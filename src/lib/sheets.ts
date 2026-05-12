@@ -71,7 +71,7 @@ const HEADERS: Record<SubmissionType, string[]> = {
     "Mobile",
     "PayFast PaymentID",
   ],
-  // /form-2 — free entry capture for sponsored / corporate days (no payment)
+  // /sponsored-entry — free entry capture for sponsored / corporate days (no payment)
   freeEntry: [
     "Timestamp",
     "Name",

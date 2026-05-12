@@ -41,6 +41,11 @@ const nextConfig: NextConfig = {
       { source: "/golf-courses/", destination: "/#courses", permanent: true },
       { source: "/terms-and-conditions", destination: "/terms", permanent: true },
       { source: "/terms-and-conditions/", destination: "/terms", permanent: true },
+      // /form-2 was the ungreppable original slug for the sponsored-entry
+      // form. Renamed to /sponsored-entry for analytics + searchability.
+      // Permanent redirect catches any external link / QR / printed material.
+      { source: "/form-2", destination: "/sponsored-entry", permanent: true },
+      { source: "/form-2/", destination: "/sponsored-entry", permanent: true },
     ];
   },
   async rewrites() {
