@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "getluckygolfclub.com" }],
+      "destination": "https://www.getluckygolf.co.za/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.getluckygolfclub.com" }],
+      "destination": "https://www.getluckygolf.co.za/:path*",
+      "permanent": true
+    }
+  ]
+}

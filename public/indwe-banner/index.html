@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indwe Risk Services - Sponsored Banner</title>
+<style>
+  @font-face {
+    font-family: 'Arial Narrow';
+    src: url('ArialNarrow.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Arial Narrow';
+    src: url('ArialNarrowBold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    background: #f0f0f0;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+    min-height: 100vh;
+  }
+
+  .banner-container {
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    max-width: 1280px;
+    margin: 0 auto;
+    background: #ffffff;
+    overflow: hidden;
+    position: relative;
+    font-family: 'Arial Narrow', Arial, Helvetica, sans-serif;
+    cursor: pointer;
+  }
+
+  /* --- Slides use absolute stacking with opacity --- */
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    animation-duration: 15s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    background: #ffffff;
+  }
+
+  /* Slide 1: Sponsor image */
+  .slide-sponsor {
+    animation-name: slide1;
+  }
+
+  .slide-sponsor img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 0;
+  }
+
+  /* Slide 2: Campaign Copy */
+  .slide-copy {
+    animation-name: slide2;
+    flex-direction: column;
+    padding: 0 8%;
+  }
+
+  .copy-line-1,
+  .copy-line-2 {
+    font-size: clamp(22px, 3.6vw, 46px);
+    font-weight: 700;
+    color: #0066a2;
+    text-align: center;
+    line-height: 1.3;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* Slide 3: CTA */
+  .slide-cta {
+    animation-name: slide3;
+    flex-direction: column;
+    gap: clamp(8px, 1.5vw, 18px);
+    padding: 0 8%;
+  }
+
+  .cta-text {
+    font-size: clamp(20px, 3.4vw, 44px);
+    font-weight: 700;
+    color: #0066a2;
+    text-align: center;
+    letter-spacing: 1.5px;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .cta-underline {
+    width: clamp(60px, 8vw, 120px);
+    height: 3px;
+    background: #0066a2;
+    margin: 0 auto;
+  }
+
+  .cta-button {
+    display: inline-block;
+    padding: clamp(6px, 1vw, 12px) clamp(20px, 3vw, 44px);
+    background: #0066a2;
+    color: #ffffff;
+    font-family: 'Arial Narrow', Arial, Helvetica, sans-serif;
+    font-size: clamp(11px, 1.4vw, 18px);
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .cta-button:hover {
+    background: #004d7a;
+  }
+
+  /*
+    15s total cycle:
+    Slide 1: 0s – 4.5s   (visible 0% – 30%)
+    Slide 2: 4.5s – 9.5s (visible 30% – 63%)
+    Slide 3: 9.5s – 14.5s(visible 63% – 97%)
+    Fade transitions: ~0.25s each (~1.5%)
+  */
+
+  @keyframes slide1 {
+    0%    { opacity: 1; }
+    30%   { opacity: 1; }
+    33%   { opacity: 0; }
+    97%   { opacity: 0; }
+    100%  { opacity: 1; }
+  }
+
+  @keyframes slide2 {
+    0%    { opacity: 0; }
+    33%   { opacity: 0; }
+    36%   { opacity: 1; }
+    63%   { opacity: 1; }
+    66%   { opacity: 0; }
+    100%  { opacity: 0; }
+  }
+
+  @keyframes slide3 {
+    0%    { opacity: 0; }
+    66%   { opacity: 0; }
+    69%   { opacity: 1; }
+    97%   { opacity: 1; }
+    100%  { opacity: 0; }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="banner-container" onclick="window.open('https://indwemicrosite.vercel.app', '_blank')" role="banner" aria-label="Indwe Risk Services Sponsorship Banner">
+
+  <!-- Slide 1: Proudly Sponsored By (pixel-perfect PNG) -->
+  <div class="slide slide-sponsor">
+    <img src="indwe-sponsor-banner.png" alt="Proudly Sponsored By Indwe Risk Services – Authorised Financial Services Provider FSP 3425" />
+  </div>
+
+  <!-- Slide 2: Campaign Copy – blue on white -->
+  <div class="slide slide-copy">
+    <span class="copy-line-1">Your handicap changes.</span>
+    <span class="copy-line-2">So does your risk.</span>
+  </div>
+
+  <!-- Slide 3: CTA – blue on white -->
+  <div class="slide slide-cta">
+    <div class="cta-text">Claim your complimentary risk review.</div>
+    <a href="https://indwemicrosite.vercel.app" target="_blank" class="cta-button" onclick="event.stopPropagation();">Takes 15 seconds</a>
+  </div>
+
+</div>
+
+</body>
+</html>
