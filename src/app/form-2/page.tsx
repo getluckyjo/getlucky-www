@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 /**
- * /sponsored-entry — free entry capture for sponsored / corporate days.
+ * /form-2 — free entry capture for sponsored / corporate days.
  * No payment, just contact details. Distinct from /form (paid).
  */
 export default function Form2Page() {

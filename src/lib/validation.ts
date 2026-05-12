@@ -142,7 +142,7 @@ export const entrySchema = z.object({
 });
 export type EntryInput = z.infer<typeof entrySchema>;
 
-// /sponsored-entry — free entry for sponsored/corporate events
+// /form-2 — free entry for sponsored/corporate events
 export const freeEntrySchema = z.object({
   name: requiredString("Name").max(120),
   email: z.string().trim().email("Enter a valid email").optional().or(z.literal("")),

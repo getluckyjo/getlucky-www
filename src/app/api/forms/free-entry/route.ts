@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     Mobile: d.mobile,
     Course: d.course || "",
     Event: d.event || "",
-    Source: "getluckygolf.co.za /sponsored-entry",
+    Source: "getluckygolf.co.za /form-2",
   };
 
   try {
