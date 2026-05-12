@@ -1,0 +1,26 @@
+# Next.js
+.next/
+next-env.d.ts
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+
+# Local environment — contains live secrets (Resend key, Sheets webhook URL +
+# secret, Indwe API key, PayFast passphrase). Never commit.
+.env
+.env.local
+.env*.local
+
+# Vercel CLI workspace
+.vercel/
+.vercel
+
+# Firecrawl scrape cache (legacy content migration data — keep local, don't commit)
+.firecrawl/
+
+# Editor / OS detritus
+.DS_Store
+*.log
+~$*
+.~lock.*
