@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 type Lead = {
   id: string;
-  type: "voucher" | "course-entry" | "free-entry" | "partner" | "corporate" | "agency";
+  type: "voucher" | "course-entry" | "free-entry" | "partner" | "corporate";
   timestamp: string;
   name: string;
   email: string;
@@ -18,15 +18,17 @@ type Lead = {
   raw: Record<string, string>;
 };
 
-const TYPES: SubmissionType[] = ["voucher", "entry", "freeEntry", "partner", "corporate", "agency"];
+// Agency submissions are deliberately excluded — they go to a separate internal pipeline,
+// not to the headline sponsor.
+type IndweType = Exclude<SubmissionType, "agency">;
+const TYPES: IndweType[] = ["voucher", "entry", "freeEntry", "partner", "corporate"];
 
-const TYPE_LABEL: Record<SubmissionType, Lead["type"]> = {
+const TYPE_LABEL: Record<IndweType, Lead["type"]> = {
   voucher: "voucher",
   entry: "course-entry",
   freeEntry: "free-entry",
   partner: "partner",
   corporate: "corporate",
-  agency: "agency",
 };
 
 function pick(row: Record<string, string>, keys: string[]): string {
@@ -37,7 +39,7 @@ function pick(row: Record<string, string>, keys: string[]): string {
   return "";
 }
 
-function normalize(type: SubmissionType, row: Record<string, string>): Lead {
+function normalize(type: IndweType, row: Record<string, string>): Lead {
   const timestamp = pick(row, ["Timestamp"]);
   const reference = pick(row, ["Reference"]);
   const status = pick(row, ["Status"]).toLowerCase();
@@ -86,7 +88,7 @@ export async function GET(req: NextRequest) {
     }),
   );
 
-  const failed: { type: SubmissionType; error: string }[] = [];
+  const failed: { type: IndweType; error: string }[] = [];
   const buckets: Lead[][] = [];
   settled.forEach((result, i) => {
     const t = TYPES[i];
