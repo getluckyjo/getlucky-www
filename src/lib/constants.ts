@@ -73,8 +73,11 @@ export const COURSE_SLUGS = {
   "Mosselbay Golf Club": "mossel-bay",
   "Mount Edgecombe Country Club": "mount-edgecombe",
   "Rondebosch Golf Club": "rondebosch",
+  "San Lameer": "san-lameer",
   "State Mines": "state-mines",
   "St Francis Links": "st-francis",
+  "Wild Coast": "wild-coast",
+  "Zimbali": "zimbali",
   "Golf Day": "golf-day",
 } as const;
 
