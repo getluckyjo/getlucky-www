@@ -75,31 +75,43 @@ export async function GET(req: NextRequest) {
   const since = url.searchParams.get("since") || undefined;
   const typeFilter = url.searchParams.get("type") as Lead["type"] | null;
 
-  try {
-    const buckets = await Promise.all(
-      TYPES.map(async (t) => {
-        const rows = await readSubmissions(t, since);
-        // For voucher/entry, only return paid records — sponsors should not see abandoned payments
-        const filtered =
-          t === "voucher" || t === "entry"
-            ? rows.filter((r) => String(r.Status || "").toLowerCase() === "paid")
-            : rows;
-        return filtered.map((r) => normalize(t, r));
-      }),
-    );
+  const settled = await Promise.allSettled(
+    TYPES.map(async (t) => {
+      const rows = await readSubmissions(t, since);
+      const filtered =
+        t === "voucher" || t === "entry"
+          ? rows.filter((r) => String(r.Status || "").toLowerCase() === "paid")
+          : rows;
+      return filtered.map((r) => normalize(t, r));
+    }),
+  );
 
-    let leads: Lead[] = buckets.flat();
-    if (typeFilter) leads = leads.filter((l) => l.type === typeFilter);
+  const failed: { type: SubmissionType; error: string }[] = [];
+  const buckets: Lead[][] = [];
+  settled.forEach((result, i) => {
+    const t = TYPES[i];
+    if (result.status === "fulfilled") {
+      buckets.push(result.value);
+    } else {
+      const message = result.reason instanceof Error ? result.reason.message : String(result.reason);
+      console.error(`Indwe leads read failed for type=${t}:`, message);
+      failed.push({ type: t, error: message });
+    }
+  });
 
-    leads.sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1));
-
-    return NextResponse.json({
-      count: leads.length,
-      generatedAt: new Date().toISOString(),
-      leads,
-    });
-  } catch (err) {
-    console.error("Indwe leads read failed", err);
-    return NextResponse.json({ error: "Failed to read leads" }, { status: 500 });
+  if (failed.length === TYPES.length) {
+    return NextResponse.json({ error: "Failed to read leads", failed }, { status: 500 });
   }
+
+  let leads: Lead[] = buckets.flat();
+  if (typeFilter) leads = leads.filter((l) => l.type === typeFilter);
+
+  leads.sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1));
+
+  return NextResponse.json({
+    count: leads.length,
+    generatedAt: new Date().toISOString(),
+    leads,
+    ...(failed.length > 0 && { partial: true, failed }),
+  });
 }
