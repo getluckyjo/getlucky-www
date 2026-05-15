@@ -140,8 +140,8 @@ export default function VoucherForm() {
         </Field>
       </div>
 
-      <Field label="Email Address (optional)" name="email" error={errors.email}>
-        <Input name="email" type="email" autoComplete="email" placeholder="you@example.com" />
+      <Field label="Email Address" name="email" required error={errors.email}>
+        <Input name="email" type="email" required autoComplete="email" placeholder="you@example.com" />
       </Field>
 
       <Field label="Purchasing For" name="purchaseFor" required error={errors.purchaseFor}>

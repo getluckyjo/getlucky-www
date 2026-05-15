@@ -30,7 +30,7 @@ const phone = requiredString("Mobile number")
  */
 export const clubMemberFields = {
   name: requiredString("Name").max(120),
-  email: z.string().trim().email("Enter a valid email").optional().or(z.literal("")),
+  email: requiredString("Email").email("Enter a valid email").max(160),
   mobile: phone,
   course: requiredString("Course").refine(
     (v) => (COURSES as readonly string[]).includes(v),
@@ -46,7 +46,7 @@ export type MembershipInput = z.infer<typeof membershipSchema>;
 export const partnerSchema = z.object({
   fullName: requiredString("Full name").max(120),
   mobile: phone,
-  email: z.string().trim().email("Enter a valid email").optional().or(z.literal("")),
+  email: requiredString("Email").email("Enter a valid email").max(160),
   golfCourse: z.string().trim().max(120).optional().or(z.literal("")),
   message: z.string().trim().max(2000).optional().or(z.literal("")),
   consentCommunication: optionalConsent,
@@ -70,7 +70,7 @@ export type AgencyInput = z.infer<typeof agencySchema>;
 export const corporateSchema = z.object({
   fullName: requiredString("Full name").max(120),
   mobile: phone,
-  email: z.string().trim().email("Enter a valid email").optional().or(z.literal("")),
+  email: requiredString("Email").email("Enter a valid email").max(160),
   companyName: z.string().trim().max(120).optional().or(z.literal("")),
   golfCourse: z.string().trim().max(120).optional().or(z.literal("")),
   golfDayDate: z.string().trim().max(40).optional().or(z.literal("")),
@@ -94,7 +94,7 @@ export const voucherSchema = z
       "Choose a partner course",
     ),
     fullName: requiredString("Full name").max(120),
-    email: z.string().trim().email("Enter a valid email").optional().or(z.literal("")),
+    email: requiredString("Email").email("Enter a valid email").max(160),
     mobile: phone,
     purchaseFor: z.enum(["myself", "someone-else"], {
       error: "Choose who this is for",
@@ -145,7 +145,7 @@ export type EntryInput = z.infer<typeof entrySchema>;
 // /form-2 — free entry for sponsored/corporate events
 export const freeEntrySchema = z.object({
   name: requiredString("Name").max(120),
-  email: z.string().trim().email("Enter a valid email").optional().or(z.literal("")),
+  email: requiredString("Email").email("Enter a valid email").max(160),
   mobile: phone,
   course: requiredString("Course").refine(
     (v) => (COURSES as readonly string[]).includes(v),

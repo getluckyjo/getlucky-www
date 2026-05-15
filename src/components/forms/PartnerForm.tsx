@@ -79,8 +79,8 @@ export default function PartnerForm() {
         </Field>
       </div>
 
-      <Field label="Email Address (optional)" name="email" error={errors.email}>
-        <Input name="email" type="email" autoComplete="email" placeholder="you@example.com" />
+      <Field label="Email Address" name="email" required error={errors.email}>
+        <Input name="email" type="email" required autoComplete="email" placeholder="you@example.com" />
       </Field>
 
       <Field

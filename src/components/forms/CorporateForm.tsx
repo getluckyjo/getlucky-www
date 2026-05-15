@@ -94,8 +94,8 @@ export default function CorporateForm() {
         </Field>
       </div>
 
-      <Field label="Email Address (optional)" name="email" error={errors.email}>
-        <Input name="email" type="email" autoComplete="email" placeholder="you@example.com" />
+      <Field label="Email Address" name="email" required error={errors.email}>
+        <Input name="email" type="email" required autoComplete="email" placeholder="you@example.com" />
       </Field>
 
       <div className="grid sm:grid-cols-2 gap-5">
