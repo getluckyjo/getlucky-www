@@ -4,7 +4,7 @@
  * Sheet owner and exposes a single HTTPS endpoint protected by a shared secret.
  */
 
-export type SubmissionType = "partner" | "corporate" | "agency" | "voucher" | "entry" | "freeEntry";
+export type SubmissionType = "partner" | "corporate" | "agency" | "voucher" | "entry" | "freeEntry" | "riskReview";
 
 const HEADERS: Record<SubmissionType, string[]> = {
   partner: [
@@ -79,6 +79,20 @@ const HEADERS: Record<SubmissionType, string[]> = {
     "Mobile",
     "Course",
     "Event",
+    "Source",
+  ],
+  // indwemicrosite.vercel.app — risk review request from the Indwe sponsor microsite.
+  // Lands here so the Indwe leads API picks it up alongside the other types.
+  // Tab is created automatically by the central Apps Script, so riskReview
+  // submissions are physically separated from other lead types.
+  riskReview: [
+    "Timestamp",
+    "Full Name",
+    "Email",
+    "Mobile",
+    "Schedule File",
+    "Consent",
+    "Lead Stage",
     "Source",
   ],
 };

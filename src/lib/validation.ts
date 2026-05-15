@@ -54,6 +54,21 @@ export const partnerSchema = z.object({
 });
 export type PartnerInput = z.infer<typeof partnerSchema>;
 
+/**
+ * Risk review request — submitted via the Indwe sponsor microsite.
+ * Mirrors what the microsite form captures (name, email, mobile, optional
+ * uploaded schedule, comms consent).
+ */
+export const riskReviewSchema = z.object({
+  fullName: requiredString("Full name").max(120),
+  email: requiredString("Email").email("Enter a valid email").max(160),
+  mobile: phone,
+  scheduleFile: z.string().trim().url("Schedule file must be a URL").optional().or(z.literal("")),
+  consent: z.boolean().optional().default(false),
+  source: z.string().trim().max(160).optional().or(z.literal("")),
+});
+export type RiskReviewInput = z.infer<typeof riskReviewSchema>;
+
 export const agencySchema = z.object({
   fullName: requiredString("Full name").max(120),
   email: requiredString("Email").email("Enter a valid email").max(160),
