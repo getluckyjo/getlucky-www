@@ -21,15 +21,19 @@ const OPS_ALERT_EMAIL = process.env.OPS_ALERT_EMAIL || "johannes@getluckygolfclu
 // Fixed payload — must be identical to the corresponding TEST_FIELDS in
 // website and subscriptions health endpoints. Apostrophe + parens are
 // deliberate (catches encoder regressions like the one fixed 2026-05-15).
+//
+// Field ORDER matters. www's signFields iterates object insertion order,
+// so this insertion order must match website's FIELD_ORDER array for the
+// three apps to produce identical canary MD5s.
 const TEST_FIELDS: Record<string, string> = {
   merchant_id: "__placeholder__",
   merchant_key: "__placeholder__",
-  amount: "149.00",
-  item_name: "Health check (O'Brien)",
-  m_payment_id: "HEALTH-CHECK-FIXED-2026",
   name_first: "Liam",
   name_last: "O'Brien",
   email_address: "health@getluckygolfclub.com",
+  m_payment_id: "HEALTH-CHECK-FIXED-2026",
+  amount: "149.00",
+  item_name: "Health check (O'Brien)",
 };
 
 interface Check {
