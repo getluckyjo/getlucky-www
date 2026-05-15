@@ -95,6 +95,14 @@ export function buildPaymentRequest(opts: {
   const returnPath = opts.returnPath || "/buy-a-swing/success";
   const cancelPath = opts.cancelPath || "/buy-a-swing/cancel";
   const ref = encodeURIComponent(opts.reference);
+  const email = opts.buyerEmail && opts.buyerEmail.trim() ? opts.buyerEmail.trim() : "";
+
+  // IMPORTANT: field insertion order is the PayFast canonical order. PayFast
+  // signs fields in submitted order, and PayFast's own signature computation
+  // expects this exact sequence — specifically email_address BEFORE cell_number,
+  // and email_confirmation / confirmation_address AFTER the custom_str* fields.
+  // Getting this wrong returns "Generated signature does not match submitted
+  // signature." on the /eng/process redirect.
   const fields: Record<string, string> = {
     merchant_id: merchantId(),
     merchant_key: merchantKey(),
@@ -103,6 +111,9 @@ export function buildPaymentRequest(opts: {
     notify_url: opts.urls?.notifyUrl ?? `${siteUrl()}/api/payfast/notify`,
     name_first: opts.buyerName.split(" ")[0] || opts.buyerName,
     name_last: opts.buyerName.split(" ").slice(1).join(" ") || opts.buyerName,
+    // email_address must come BEFORE cell_number. PayFast rejects an empty
+    // email_address string, so omit the field entirely when no email provided.
+    ...(email ? { email_address: email } : {}),
     cell_number: normaliseSACellNumber(opts.buyerMobile || ""),
     m_payment_id: opts.reference,
     amount: opts.amount.toFixed(2),
@@ -110,14 +121,10 @@ export function buildPaymentRequest(opts: {
     item_description: (opts.itemDescription || opts.itemName).slice(0, 255),
     custom_str1: opts.customStr1 || "",
     custom_str2: opts.customStr2 || "",
+    // email_confirmation + confirmation_address come AFTER custom_str* per
+    // PayFast's canonical order.
+    ...(email ? { email_confirmation: "1", confirmation_address: email } : {}),
   };
-
-  // PayFast rejects empty email_address strings — only include when provided.
-  if (opts.buyerEmail && opts.buyerEmail.trim()) {
-    fields.email_address = opts.buyerEmail.trim();
-    fields.email_confirmation = "1";
-    fields.confirmation_address = opts.buyerEmail.trim();
-  }
 
   // Subscription fields, if requested. Per PayFast docs, set subscription_type=1
   // and the recurring fields. The initial `amount` is what gets charged today;
