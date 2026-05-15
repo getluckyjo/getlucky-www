@@ -1,0 +1,152 @@
+name: PayFast Cross-App Health Check
+
+# Aggregates the three per-app /api/health/payfast endpoints into a single
+# daily digest. Runs 15 minutes AFTER the Vercel crons in each app (06:00 UTC)
+# so any failures have already triggered per-app emails — this layer catches
+# the things Vercel cron can't:
+#   • An app's cron silently stopped firing (then we get no email here either,
+#     so the workflow itself failing is the signal — watch the GitHub Actions
+#     badge)
+#   • Canary MD5 divergence across the three apps (means passphrase, encoder,
+#     or merchant id/key drifted on one app without that app individually
+#     "failing" — each cron would report ok:true while signatures no longer
+#     interoperate)
+#
+# On any anomaly the workflow emails johannes@getluckygolfclub.com via Resend.
+
+on:
+  schedule:
+    - cron: '15 6 * * *'  # 06:15 UTC = 08:15 SAST, 15 min after Vercel crons
+  workflow_dispatch:        # manual trigger
+
+permissions:
+  contents: read
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Probe all three apps and aggregate
+        id: probe
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          OPS_EMAIL: ${{ vars.OPS_ALERT_EMAIL || 'johannes@getluckygolfclub.com' }}
+        run: |
+          node <<'EOF'
+          const https = require('https');
+
+          const ENDPOINTS = [
+            { app: 'website',       url: 'https://simulator.getluckygolfclub.com/api/health/payfast' },
+            { app: 'www',           url: 'https://getluckygolf.co.za/api/health/payfast' },
+            { app: 'subscriptions', url: 'https://membership.getluckygolfclub.com/api/health/payfast' },
+          ];
+
+          function fetchJson(url) {
+            return new Promise((resolve) => {
+              const req = https.get(url, { timeout: 15000 }, (res) => {
+                let body = '';
+                res.on('data', (c) => (body += c));
+                res.on('end', () => {
+                  try { resolve({ httpStatus: res.statusCode, body: JSON.parse(body) }); }
+                  catch (e) { resolve({ httpStatus: res.statusCode, body: null, parseError: e.message }); }
+                });
+              });
+              req.on('timeout', () => { req.destroy(); resolve({ httpStatus: 0, body: null, error: 'timeout' }); });
+              req.on('error', (e) => resolve({ httpStatus: 0, body: null, error: e.message }));
+            });
+          }
+
+          (async () => {
+            const results = await Promise.all(ENDPOINTS.map(async (e) => ({ ...e, ...(await fetchJson(e.url)) })));
+
+            const issues = [];
+            const lines = [];
+
+            for (const r of results) {
+              if (r.httpStatus !== 200) {
+                issues.push(`${r.app}: HTTP ${r.httpStatus} (${r.error || r.parseError || 'no body'})`);
+                lines.push(`✗ ${r.app} — HTTP ${r.httpStatus} ${r.error || r.parseError || ''}`);
+                continue;
+              }
+              if (!r.body || r.body.ok !== true) {
+                const fails = (r.body && r.body.checks || []).filter((c) => !c.ok).map((c) => `${c.name}: ${c.detail}`).join('; ');
+                issues.push(`${r.app}: ${fails || 'ok=false'}`);
+                lines.push(`✗ ${r.app} — ${fails || 'ok=false'}`);
+                continue;
+              }
+              lines.push(`✓ ${r.app} — canary=${r.body.canary_md5}`);
+            }
+
+            const okResults = results.filter((r) => r.httpStatus === 200 && r.body && r.body.ok === true);
+            const md5s = [...new Set(okResults.map((r) => r.body.canary_md5))];
+            if (okResults.length > 1 && md5s.length > 1) {
+              issues.push(`canary divergence across apps: ${md5s.join(' vs ')}`);
+              lines.push(`🚨 CANARY DIVERGENCE — apps producing different MD5s: ${md5s.join(' vs ')}`);
+            }
+
+            const allOk = issues.length === 0;
+            const report = lines.join('\n');
+            console.log('--- REPORT ---');
+            console.log(report);
+            console.log('--- END REPORT ---');
+
+            // Always emit a status to GH outputs
+            const out = require('fs');
+            out.appendFileSync(process.env.GITHUB_OUTPUT, `failed=${!allOk}\n`);
+            out.appendFileSync(process.env.GITHUB_OUTPUT, `summary<<DELIM\n${report}\nDELIM\n`);
+
+            if (allOk) {
+              console.log('All systems healthy. No email sent.');
+              return;
+            }
+
+            // Email on failure
+            const key = process.env.RESEND_API_KEY;
+            const to = process.env.OPS_EMAIL;
+            if (!key) { console.error('No RESEND_API_KEY set; cannot email'); process.exit(1); }
+
+            const html = `<div style="font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;">
+              <h2 style="color:#b91c1c;">Daily PayFast Cross-App Check — Issues Detected</h2>
+              <p>${issues.length} issue(s) found at ${new Date().toISOString()}</p>
+              <pre style="background:#f5f5f5;padding:12px;border-radius:6px;font-size:13px;">${report}</pre>
+              <p style="color:#666;font-size:12px;">Workflow: <a href="https://github.com/getluckyjo/getlucky-www/actions">getlucky-www / payfast-health</a></p>
+            </div>`;
+
+            const payload = JSON.stringify({
+              from: 'Get Lucky Ops <ops@getluckygolfclub.com>',
+              to,
+              subject: `[ALERT] Daily PayFast check: ${issues.length} issue${issues.length === 1 ? '' : 's'}`,
+              html,
+            });
+
+            const resendRes = await new Promise((resolve) => {
+              const req = https.request('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) },
+              }, (res) => {
+                let body = '';
+                res.on('data', (c) => (body += c));
+                res.on('end', () => resolve({ status: res.statusCode, body }));
+              });
+              req.on('error', (e) => resolve({ status: 0, body: e.message }));
+              req.write(payload);
+              req.end();
+            });
+            console.log(`Resend HTTP ${resendRes.status}`);
+            if (resendRes.status >= 400) console.error('Resend response:', resendRes.body);
+
+            process.exit(1); // fail the workflow so the GitHub Actions badge goes red
+          })();
+          EOF
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "## PayFast Daily Health Check"
+            echo ""
+            echo '```'
+            echo "${{ steps.probe.outputs.summary }}"
+            echo '```'
+          } >> $GITHUB_STEP_SUMMARY
