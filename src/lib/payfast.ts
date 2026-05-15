@@ -39,7 +39,18 @@ function siteUrl() {
  * passphrase appended (also URL-encoded).
  */
 function pfEncode(value: string) {
-  return encodeURIComponent(value).replace(/%20/g, "+");
+  // Match PHP's urlencode() — PayFast computes signatures server-side with PHP,
+  // so we must encode !'()*~ which encodeURIComponent leaves alone. Without
+  // this, a buyer named O'Brien (or any name with these chars) fails PayFast's
+  // signature check with "Generated signature does not match submitted signature".
+  return encodeURIComponent(value.trim())
+    .replace(/%20/g, "+")
+    .replace(/!/g, "%21")
+    .replace(/'/g, "%27")
+    .replace(/\(/g, "%28")
+    .replace(/\)/g, "%29")
+    .replace(/\*/g, "%2A")
+    .replace(/~/g, "%7E");
 }
 
 /**
