@@ -74,8 +74,8 @@ export default function FreeEntryForm() {
         <Input name="name" required autoComplete="name" placeholder="Full name" />
       </Field>
 
-      <Field label="Email Address (optional)" name="email" error={errors.email}>
-        <Input name="email" type="email" autoComplete="email" placeholder="you@example.com" />
+      <Field label="Email Address" name="email" required error={errors.email}>
+        <Input name="email" type="email" required autoComplete="email" placeholder="you@example.com" />
       </Field>
 
       <Field label="Mobile Number" name="mobile" required error={errors.mobile}>
