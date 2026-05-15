@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 type Lead = {
   id: string;
-  type: "voucher" | "course-entry" | "free-entry" | "partner" | "corporate";
+  type: "voucher" | "course-entry" | "free-entry" | "partner" | "corporate" | "risk-review";
   timestamp: string;
   name: string;
   email: string;
@@ -15,13 +15,24 @@ type Lead = {
   event: string;
   status: "paid" | "lead" | "pending";
   source: string;
+  // Promoted from raw so integrators don't need to dig — empty string when not
+  // applicable to a given lead type. Adding new top-level fields here is a
+  // non-breaking change; raw is still returned unchanged below.
+  consent: string;
+  leadStage: string;
+  scheduleFile: string;
+  tier: string;
+  amount: string;
+  prize: string;
+  date: string;
+  payfastPaymentId: string;
   raw: Record<string, string>;
 };
 
 // Agency submissions are deliberately excluded — they go to a separate internal pipeline,
 // not to the headline sponsor.
 type IndweType = Exclude<SubmissionType, "agency">;
-const TYPES: IndweType[] = ["voucher", "entry", "freeEntry", "partner", "corporate"];
+const TYPES: IndweType[] = ["voucher", "entry", "freeEntry", "partner", "corporate", "riskReview"];
 
 const TYPE_LABEL: Record<IndweType, Lead["type"]> = {
   voucher: "voucher",
@@ -29,6 +40,7 @@ const TYPE_LABEL: Record<IndweType, Lead["type"]> = {
   freeEntry: "free-entry",
   partner: "partner",
   corporate: "corporate",
+  riskReview: "risk-review",
 };
 
 function pick(row: Record<string, string>, keys: string[]): string {
@@ -57,6 +69,14 @@ function normalize(type: IndweType, row: Record<string, string>): Lead {
     event: pick(row, ["Event", "Golf Day Date"]),
     status: type === "voucher" || type === "entry" ? normalizedStatus : "lead",
     source: pick(row, ["Source"]) || (type === "entry" ? "qr-on-course" : type === "voucher" ? "online" : ""),
+    consent: pick(row, ["Consent"]),
+    leadStage: pick(row, ["Lead Stage"]),
+    scheduleFile: pick(row, ["Schedule File"]),
+    tier: pick(row, ["Tier"]),
+    amount: pick(row, ["Amount"]),
+    prize: pick(row, ["Prize"]),
+    date: pick(row, ["Date"]),
+    payfastPaymentId: pick(row, ["PayFast PaymentID"]),
     raw: row,
   };
 }

@@ -32,7 +32,7 @@ Authorization: Bearer 5d7e4e11700461f924a3959299f7e281a04d1590bae43c802120912a2b
 | Param  | Example                          | Effect                                                              |
 |--------|----------------------------------|---------------------------------------------------------------------|
 | `since`| `2026-05-01T00:00:00Z`           | Only return leads with a Timestamp >= this ISO 8601 value.          |
-| `type` | `voucher`                        | Filter to one type. Values: `voucher`, `course-entry`, `free-entry`, `partner`, `corporate`. |
+| `type` | `voucher`                        | Filter to one type. Values: `voucher`, `course-entry`, `free-entry`, `partner`, `corporate`, `risk-review`. |
 
 Recommended pattern: store the `generatedAt` you receive, pass it back as `since` next poll.
 
@@ -56,6 +56,14 @@ Recommended pattern: store the `generatedAt` you receive, pass it back as `since
       "event": "",
       "status": "paid",
       "source": "online",
+      "consent": "",
+      "leadStage": "",
+      "scheduleFile": "",
+      "tier": "Eagle",
+      "amount": "1500.00",
+      "prize": "R1,000,000",
+      "date": "",
+      "payfastPaymentId": "2487391",
       "raw": { "...original sheet row...": "" }
     },
     {
@@ -69,6 +77,35 @@ Recommended pattern: store the `generatedAt` you receive, pass it back as `since
       "event": "Indwe Corporate Day",
       "status": "lead",
       "source": "qr-on-course",
+      "consent": "",
+      "leadStage": "",
+      "scheduleFile": "",
+      "tier": "",
+      "amount": "",
+      "prize": "",
+      "date": "",
+      "payfastPaymentId": "",
+      "raw": { "...": "" }
+    },
+    {
+      "id": "risk-review-2026-05-04T14:20:00Z-anna@example.com",
+      "type": "risk-review",
+      "timestamp": "2026-05-04T14:20:00Z",
+      "name": "Anna Botha",
+      "email": "anna@example.com",
+      "mobile": "+27825551234",
+      "course": "",
+      "event": "",
+      "status": "lead",
+      "source": "indwe-microsite",
+      "consent": "Yes",
+      "leadStage": "Direct Warm Lead",
+      "scheduleFile": "https://drive.google.com/...",
+      "tier": "",
+      "amount": "",
+      "prize": "",
+      "date": "",
+      "payfastPaymentId": "",
       "raw": { "...": "" }
     }
   ]
@@ -77,19 +114,27 @@ Recommended pattern: store the `generatedAt` you receive, pass it back as `since
 
 ### Field reference
 
-| Field       | Type     | Notes                                                                 |
-|-------------|----------|-----------------------------------------------------------------------|
-| `id`        | string   | Stable identifier (PayFast reference where applicable). Use for dedup. |
-| `type`      | enum     | `voucher` (online purchase) · `course-entry` (paid QR entry on course) · `free-entry` (sponsored free entry) · `partner` (course partner enquiry) · `corporate` (corporate golf-day enquiry). |
-| `timestamp` | ISO 8601 | When the lead was captured.                                           |
-| `name`      | string   | Best available name (full name / buyer / recipient).                  |
-| `email`     | string   | Best available email.                                                 |
-| `mobile`    | string   | E.164-formatted where possible.                                       |
-| `course`    | string   | Golf course associated with the lead.                                 |
-| `event`     | string   | Event name or golf-day date, if any.                                  |
-| `status`    | enum     | `paid` · `lead` · `pending`. Only `paid` records are returned for `voucher` and `course-entry`. |
-| `source`    | string   | Where the lead came from (`online`, `qr-on-course`, etc.).            |
-| `raw`       | object   | Original row from our system, for any field not in the normalised shape. |
+| Field              | Type     | Notes                                                                 |
+|--------------------|----------|-----------------------------------------------------------------------|
+| `id`               | string   | Stable identifier (PayFast reference where applicable). Use for dedup. |
+| `type`             | enum     | `voucher` (online purchase) · `course-entry` (paid QR entry on course) · `free-entry` (sponsored free entry) · `partner` (course partner enquiry) · `corporate` (corporate golf-day enquiry) · `risk-review` (Indwe microsite risk-review request). |
+| `timestamp`        | ISO 8601 | When the lead was captured.                                           |
+| `name`             | string   | Best available name (full name / buyer / recipient).                  |
+| `email`            | string   | Best available email.                                                 |
+| `mobile`           | string   | E.164-formatted where possible.                                       |
+| `course`           | string   | Golf course associated with the lead.                                 |
+| `event`            | string   | Event name or golf-day date, if any.                                  |
+| `status`           | enum     | `paid` · `lead` · `pending`. Only `paid` records are returned for `voucher` and `course-entry`. |
+| `source`           | string   | Where the lead came from (`online`, `qr-on-course`, `indwe-microsite`, etc.). |
+| `consent`          | string   | Communications consent. `Yes` / `No` for `risk-review`; empty otherwise. |
+| `leadStage`        | string   | Lead-stage tag (e.g. `Direct Warm Lead` on `risk-review`). Empty when not applicable. |
+| `scheduleFile`     | string   | URL to an uploaded insurance schedule (risk-review only). Empty otherwise. |
+| `tier`             | string   | Entry tier (`voucher` / `course-entry`). Empty otherwise.             |
+| `amount`           | string   | Amount paid in ZAR (`voucher` / `course-entry`). Empty otherwise.     |
+| `prize`            | string   | Prize associated with the entry (`voucher` / `course-entry`). Empty otherwise. |
+| `date`             | string   | Tee-off date for paid course entries. Empty otherwise.                |
+| `payfastPaymentId` | string   | PayFast payment ID for paid records. Empty otherwise.                 |
+| `raw`              | object   | **Optional safety net.** Original row from our system, for any field not in the normalised shape. You can ignore `raw` entirely — every commonly-used value is now a first-class top-level field. |
 
 ---
 
