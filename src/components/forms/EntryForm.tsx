@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { Lock, Shield, ShieldCheck } from "lucide-react";
-import { COURSES, MEMBERSHIP, PRIZE_TIERS, ROUTES } from "@/lib/constants";
+import { COURSES, COURSE_SLUGS, MEMBERSHIP, PRIZE_TIERS, ROUTES } from "@/lib/constants";
 import {
   Checkbox,
   Field,
@@ -13,6 +13,13 @@ import {
   Select,
   SubmitButton,
 } from "./FormPrimitives";
+
+// Membership signups live on the dedicated subscription site
+// (membership.getluckygolfclub.com), which owns the recurring-billing flow,
+// the welcome-email template and the subscriber database. We deep-link to
+// the course-specific signup page when a course is selected, else send the
+// user to the club picker.
+const MEMBERSHIP_BASE = "https://membership.getluckygolfclub.com";
 
 export default function EntryForm() {
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -33,62 +40,25 @@ export default function EntryForm() {
     setTopError((prev) => (prev ? null : prev));
   }
 
-  async function onJoinClub() {
+  function onJoinClub() {
     if (memberPending || pending) return;
     setErrors({});
     setTopError(null);
 
     const form = formRef.current;
     if (!form) return;
-    const fd = new FormData(form);
-    const payload = {
-      name: String(fd.get("name") || ""),
-      email: String(fd.get("email") || ""),
-      mobile: String(fd.get("mobile") || ""),
-      course: String(fd.get("course") || ""),
-      consentCommunication: fd.get("consentCommunication") === "on",
-      consentTerms: fd.get("consentTerms") === "on",
-    };
-
-    // Quick client-side checks — membership needs course + contact + consents.
-    const missing: typeof errors = {};
-    if (!payload.course) missing.course = "Choose your course before joining the Club";
-    if (!payload.name) missing.name = "Name is required";
-    if (!payload.mobile) missing.mobile = "Mobile is required";
-    if (!payload.consentTerms) missing.consentTerms = "You must agree to continue";
-    if (Object.keys(missing).length) {
-      setErrors(missing);
-      setTopError("Add your details below to join the Club.");
-      const firstMissing = ["course", "name", "mobile", "consentTerms"].find(
-        (k) => missing[k as keyof typeof missing],
-      );
-      if (firstMissing) {
-        const el = form.querySelector<HTMLElement>(`[name="${firstMissing}"]`);
-        el?.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-      return;
-    }
+    const course = String(new FormData(form).get("course") || "");
+    const slug = course
+      ? COURSE_SLUGS[course as keyof typeof COURSE_SLUGS]
+      : undefined;
 
     setMemberPending(true);
-    try {
-      const res = await fetch("/api/forms/membership", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        if (data.fieldErrors) setErrors(data.fieldErrors);
-        setTopError(data.error || "Something went wrong. Please try again.");
-        setMemberPending(false);
-        if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
-        return;
-      }
-      submitToPayFast(data.processUrl, data.fields);
-    } catch {
-      setTopError("Network error. Please check your connection and try again.");
-      setMemberPending(false);
-    }
+    // Deep-link to the course-specific signup if a course is picked,
+    // otherwise drop the user on the clubs picker. The membership site owns
+    // the recurring-billing flow and welcome email from this point on.
+    window.location.href = slug
+      ? `${MEMBERSHIP_BASE}/join/${slug}`
+      : `${MEMBERSHIP_BASE}/clubs`;
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
