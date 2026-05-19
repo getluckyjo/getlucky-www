@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Lock, Shield, ShieldCheck } from "lucide-react";
-import { COURSES, COURSE_SLUGS, MEMBERSHIP, PRIZE_TIERS, ROUTES } from "@/lib/constants";
+import { COURSES, MEMBERSHIP, PRIZE_TIERS, ROUTES } from "@/lib/constants";
 import {
   Checkbox,
   Field,
@@ -16,10 +16,10 @@ import {
 
 // Membership signups live on the dedicated subscription site
 // (membership.getluckygolfclub.com), which owns the recurring-billing flow,
-// the welcome-email template and the subscriber database. We deep-link to
-// the course-specific signup page when a course is selected, else send the
-// user to the club picker.
-const MEMBERSHIP_BASE = "https://membership.getluckygolfclub.com";
+// the welcome-email template and the subscriber database. The form-side
+// upsell pushes the generic Get Lucky join page rather than course-specific
+// deep links — the membership site handles club selection downstream.
+const MEMBERSHIP_JOIN_URL = "https://membership.getluckygolfclub.com/join/get-lucky";
 
 export default function EntryForm() {
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -27,7 +27,6 @@ export default function EntryForm() {
   const [topError, setTopError] = useState<string | null>(null);
   const [tier, setTier] = useState<number>(150);
   const [memberPending, setMemberPending] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
 
   // Clear the error for a field as the user fixes it, and drop the top banner
   // on the first edit. Without this, "Name is required" sticks around while
@@ -44,21 +43,8 @@ export default function EntryForm() {
     if (memberPending || pending) return;
     setErrors({});
     setTopError(null);
-
-    const form = formRef.current;
-    if (!form) return;
-    const course = String(new FormData(form).get("course") || "");
-    const slug = course
-      ? COURSE_SLUGS[course as keyof typeof COURSE_SLUGS]
-      : undefined;
-
     setMemberPending(true);
-    // Deep-link to the course-specific signup if a course is picked,
-    // otherwise drop the user on the clubs picker. The membership site owns
-    // the recurring-billing flow and welcome email from this point on.
-    window.location.href = slug
-      ? `${MEMBERSHIP_BASE}/join/${slug}`
-      : `${MEMBERSHIP_BASE}/clubs`;
+    window.location.href = MEMBERSHIP_JOIN_URL;
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -100,7 +86,7 @@ export default function EntryForm() {
   }
 
   return (
-    <form ref={formRef} onSubmit={onSubmit} onChange={onFieldChange} noValidate className="space-y-5">
+    <form onSubmit={onSubmit} onChange={onFieldChange} noValidate className="space-y-5">
       {topError && <FormErrorBanner message={topError} />}
 
       <Field label="Entry Amount" name="entryAmount" required error={errors.entryAmount}>
