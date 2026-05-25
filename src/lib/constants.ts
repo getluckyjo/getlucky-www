@@ -7,6 +7,9 @@ export const GOOGLE_ADS = {
   conversionId: "AW-18144302506",
 } as const;
 
+export const GA4_ID = "G-J5E9QM1F7L";
+export const GTM_ID = "GTM-T7JGF7M2";
+
 export const SITE = {
   name: "Get Lucky Golf Club",
   tagline: "South Africa's Leading Hole-in-One Golf Activation",
