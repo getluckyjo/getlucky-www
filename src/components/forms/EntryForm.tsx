@@ -70,16 +70,30 @@ export default function EntryForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        if (data.fieldErrors) setErrors(data.fieldErrors);
-        setTopError(data.error || "Something went wrong. Please try again.");
+      // Parse defensively: a platform timeout (504) or proxy error returns an
+      // HTML body, and blindly calling res.json() would throw and surface a
+      // misleading "Network error". Treat a non-JSON or non-ok response as a
+      // server-side failure and show its message (or a sensible fallback).
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data) {
+        if (data?.fieldErrors) setErrors(data.fieldErrors);
+        setTopError(
+          data?.error ||
+            "We couldn't start your payment just now. Please try again in a moment, or ask a marshal at the tee.",
+        );
+        setPending(false);
+        if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+      if (!data.processUrl || !data.fields) {
+        setTopError("Payment couldn't be initialised. Please try again in a moment.");
         setPending(false);
         if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
         return;
       }
       submitToPayFast(data.processUrl, data.fields);
     } catch {
+      // Only genuine fetch rejections (offline / DNS / TLS) land here now.
       setTopError("Network error. Please check your connection and try again.");
       setPending(false);
     }
