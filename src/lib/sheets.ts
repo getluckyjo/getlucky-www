@@ -106,6 +106,12 @@ function endpoint() {
   return { url, secret };
 }
 
+// Cap how long we wait on the Apps Script. During an Apps Script redeploy the
+// /exec endpoint can hang rather than error; without this the Vercel function
+// runs to its timeout and returns a non-JSON 504, which the client surfaces as
+// "Network error". Failing fast lets callers return their own friendly message.
+const SCRIPT_TIMEOUT_MS = 8000;
+
 async function postScript(payload: Record<string, unknown>) {
   const { url, secret } = endpoint();
   const res = await fetch(url, {
@@ -113,6 +119,7 @@ async function postScript(payload: Record<string, unknown>) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ...payload, secret }),
     redirect: "follow",
+    signal: AbortSignal.timeout(SCRIPT_TIMEOUT_MS),
   });
   if (!res.ok) throw new Error(`Apps Script HTTP ${res.status}`);
   const data = await res.json();
@@ -125,7 +132,10 @@ async function getScript(params: Record<string, string>) {
   const u = new URL(url);
   u.searchParams.set("secret", secret);
   for (const [k, v] of Object.entries(params)) u.searchParams.set(k, v);
-  const res = await fetch(u.toString(), { redirect: "follow" });
+  const res = await fetch(u.toString(), {
+    redirect: "follow",
+    signal: AbortSignal.timeout(SCRIPT_TIMEOUT_MS),
+  });
   if (!res.ok) throw new Error(`Apps Script HTTP ${res.status}`);
   const data = await res.json();
   if (data.error) throw new Error(`Apps Script: ${data.error}`);
