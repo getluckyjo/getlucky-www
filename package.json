@@ -2,6 +2,9 @@
   "name": "get-lucky-golf-club-www",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "next dev --port 3001",
     "build": "next build",
