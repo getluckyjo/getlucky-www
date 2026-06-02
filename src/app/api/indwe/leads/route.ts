@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readSubmissions, SubmissionType } from "@/lib/sheets";
+import {
+  isDbConfigured,
+  listVouchers,
+  listEntries,
+  listLeads,
+  voucherToSheet,
+  entryToSheet,
+  leadToSheet,
+} from "@/lib/db";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -42,6 +51,26 @@ const TYPE_LABEL: Record<IndweType, Lead["type"]> = {
   corporate: "corporate",
   riskReview: "risk-review",
 };
+
+// Source rows for a given type. Postgres when configured (Sheet-shaped via the
+// db adapters so normalize() is unchanged), else the legacy Sheets read.
+async function rowsForType(t: IndweType, since?: string): Promise<Record<string, string>[]> {
+  if (!isDbConfigured()) return readSubmissions(t, since);
+  switch (t) {
+    case "voucher":
+      return (await listVouchers(since)).map(voucherToSheet);
+    case "entry":
+      return (await listEntries(since)).map(entryToSheet);
+    case "freeEntry":
+      return (await listLeads("free_entry", since)).map((r) => leadToSheet("free_entry", r));
+    case "partner":
+      return (await listLeads("partner", since)).map((r) => leadToSheet("partner", r));
+    case "corporate":
+      return (await listLeads("corporate", since)).map((r) => leadToSheet("corporate", r));
+    case "riskReview":
+      return (await listLeads("risk_review", since)).map((r) => leadToSheet("risk_review", r));
+  }
+}
 
 function pick(row: Record<string, string>, keys: string[]): string {
   for (const k of keys) {
@@ -99,7 +128,7 @@ export async function GET(req: NextRequest) {
 
   const settled = await Promise.allSettled(
     TYPES.map(async (t) => {
-      const rows = await readSubmissions(t, since);
+      const rows = await rowsForType(t, since);
       const filtered =
         t === "voucher" || t === "entry"
           ? rows.filter((r) => String(r.Status || "").toLowerCase() === "paid")
