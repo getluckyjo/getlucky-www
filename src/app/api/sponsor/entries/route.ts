@@ -1,9 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readSubmissions, SubmissionType } from "@/lib/sheets";
+import { isDbConfigured, listVouchers, listLeads, voucherToSheet, leadToSheet } from "@/lib/db";
 
 export const runtime = "nodejs";
 
 const VALID_TYPES: SubmissionType[] = ["partner", "corporate", "voucher"];
+
+// Source records for a sponsor-visible type. Postgres when configured
+// (Sheet-shaped via the db adapters), else the legacy Sheets read.
+async function recordsForType(
+  t: SubmissionType,
+  since?: string,
+): Promise<Record<string, string>[]> {
+  if (!isDbConfigured()) return readSubmissions(t, since);
+  switch (t) {
+    case "voucher":
+      return (await listVouchers(since)).map(voucherToSheet);
+    case "partner":
+      return (await listLeads("partner", since)).map((r) => leadToSheet("partner", r));
+    case "corporate":
+      return (await listLeads("corporate", since)).map((r) => leadToSheet("corporate", r));
+    default:
+      return readSubmissions(t, since);
+  }
+}
 
 export async function GET(req: NextRequest) {
   const expected = process.env.SPONSOR_API_KEY;
@@ -29,7 +49,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const records = await readSubmissions(typeParam, since || undefined);
+    const records = await recordsForType(typeParam, since || undefined);
     // For voucher type, only return paid entries to sponsors by default
     const filtered = typeParam === "voucher"
       ? records.filter((r) => String(r.Status || "").toLowerCase() === "paid")

@@ -3,7 +3,15 @@ import { updateVoucherStatus, readSubmissions, SubmissionType } from "@/lib/shee
 import { sendSubmissionNotification, sendVoucherConfirmation } from "@/lib/email";
 import { verifyNotifySignature, validateNotifyServerSide, isPayfastSourceIpValid } from "@/lib/payfast";
 import { PRIZE_TIERS } from "@/lib/constants";
-import { isDbConfigured, markPaid, markStatus } from "@/lib/db";
+import {
+  isDbConfigured,
+  markPaid,
+  markStatus,
+  getVoucher,
+  getEntry,
+  voucherToSheet,
+  entryToSheet,
+} from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -64,10 +72,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "validation failed" }, { status: 400 });
   }
 
-  // 3. Cross-check the row we recorded — look in the correct tab
+  // 3. Cross-check the row we recorded. Postgres is the read source-of-record
+  //    when configured (fast + reliable, unlike the 8s Apps Script which can
+  //    hang during a redeploy and drop a genuine paid notification); fall back
+  //    to Sheets otherwise. Either path yields a Sheet-shaped `row` so the rest
+  //    of this handler is unchanged.
   const tab = tabForReference(reference);
-  const rows = await readSubmissions(tab).catch(() => [] as Record<string, string>[]);
-  const row = rows.find((r) => r.Reference === reference);
+  let row: Record<string, string> | undefined;
+  if (isDbConfigured()) {
+    if (tab === "entry") {
+      const rec = await getEntry(reference).catch((err) => {
+        console.error("PayFast ITN DB getEntry failed", { reference, err });
+        return null;
+      });
+      row = rec ? entryToSheet(rec) : undefined;
+    } else {
+      const rec = await getVoucher(reference).catch((err) => {
+        console.error("PayFast ITN DB getVoucher failed", { reference, err });
+        return null;
+      });
+      row = rec ? voucherToSheet(rec) : undefined;
+    }
+  } else {
+    const rows = await readSubmissions(tab).catch(() => [] as Record<string, string>[]);
+    row = rows.find((r) => r.Reference === reference);
+  }
 
   if (!row) {
     console.warn("PayFast ITN unknown reference", { reference, tab });

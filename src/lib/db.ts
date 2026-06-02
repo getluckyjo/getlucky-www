@@ -134,3 +134,205 @@ export async function insertLead(rec: LeadRecord): Promise<void> {
   const { error } = await db().from("leads").insert({ data: {}, ...rec });
   if (error) throw new Error(`db.insertLead: ${error.message}`);
 }
+
+/* -------------------------------------------------------------------------- *
+ * Reads (Phase B)
+ *
+ * Postgres is now the read source for the PayFast notify amount cross-check
+ * and the Indwe / sponsor lead APIs. The DB rows are reshaped into the legacy
+ * Google Sheet column shape by the *ToSheet adapters below, so every existing
+ * consumer (which was written against Sheet column names) keeps working
+ * unchanged. Callers guard with isDbConfigured() and fall back to Sheets when
+ * the DB env vars aren't set.
+ * -------------------------------------------------------------------------- */
+
+export type DbLeadType = LeadRecord["type"];
+
+type VoucherRow = {
+  reference: string;
+  status: string | null;
+  tier: string | null;
+  amount: number | null;
+  prize: string | null;
+  course: string | null;
+  buyer_name: string | null;
+  buyer_email: string | null;
+  buyer_mobile: string | null;
+  purchase_for: string | null;
+  recipient_name: string | null;
+  recipient_email: string | null;
+  personal_message: string | null;
+  promo_code: string | null;
+  pf_payment_id: string | null;
+  created_at: string;
+};
+
+type EntryRow = {
+  reference: string;
+  status: string | null;
+  entry_date: string | null;
+  tier: string | null;
+  amount: number | null;
+  prize: string | null;
+  course: string | null;
+  name: string | null;
+  email: string | null;
+  mobile: string | null;
+  pf_payment_id: string | null;
+  created_at: string;
+};
+
+type LeadRow = {
+  type: DbLeadType;
+  full_name: string | null;
+  email: string | null;
+  mobile: string | null;
+  company: string | null;
+  message: string | null;
+  source: string | null;
+  consent_communication: boolean | null;
+  data: Record<string, unknown> | null;
+  created_at: string;
+};
+
+const s = (v: unknown): string => (v === null || v === undefined ? "" : String(v));
+
+export async function getVoucher(reference: string): Promise<VoucherRow | null> {
+  const { data, error } = await db()
+    .from("vouchers")
+    .select("*")
+    .eq("reference", reference)
+    .maybeSingle();
+  if (error) throw new Error(`db.getVoucher: ${error.message}`);
+  return (data as VoucherRow) ?? null;
+}
+
+export async function getEntry(reference: string): Promise<EntryRow | null> {
+  const { data, error } = await db()
+    .from("entries")
+    .select("*")
+    .eq("reference", reference)
+    .maybeSingle();
+  if (error) throw new Error(`db.getEntry: ${error.message}`);
+  return (data as EntryRow) ?? null;
+}
+
+export async function listVouchers(sinceISO?: string): Promise<VoucherRow[]> {
+  let q = db().from("vouchers").select("*").order("created_at", { ascending: false });
+  if (sinceISO) q = q.gte("created_at", sinceISO);
+  const { data, error } = await q;
+  if (error) throw new Error(`db.listVouchers: ${error.message}`);
+  return (data as VoucherRow[]) ?? [];
+}
+
+export async function listEntries(sinceISO?: string): Promise<EntryRow[]> {
+  let q = db().from("entries").select("*").order("created_at", { ascending: false });
+  if (sinceISO) q = q.gte("created_at", sinceISO);
+  const { data, error } = await q;
+  if (error) throw new Error(`db.listEntries: ${error.message}`);
+  return (data as EntryRow[]) ?? [];
+}
+
+export async function listLeads(type: DbLeadType, sinceISO?: string): Promise<LeadRow[]> {
+  let q = db()
+    .from("leads")
+    .select("*")
+    .eq("type", type)
+    .order("created_at", { ascending: false });
+  if (sinceISO) q = q.gte("created_at", sinceISO);
+  const { data, error } = await q;
+  if (error) throw new Error(`db.listLeads: ${error.message}`);
+  return (data as LeadRow[]) ?? [];
+}
+
+// --- Sheet-shape adapters: DB row -> legacy Sheet column object -------------
+
+export function voucherToSheet(r: VoucherRow): Record<string, string> {
+  return {
+    Timestamp: s(r.created_at),
+    Reference: s(r.reference),
+    Status: s(r.status),
+    Tier: s(r.tier),
+    Amount: s(r.amount),
+    Prize: s(r.prize),
+    Course: s(r.course),
+    "Buyer Name": s(r.buyer_name),
+    "Buyer Email": s(r.buyer_email),
+    "Buyer Mobile": s(r.buyer_mobile),
+    For: s(r.purchase_for),
+    "Recipient Name": s(r.recipient_name),
+    "Recipient Email": s(r.recipient_email),
+    "Personal Message": s(r.personal_message),
+    "Promo Code": s(r.promo_code),
+    "PayFast PaymentID": s(r.pf_payment_id),
+  };
+}
+
+export function entryToSheet(r: EntryRow): Record<string, string> {
+  return {
+    Timestamp: s(r.created_at),
+    Reference: s(r.reference),
+    Status: s(r.status),
+    Date: s(r.entry_date),
+    Tier: s(r.tier),
+    Amount: s(r.amount),
+    Prize: s(r.prize),
+    Course: s(r.course),
+    Name: s(r.name),
+    Email: s(r.email),
+    Mobile: s(r.mobile),
+    "PayFast PaymentID": s(r.pf_payment_id),
+  };
+}
+
+export function leadToSheet(type: DbLeadType, r: LeadRow): Record<string, string> {
+  const d = r.data ?? {};
+  const base = {
+    Timestamp: s(r.created_at),
+    Email: s(r.email),
+    Mobile: s(r.mobile),
+    Source: s(r.source),
+  };
+  switch (type) {
+    case "partner":
+      return {
+        ...base,
+        "Full Name": s(r.full_name),
+        "Golf Course": s(d.golf_course),
+        Message: s(r.message),
+      };
+    case "corporate":
+      return {
+        ...base,
+        "Full Name": s(r.full_name),
+        Company: s(r.company),
+        "Golf Course": s(d.golf_course),
+        "Golf Day Date": s(d.golf_day_date),
+        Message: s(r.message),
+      };
+    case "agency":
+      return {
+        ...base,
+        "Full Name": s(r.full_name),
+        Company: s(r.company),
+        Industry: s(d.industry),
+        "Budget Range": s(d.budget_range),
+        Message: s(r.message),
+      };
+    case "free_entry":
+      return {
+        ...base,
+        Name: s(r.full_name),
+        Course: s(d.course),
+        Event: s(d.event),
+      };
+    case "risk_review":
+      return {
+        ...base,
+        "Full Name": s(r.full_name),
+        "Schedule File": s(d.schedule_file),
+        Consent: r.consent_communication ? "Yes" : "No",
+        "Lead Stage": s(d.lead_stage),
+      };
+  }
+}
