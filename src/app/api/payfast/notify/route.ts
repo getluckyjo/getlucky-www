@@ -3,6 +3,7 @@ import { updateVoucherStatus, readSubmissions, SubmissionType } from "@/lib/shee
 import { sendSubmissionNotification, sendVoucherConfirmation } from "@/lib/email";
 import { verifyNotifySignature, validateNotifyServerSide, isPayfastSourceIpValid } from "@/lib/payfast";
 import { PRIZE_TIERS } from "@/lib/constants";
+import { isDbConfigured, markPaid, markStatus } from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -80,12 +81,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "amount mismatch" }, { status: 400 });
   }
 
+  // Postgres is the durable system-of-record; map the Sheet tab to its table.
+  const dbTable = tab === "entry" ? "entries" : "vouchers";
+
   // 4. Status — only treat COMPLETE as paid
   if (status !== "COMPLETE") {
     await updateVoucherStatus(reference, {
       Status: status.toLowerCase() || "unknown",
       "PayFast PaymentID": pfPaymentId,
     }).catch(console.error);
+    if (isDbConfigured()) {
+      await markStatus(dbTable, reference, status.toLowerCase() || "unknown", pfPaymentId).catch(
+        console.error,
+      );
+    }
     return new Response("OK", { status: 200 });
   }
 
@@ -93,6 +102,22 @@ export async function POST(req: NextRequest) {
     Status: "paid",
     "PayFast PaymentID": pfPaymentId,
   }).catch(console.error);
+
+  // Idempotency gate: markPaid returns true only on the first not-paid → paid
+  // transition. PayFast resends ITNs, so without this gate a resend would
+  // re-send the confirmation emails. When the DB isn't configured we keep the
+  // legacy behaviour and always send. Fail-open on DB error: a DB hiccup should
+  // not silently swallow a genuine paid customer's confirmation.
+  let firstPaidTransition = true;
+  if (isDbConfigured()) {
+    firstPaidTransition = await markPaid(dbTable, reference, pfPaymentId).catch((err) => {
+      console.error("PayFast ITN markPaid failed", { reference, err });
+      return true;
+    });
+  }
+  if (!firstPaidTransition) {
+    return new Response("OK", { status: 200 });
+  }
 
   const tier = PRIZE_TIERS.find((t) => t.label === row.Tier);
 

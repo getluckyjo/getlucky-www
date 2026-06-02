@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { corporateSchema } from "@/lib/validation";
 import { appendSubmission } from "@/lib/sheets";
 import { sendSubmissionNotification } from "@/lib/email";
+import { isDbConfigured, insertLead } from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -37,6 +38,25 @@ export async function POST(req: NextRequest) {
     Message: data.message || "",
     Source: "getluckygolf.co.za /corporate-golf-days",
   };
+
+  // Postgres is the durable lead store; Sheets/email are the mirror + alert.
+  if (isDbConfigured()) {
+    try {
+      await insertLead({
+        type: "corporate",
+        full_name: data.fullName,
+        email: data.email,
+        mobile: data.mobile,
+        company: data.companyName || null,
+        message: data.message || null,
+        source: sheetRow.Source,
+        consent_communication: data.consentCommunication,
+        data: { golf_course: data.golfCourse || "", golf_day_date: data.golfDayDate || "" },
+      });
+    } catch (err) {
+      console.error("Corporate lead DB write failed", err);
+    }
+  }
 
   const tasks = await Promise.allSettled([
     appendSubmission("corporate", sheetRow),

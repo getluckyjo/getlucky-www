@@ -14,6 +14,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { riskReviewSchema } from "@/lib/validation";
 import { appendSubmission } from "@/lib/sheets";
+import { isDbConfigured, insertLead } from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -75,6 +76,27 @@ export async function POST(req: NextRequest) {
     "Lead Stage": "Direct Warm Lead",
     Source: data.source || "indwe-microsite",
   };
+
+  // Postgres is the durable lead store; Sheets is the mirror. Fail-soft — the
+  // microsite also writes to its own Apps Script as a backup.
+  if (isDbConfigured()) {
+    try {
+      await insertLead({
+        type: "risk_review",
+        full_name: data.fullName,
+        email: data.email,
+        mobile: data.mobile,
+        source: sheetRow.Source,
+        consent_communication: data.consent ?? false,
+        data: {
+          schedule_file: data.scheduleFile || "",
+          lead_stage: sheetRow["Lead Stage"],
+        },
+      });
+    } catch (err) {
+      console.error("Risk-review lead DB write failed", err);
+    }
+  }
 
   try {
     await appendSubmission("riskReview", sheetRow);

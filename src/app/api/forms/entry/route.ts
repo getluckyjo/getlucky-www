@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { entrySchema } from "@/lib/validation";
 import { appendSubmission } from "@/lib/sheets";
+import { isDbConfigured, createEntry } from "@/lib/db";
 import { buildPaymentRequest, processUrl } from "@/lib/payfast";
 import { PRIZE_TIERS } from "@/lib/constants";
 
@@ -61,6 +62,36 @@ export async function POST(req: NextRequest) {
     Mobile: d.mobile,
     "PayFast PaymentID": "",
   };
+
+  // Postgres is the durable system-of-record (Sheets is now a mirror). Write it
+  // first and fail closed: if we can't record the pending row, don't take the
+  // payment. Skipped entirely until Supabase is configured, so the Sheets-only
+  // flow keeps working during rollout.
+  if (isDbConfigured()) {
+    try {
+      await createEntry({
+        reference,
+        status: "pending",
+        entry_date: entryDate,
+        tier: tier.label,
+        amount: d.entryAmount,
+        prize: tier.prize,
+        course: d.course,
+        name: d.name,
+        email: d.email || null,
+        mobile: d.mobile,
+      });
+    } catch (err) {
+      console.error("Entry DB write failed", err);
+      return NextResponse.json(
+        {
+          error:
+            "We couldn't record your entry just now. Please try again in a moment, or ask a marshal at the tee.",
+        },
+        { status: 503 },
+      );
+    }
+  }
 
   // Fail closed: if we can't record the pending row, don't take the payment.
   // The env-var guard above only proves the env is set, not that Sheets is up.
