@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { partnerSchema } from "@/lib/validation";
 import { appendSubmission } from "@/lib/sheets";
 import { sendSubmissionNotification } from "@/lib/email";
+import { isDbConfigured, insertLead } from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -35,6 +36,25 @@ export async function POST(req: NextRequest) {
     Message: data.message || "",
     Source: "getluckygolf.co.za /become-a-partner",
   };
+
+  // Postgres is the durable lead store; Sheets/email are the mirror + alert.
+  // Fail-soft: a DB hiccup must not lose the enquiry while Sheets still records it.
+  if (isDbConfigured()) {
+    try {
+      await insertLead({
+        type: "partner",
+        full_name: data.fullName,
+        email: data.email,
+        mobile: data.mobile,
+        message: data.message || null,
+        source: sheetRow.Source,
+        consent_communication: data.consentCommunication,
+        data: { golf_course: data.golfCourse || "" },
+      });
+    } catch (err) {
+      console.error("Partner lead DB write failed", err);
+    }
+  }
 
   // Best-effort: storage and email are independent, fail-soft individually
   const tasks = await Promise.allSettled([

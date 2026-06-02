@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import dns from "node:dns/promises";
 
 const SANDBOX_HOST = "sandbox.payfast.co.za";
 const LIVE_HOST = "www.payfast.co.za";
@@ -207,4 +208,35 @@ const PAYFAST_IPS = [
 
 export function payfastNotifyHosts() {
   return PAYFAST_IPS;
+}
+
+/**
+ * Defence-in-depth: confirm an ITN's source IP resolves to a known PayFast host.
+ *
+ * This sits ON TOP of signature verification + server-side postback validation
+ * (which already cryptographically prove the ITN is genuine), so it is
+ * intentionally **fail-open**: if we can't determine the source IP, or DNS
+ * lookups fail entirely, we log and allow rather than risk dropping a real
+ * paid-entry notification on an infra hiccup. It returns `false` ONLY when we
+ * positively identify a source IP that is NOT a PayFast host.
+ */
+export async function isPayfastSourceIpValid(
+  sourceIp: string | null | undefined,
+): Promise<boolean> {
+  if (!sourceIp) return true; // can't determine source — don't block
+  try {
+    const resolved = await Promise.all(
+      payfastNotifyHosts().map((h) =>
+        dns
+          .lookup(h, { all: true })
+          .then((recs) => recs.map((r) => r.address))
+          .catch(() => [] as string[]),
+      ),
+    );
+    const valid = new Set(resolved.flat());
+    if (valid.size === 0) return true; // DNS failed entirely — fail-open
+    return valid.has(sourceIp);
+  } catch {
+    return true; // unexpected error — fail-open (postback check still protects us)
+  }
 }

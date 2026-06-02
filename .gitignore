@@ -19,6 +19,9 @@ node_modules/
 # Firecrawl scrape cache (legacy content migration data — keep local, don't commit)
 .firecrawl/
 
+# Claude Code agent worktrees (large local-only checkouts — never commit)
+.claude/worktrees/
+
 # Editor / OS detritus
 .DS_Store
 *.log

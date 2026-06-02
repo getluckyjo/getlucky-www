@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { freeEntrySchema } from "@/lib/validation";
 import { appendSubmission } from "@/lib/sheets";
+import { isDbConfigured, insertLead } from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -35,6 +36,24 @@ export async function POST(req: NextRequest) {
     Event: d.event || "",
     Source: "getluckygolf.co.za /form-2",
   };
+
+  // Postgres is the durable lead store; Sheets is the mirror. Fail-soft so a DB
+  // hiccup doesn't block the free-entry capture while Sheets still records it.
+  if (isDbConfigured()) {
+    try {
+      await insertLead({
+        type: "free_entry",
+        full_name: d.name,
+        email: d.email,
+        mobile: d.mobile,
+        source: sheetRow.Source,
+        consent_communication: d.consentCommunication,
+        data: { course: d.course || "", event: d.event || "" },
+      });
+    } catch (err) {
+      console.error("Free entry lead DB write failed", err);
+    }
+  }
 
   try {
     await appendSubmission("freeEntry", sheetRow);

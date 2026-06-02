@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { updateVoucherStatus, readSubmissions, SubmissionType } from "@/lib/sheets";
 import { sendSubmissionNotification, sendVoucherConfirmation } from "@/lib/email";
-import { verifyNotifySignature, validateNotifyServerSide } from "@/lib/payfast";
+import { verifyNotifySignature, validateNotifyServerSide, isPayfastSourceIpValid } from "@/lib/payfast";
 import { PRIZE_TIERS } from "@/lib/constants";
+import { isDbConfigured, markPaid, markStatus } from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -21,7 +22,8 @@ function tabForReference(ref: string): SubmissionType {
 
 /**
  * PayFast Instant Transaction Notification (ITN) handler.
- * Per PayFast docs, validate four things:
+ * Per PayFast docs, validate:
+ *   0. source IP resolves to a known PayFast host (defence-in-depth, fail-open)
  *   1. signature matches
  *   2. server-side: post the body back to PayFast and expect "VALID"
  *   3. amount matches what we expected (trust the row in the Sheet)
@@ -37,6 +39,17 @@ export async function POST(req: NextRequest) {
   const signature = fields.signature || "";
   const amountGross = fields.amount_gross || "";
   const pfPaymentId = fields.pf_payment_id || "";
+
+  // 0. Source IP (defence-in-depth). Vercel puts the real client IP first in
+  //    x-forwarded-for. Only reject when we positively identify a non-PayFast
+  //    IP — the check is fail-open (see isPayfastSourceIpValid) so a DNS hiccup
+  //    can't drop a genuine paid-entry notification.
+  const sourceIp = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim()
+    || req.headers.get("x-real-ip");
+  if (!(await isPayfastSourceIpValid(sourceIp))) {
+    console.warn("PayFast ITN from non-PayFast source IP", { reference, sourceIp });
+    return NextResponse.json({ error: "bad source" }, { status: 403 });
+  }
 
   // 1. Signature
   if (!verifyNotifySignature(rawBody, signature)) {
@@ -68,12 +81,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "amount mismatch" }, { status: 400 });
   }
 
+  // Postgres is the durable system-of-record; map the Sheet tab to its table.
+  const dbTable = tab === "entry" ? "entries" : "vouchers";
+
   // 4. Status — only treat COMPLETE as paid
   if (status !== "COMPLETE") {
     await updateVoucherStatus(reference, {
       Status: status.toLowerCase() || "unknown",
       "PayFast PaymentID": pfPaymentId,
     }).catch(console.error);
+    if (isDbConfigured()) {
+      await markStatus(dbTable, reference, status.toLowerCase() || "unknown", pfPaymentId).catch(
+        console.error,
+      );
+    }
     return new Response("OK", { status: 200 });
   }
 
@@ -81,6 +102,22 @@ export async function POST(req: NextRequest) {
     Status: "paid",
     "PayFast PaymentID": pfPaymentId,
   }).catch(console.error);
+
+  // Idempotency gate: markPaid returns true only on the first not-paid → paid
+  // transition. PayFast resends ITNs, so without this gate a resend would
+  // re-send the confirmation emails. When the DB isn't configured we keep the
+  // legacy behaviour and always send. Fail-open on DB error: a DB hiccup should
+  // not silently swallow a genuine paid customer's confirmation.
+  let firstPaidTransition = true;
+  if (isDbConfigured()) {
+    firstPaidTransition = await markPaid(dbTable, reference, pfPaymentId).catch((err) => {
+      console.error("PayFast ITN markPaid failed", { reference, err });
+      return true;
+    });
+  }
+  if (!firstPaidTransition) {
+    return new Response("OK", { status: 200 });
+  }
 
   const tier = PRIZE_TIERS.find((t) => t.label === row.Tier);
 

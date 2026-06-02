@@ -41,8 +41,6 @@ export const clubMemberFields = {
 } as const;
 
 export const membershipSchema = z.object(clubMemberFields);
-export type MembershipInput = z.infer<typeof membershipSchema>;
-
 export const partnerSchema = z.object({
   fullName: requiredString("Full name").max(120),
   mobile: phone,
@@ -52,8 +50,6 @@ export const partnerSchema = z.object({
   consentCommunication: optionalConsent,
   consentTerms: consent,
 });
-export type PartnerInput = z.infer<typeof partnerSchema>;
-
 /**
  * Risk review request — submitted via the Indwe sponsor microsite.
  * Mirrors what the microsite form captures (name, email, mobile, optional
@@ -67,8 +63,6 @@ export const riskReviewSchema = z.object({
   consent: z.boolean().optional().default(false),
   source: z.string().trim().max(160).optional().or(z.literal("")),
 });
-export type RiskReviewInput = z.infer<typeof riskReviewSchema>;
-
 export const agencySchema = z.object({
   fullName: requiredString("Full name").max(120),
   email: requiredString("Email").email("Enter a valid email").max(160),
@@ -80,8 +74,6 @@ export const agencySchema = z.object({
   consentCommunication: optionalConsent,
   consentTerms: consent,
 });
-export type AgencyInput = z.infer<typeof agencySchema>;
-
 export const corporateSchema = z.object({
   fullName: requiredString("Full name").max(120),
   mobile: phone,
@@ -93,8 +85,6 @@ export const corporateSchema = z.object({
   consentCommunication: optionalConsent,
   consentTerms: consent,
 });
-export type CorporateInput = z.infer<typeof corporateSchema>;
-
 const tierEntries = PRIZE_TIERS.map((t) => t.entryAmount) as readonly number[];
 const courseValues = COURSES as readonly string[];
 
@@ -144,8 +134,6 @@ export const voucherSchema = z
       }
     }
   });
-export type VoucherInput = z.infer<typeof voucherSchema>;
-
 // /form — in-person QR-code paid entry (simpler than /buy-a-swing — no gifting).
 // Entry date is auto-captured server-side from the request timestamp.
 export const entrySchema = z.object({
@@ -170,4 +158,3 @@ export const freeEntrySchema = z.object({
   consentCommunication: optionalConsent,
   consentTerms: consent,
 });
-export type FreeEntryInput = z.infer<typeof freeEntrySchema>;

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { voucherSchema } from "@/lib/validation";
 import { appendSubmission } from "@/lib/sheets";
+import { isDbConfigured, createVoucher } from "@/lib/db";
 import { buildPaymentRequest, processUrl } from "@/lib/payfast";
 import { PRIZE_TIERS } from "@/lib/constants";
 
@@ -65,6 +66,33 @@ export async function POST(req: NextRequest) {
     "Promo Code": d.promoCode || "",
     "PayFast PaymentID": "",
   };
+
+  // Postgres is the durable system-of-record (Sheets is now a mirror). Write it
+  // first; fail-soft like the Sheets path below — the notify webhook upserts the
+  // paid status by reference, so a missed pending row still reconciles.
+  if (isDbConfigured()) {
+    try {
+      await createVoucher({
+        reference,
+        status: "pending",
+        tier: tier.label,
+        amount: d.entryAmount,
+        prize: tier.prize,
+        course: d.course,
+        buyer_name: d.fullName,
+        buyer_email: d.email || null,
+        buyer_mobile: d.mobile,
+        purchase_for: d.purchaseFor,
+        recipient_name: d.recipientName || null,
+        recipient_email: d.recipientEmail || null,
+        personal_message: d.personalMessage || null,
+        promo_code: d.promoCode || null,
+      });
+    } catch (err) {
+      console.error("Voucher DB write failed", err);
+      // Continue anyway — payment can still proceed; notify backfills by reference
+    }
+  }
 
   // Record pending row first; payment confirmation arrives via /api/payfast/notify
   try {

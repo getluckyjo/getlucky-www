@@ -2,6 +2,9 @@
   "name": "get-lucky-golf-club-www",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "next dev --port 3001",
     "build": "next build",
@@ -9,11 +12,11 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "googleapis": "^171.4.0",
+    "@supabase/supabase-js": "^2.107.0",
     "lucide-react": "^1.7.0",
-    "next": "16.2.2",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
+    "next": "~16.2.2",
+    "react": "~19.2.4",
+    "react-dom": "~19.2.4",
     "resend": "^6.12.2",
     "zod": "^4.4.3"
   },
@@ -23,7 +26,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.2",
+    "eslint-config-next": "~16.2.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
