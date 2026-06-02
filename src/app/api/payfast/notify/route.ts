@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { updateVoucherStatus, readSubmissions, SubmissionType } from "@/lib/sheets";
 import { sendSubmissionNotification, sendVoucherConfirmation } from "@/lib/email";
-import { verifyNotifySignature, validateNotifyServerSide } from "@/lib/payfast";
+import { verifyNotifySignature, validateNotifyServerSide, isPayfastSourceIpValid } from "@/lib/payfast";
 import { PRIZE_TIERS } from "@/lib/constants";
 
 export const runtime = "nodejs";
@@ -21,7 +21,8 @@ function tabForReference(ref: string): SubmissionType {
 
 /**
  * PayFast Instant Transaction Notification (ITN) handler.
- * Per PayFast docs, validate four things:
+ * Per PayFast docs, validate:
+ *   0. source IP resolves to a known PayFast host (defence-in-depth, fail-open)
  *   1. signature matches
  *   2. server-side: post the body back to PayFast and expect "VALID"
  *   3. amount matches what we expected (trust the row in the Sheet)
@@ -37,6 +38,17 @@ export async function POST(req: NextRequest) {
   const signature = fields.signature || "";
   const amountGross = fields.amount_gross || "";
   const pfPaymentId = fields.pf_payment_id || "";
+
+  // 0. Source IP (defence-in-depth). Vercel puts the real client IP first in
+  //    x-forwarded-for. Only reject when we positively identify a non-PayFast
+  //    IP — the check is fail-open (see isPayfastSourceIpValid) so a DNS hiccup
+  //    can't drop a genuine paid-entry notification.
+  const sourceIp = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim()
+    || req.headers.get("x-real-ip");
+  if (!(await isPayfastSourceIpValid(sourceIp))) {
+    console.warn("PayFast ITN from non-PayFast source IP", { reference, sourceIp });
+    return NextResponse.json({ error: "bad source" }, { status: 403 });
+  }
 
   // 1. Signature
   if (!verifyNotifySignature(rawBody, signature)) {
