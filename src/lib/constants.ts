@@ -79,6 +79,7 @@ export const COURSE_SLUGS = {
   "San Lameer": "san-lameer",
   "State Mines": "state-mines",
   "St Francis Links": "st-francis",
+  "Victoria Golf Club": "victoria",
   "Wild Coast": "wild-coast",
   "Zimbali": "zimbali",
   "Golf Day": "golf-day",
