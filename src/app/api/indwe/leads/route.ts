@@ -9,13 +9,14 @@ import {
   entryToSheet,
   leadToSheet,
 } from "@/lib/db";
+import { isSubsDbConfigured, listIndweLeads, type IndweLeadRow } from "@/lib/subscriptions-db";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 type Lead = {
   id: string;
-  type: "voucher" | "course-entry" | "free-entry" | "partner" | "corporate" | "risk-review";
+  type: "voucher" | "course-entry" | "free-entry" | "partner" | "corporate" | "risk-review" | "membership";
   timestamp: string;
   name: string;
   email: string;
@@ -97,7 +98,9 @@ function normalize(type: IndweType, row: Record<string, string>): Lead {
     course: pick(row, ["Golf Course", "Course"]),
     event: pick(row, ["Event", "Golf Day Date"]),
     status: type === "voucher" || type === "entry" ? normalizedStatus : "lead",
-    source: pick(row, ["Source"]) || (type === "entry" ? "qr-on-course" : type === "voucher" ? "online" : ""),
+    // Entries now record a real Source ("on-course") at capture time; the
+    // fallback only covers legacy rows written before that column existed.
+    source: pick(row, ["Source"]) || (type === "entry" ? "on-course" : type === "voucher" ? "online" : ""),
     consent: pick(row, ["Consent"]),
     leadStage: pick(row, ["Lead Stage"]),
     scheduleFile: pick(row, ["Schedule File"]),
@@ -107,6 +110,43 @@ function normalize(type: IndweType, row: Record<string, string>): Lead {
     date: pick(row, ["Date"]),
     payfastPaymentId: pick(row, ["PayFast PaymentID"]),
     raw: row,
+  };
+}
+
+// Membership "switch your broker to Indwe" leads live in the separate
+// Subscriptions Supabase project. Fold them into the same Lead shape so Indwe
+// pulls every lead — course entries, vouchers, sponsored entries, partner,
+// corporate, risk-review AND membership — from this one endpoint. The internal
+// source/capture_point are normalized to a single clean "membership-offer" tag;
+// the raw values are preserved under `raw` for anyone who wants the detail.
+function membershipToLead(row: IndweLeadRow): Lead {
+  return {
+    id: row.id || `membership-${row.created_at}-${row.email || row.mobile || ""}`,
+    type: "membership",
+    timestamp: row.created_at || "",
+    name: row.full_name || "",
+    email: row.email || "",
+    mobile: row.mobile || "",
+    course: "",
+    event: "",
+    status: "lead",
+    source: "membership-offer",
+    consent: "",
+    // Surface the broker-switch pipeline state (pending → proof_received →
+    // verified → credited / rejected) so Indwe sees where the lead is.
+    leadStage: row.status || "",
+    scheduleFile: "",
+    tier: "",
+    amount: "",
+    prize: "",
+    date: "",
+    payfastPaymentId: "",
+    raw: {
+      club_id: row.club_id ?? "",
+      capture_point: row.capture_point ?? "",
+      internal_source: row.source ?? "",
+      status: row.status ?? "",
+    },
   };
 }
 
@@ -137,7 +177,7 @@ export async function GET(req: NextRequest) {
     }),
   );
 
-  const failed: { type: IndweType; error: string }[] = [];
+  const failed: { type: string; error: string }[] = [];
   const buckets: Lead[][] = [];
   settled.forEach((result, i) => {
     const t = TYPES[i];
@@ -155,6 +195,22 @@ export async function GET(req: NextRequest) {
   }
 
   let leads: Lead[] = buckets.flat();
+
+  // Supplemental: membership "switch to Indwe" leads from the Subscriptions
+  // project. Optional (skipped when its env vars aren't set) and best-effort —
+  // a read failure here degrades to `partial` rather than failing the whole
+  // response, since the core lead types above already succeeded.
+  if (isSubsDbConfigured()) {
+    try {
+      const rows = await listIndweLeads(since);
+      leads = leads.concat(rows.map(membershipToLead));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error("Indwe leads read failed for type=membership:", message);
+      failed.push({ type: "membership", error: message });
+    }
+  }
+
   if (typeFilter) leads = leads.filter((l) => l.type === typeFilter);
 
   leads.sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1));

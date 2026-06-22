@@ -48,6 +48,12 @@ export async function POST(req: NextRequest) {
   // wall-clock as the play date — accurate enough for QR-at-the-tee usage.
   const entryDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
+  // Flat "on-course" source: /form is the in-person/QR paid entry used at the
+  // course. Recorded on the row so /api/indwe/leads reports the real source
+  // instead of a read-time default. (Decision Jun 2026: no QR-vs-ambassador
+  // split — one honest tag.)
+  const source = "on-course";
+
   const sheetRow = {
     Timestamp: timestamp,
     Reference: reference,
@@ -60,6 +66,7 @@ export async function POST(req: NextRequest) {
     Name: d.name,
     Email: d.email || "",
     Mobile: d.mobile,
+    Source: source,
     "PayFast PaymentID": "",
   };
 
@@ -80,6 +87,7 @@ export async function POST(req: NextRequest) {
         name: d.name,
         email: d.email || null,
         mobile: d.mobile,
+        source,
       });
     } catch (err) {
       console.error("Entry DB write failed", err);
