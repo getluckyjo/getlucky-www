@@ -13,7 +13,7 @@ const perks = [
 
 export default function IndweOffer() {
   return (
-    <section className="py-16 sm:py-24 bg-cream relative overflow-hidden">
+    <section id="quote" className="py-16 sm:py-24 bg-cream relative overflow-hidden scroll-mt-20">
       {/* Soft gold glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[720px] h-[360px] bg-gold/10 rounded-full blur-[120px] pointer-events-none" />
 
