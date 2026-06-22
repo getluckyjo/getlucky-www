@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PartnerForm from "@/components/forms/PartnerForm";
 import ProposalFlipbook from "@/components/ProposalFlipbook";
+import IndweBannerStrip from "@/components/IndweBannerStrip";
 
 export const metadata: Metadata = {
   title: "Become a Partner Course",
@@ -31,6 +32,11 @@ export default function BecomeAPartnerPage() {
                 upfront cost, zero risk to your club, full activation support from
                 our team.
               </p>
+            </div>
+
+            {/* Headline sponsor */}
+            <div className="mb-10 overflow-hidden rounded-3xl border border-green-dark/10 shadow-sm">
+              <IndweBannerStrip src="/indwe-banner-partner/index.html" />
             </div>
 
             <div className="bg-white rounded-3xl shadow-sm border border-green-dark/10 p-4 sm:p-6 mb-10">

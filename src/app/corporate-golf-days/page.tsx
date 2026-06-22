@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CorporateForm from "@/components/forms/CorporateForm";
 import GolfDayCalculator from "@/components/GolfDayCalculator";
+import IndweBannerStrip from "@/components/IndweBannerStrip";
 import {
   Trophy,
   Camera,
@@ -115,6 +116,9 @@ export default function CorporateGolfDaysPage() {
             </div>
           </div>
         </section>
+
+        {/* HEADLINE SPONSOR */}
+        <IndweBannerStrip src="/indwe-banner-corporate/index.html" />
 
         {/* CALCULATOR */}
         <section id="build" className="py-20 sm:py-28 bg-cream">
