@@ -45,6 +45,7 @@ export type EntryRecord = {
   name?: string | null;
   email?: string | null;
   mobile?: string | null;
+  source?: string | null;
 };
 
 export type VoucherRecord = {
@@ -178,6 +179,7 @@ type EntryRow = {
   name: string | null;
   email: string | null;
   mobile: string | null;
+  source: string | null;
   pf_payment_id: string | null;
   created_at: string;
 };
@@ -281,6 +283,7 @@ export function entryToSheet(r: EntryRow): Record<string, string> {
     Name: s(r.name),
     Email: s(r.email),
     Mobile: s(r.mobile),
+    Source: s(r.source),
     "PayFast PaymentID": s(r.pf_payment_id),
   };
 }
