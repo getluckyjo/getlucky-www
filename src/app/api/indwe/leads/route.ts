@@ -169,11 +169,12 @@ export async function GET(req: NextRequest) {
   const settled = await Promise.allSettled(
     TYPES.map(async (t) => {
       const rows = await rowsForType(t, since);
-      const filtered =
-        t === "voucher" || t === "entry"
-          ? rows.filter((r) => String(r.Status || "").toLowerCase() === "paid")
-          : rows;
-      return filtered.map((r) => normalize(t, r));
+      // Payment is not a prerequisite for a lead. Vouchers and course entries
+      // flow to Indwe the moment they're captured, carrying their real status
+      // ("pending" until PayFast confirms, then "paid"), so Indwe sees the whole
+      // funnel — not just completed purchases. (Previously these two types were
+      // filtered to Status === "paid".)
+      return rows.map((r) => normalize(t, r));
     }),
   );
 
