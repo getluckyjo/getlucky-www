@@ -12,6 +12,7 @@ const links = [
   { href: "/#prizes", label: "Prizes" },
   { href: "/#membership", label: "Membership" },
   { href: ROUTES.corporate, label: "Corporate Days" },
+  { href: ROUTES.charity, label: "Charity Days" },
   { href: ROUTES.partner, label: "Partner Courses" },
   { href: ROUTES.agency, label: "Agency" },
 ];

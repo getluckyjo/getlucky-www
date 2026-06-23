@@ -54,6 +54,7 @@ export default function Footer() {
             <ul className="space-y-2.5">
               {[
                 { href: ROUTES.corporate, label: "Corporate Golf Days", external: false },
+                { href: ROUTES.charity, label: "Charity Golf Days", external: false },
                 { href: ROUTES.partner, label: "Become a Partner Course", external: false },
                 { href: SITE.simulator, label: "Golf Simulator", external: true },
                 { href: "https://golfdaypro.co.za", label: "Golf Day Pro", external: true },
