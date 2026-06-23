@@ -66,7 +66,7 @@ export type VoucherRecord = {
 };
 
 export type LeadRecord = {
-  type: "partner" | "corporate" | "agency" | "free_entry" | "risk_review";
+  type: "partner" | "corporate" | "charity" | "agency" | "free_entry" | "risk_review";
   full_name?: string | null;
   email?: string | null;
   mobile?: string | null;
@@ -309,6 +309,15 @@ export function leadToSheet(type: DbLeadType, r: LeadRow): Record<string, string
         ...base,
         "Full Name": s(r.full_name),
         Company: s(r.company),
+        "Golf Course": s(d.golf_course),
+        "Golf Day Date": s(d.golf_day_date),
+        Message: s(r.message),
+      };
+    case "charity":
+      return {
+        ...base,
+        "Full Name": s(r.full_name),
+        Charity: s(r.company),
         "Golf Course": s(d.golf_course),
         "Golf Day Date": s(d.golf_day_date),
         Message: s(r.message),

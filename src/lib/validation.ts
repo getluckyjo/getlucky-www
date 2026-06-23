@@ -85,6 +85,19 @@ export const corporateSchema = z.object({
   consentCommunication: optionalConsent,
   consentTerms: consent,
 });
+// Charity golf day enquiry — mirrors corporate, but the host is a charity and
+// the organisation name is required (it drives the fundraising relationship).
+export const charitySchema = z.object({
+  fullName: requiredString("Full name").max(120),
+  mobile: phone,
+  email: requiredString("Email").email("Enter a valid email").max(160),
+  charityName: requiredString("Charity name").max(120),
+  golfCourse: z.string().trim().max(120).optional().or(z.literal("")),
+  golfDayDate: z.string().trim().max(40).optional().or(z.literal("")),
+  message: z.string().trim().max(2000).optional().or(z.literal("")),
+  consentCommunication: optionalConsent,
+  consentTerms: consent,
+});
 const tierEntries = PRIZE_TIERS.map((t) => t.entryAmount) as readonly number[];
 const courseValues = COURSES as readonly string[];
 
