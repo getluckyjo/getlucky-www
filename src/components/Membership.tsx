@@ -83,7 +83,7 @@ export default function Membership() {
             </div>
 
             <a
-              href="#courses"
+              href="https://membership.getluckygolfclub.com/join/get-lucky"
               className="block text-center bg-gold hover:bg-gold-light text-green-dark font-bold text-lg py-4 rounded-full transition-all hover:scale-105"
             >
               Join the Club
