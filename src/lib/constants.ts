@@ -92,6 +92,7 @@ export const ROUTES = {
   partner: "/become-a-partner",
   corporate: "/corporate-golf-days",
   charity: "/charity-golf-days",
+  simulator: "/golf-simulators",
   agency: "/agency",
   buyVoucher: "/buy-a-swing",
   voucherSuccess: "/buy-a-swing/success",

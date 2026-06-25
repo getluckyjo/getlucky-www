@@ -98,6 +98,19 @@ export const charitySchema = z.object({
   consentCommunication: optionalConsent,
   consentTerms: consent,
 });
+// Golf simulator partner enquiry — venue adds the R100k challenge to their sim.
+// The venue/business name is required (it drives the revenue-share relationship);
+// location is an optional city/area.
+export const simulatorSchema = z.object({
+  fullName: requiredString("Full name").max(120),
+  mobile: phone,
+  email: requiredString("Email").email("Enter a valid email").max(160),
+  venueName: requiredString("Venue name").max(120),
+  location: z.string().trim().max(120).optional().or(z.literal("")),
+  message: z.string().trim().max(2000).optional().or(z.literal("")),
+  consentCommunication: optionalConsent,
+  consentTerms: consent,
+});
 const tierEntries = PRIZE_TIERS.map((t) => t.entryAmount) as readonly number[];
 const courseValues = COURSES as readonly string[];
 
