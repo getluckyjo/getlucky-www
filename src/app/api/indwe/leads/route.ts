@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 
 type Lead = {
   id: string;
-  type: "voucher" | "course-entry" | "free-entry" | "partner" | "corporate" | "charity" | "risk-review" | "membership";
+  type: "voucher" | "course-entry" | "free-entry" | "partner" | "corporate" | "charity" | "simulator" | "risk-review" | "membership";
   timestamp: string;
   name: string;
   email: string;
@@ -42,7 +42,7 @@ type Lead = {
 // Agency submissions are deliberately excluded — they go to a separate internal pipeline,
 // not to the headline sponsor.
 type IndweType = Exclude<SubmissionType, "agency">;
-const TYPES: IndweType[] = ["voucher", "entry", "freeEntry", "partner", "corporate", "charity", "riskReview"];
+const TYPES: IndweType[] = ["voucher", "entry", "freeEntry", "partner", "corporate", "charity", "simulator", "riskReview"];
 
 const TYPE_LABEL: Record<IndweType, Lead["type"]> = {
   voucher: "voucher",
@@ -51,6 +51,7 @@ const TYPE_LABEL: Record<IndweType, Lead["type"]> = {
   partner: "partner",
   corporate: "corporate",
   charity: "charity",
+  simulator: "simulator",
   riskReview: "risk-review",
 };
 
@@ -71,6 +72,8 @@ async function rowsForType(t: IndweType, since?: string): Promise<Record<string,
       return (await listLeads("corporate", since)).map((r) => leadToSheet("corporate", r));
     case "charity":
       return (await listLeads("charity", since)).map((r) => leadToSheet("charity", r));
+    case "simulator":
+      return (await listLeads("simulator", since)).map((r) => leadToSheet("simulator", r));
     case "riskReview":
       return (await listLeads("risk_review", since)).map((r) => leadToSheet("risk_review", r));
   }

@@ -4,7 +4,7 @@
  * Sheet owner and exposes a single HTTPS endpoint protected by a shared secret.
  */
 
-export type SubmissionType = "partner" | "corporate" | "charity" | "agency" | "voucher" | "entry" | "freeEntry" | "riskReview";
+export type SubmissionType = "partner" | "corporate" | "charity" | "simulator" | "agency" | "voucher" | "entry" | "freeEntry" | "riskReview";
 
 const HEADERS: Record<SubmissionType, string[]> = {
   partner: [
@@ -35,6 +35,16 @@ const HEADERS: Record<SubmissionType, string[]> = {
     "Charity",
     "Golf Course",
     "Golf Day Date",
+    "Message",
+    "Source",
+  ],
+  simulator: [
+    "Timestamp",
+    "Full Name",
+    "Email",
+    "Mobile",
+    "Venue",
+    "Location",
     "Message",
     "Source",
   ],
