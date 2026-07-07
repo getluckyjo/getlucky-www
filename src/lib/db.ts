@@ -350,6 +350,7 @@ export function leadToSheet(type: DbLeadType, r: LeadRow): Record<string, string
       return {
         ...base,
         "Full Name": s(r.full_name),
+        Address: s(d.address),
         "Schedule File": s(d.schedule_file),
         Consent: r.consent_communication ? "Yes" : "No",
         "Lead Stage": s(d.lead_stage),

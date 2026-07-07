@@ -31,6 +31,7 @@ type Lead = {
   consent: string;
   leadStage: string;
   scheduleFile: string;
+  address: string;
   tier: string;
   amount: string;
   prize: string;
@@ -131,6 +132,7 @@ function normalize(type: IndweType, row: Record<string, string>): Lead {
     // lead (including historical rows) emits exactly one canonical tier string.
     leadStage: LEAD_STAGE_BY_TYPE[TYPE_LABEL[type]],
     scheduleFile: pick(row, ["Schedule File"]),
+    address: pick(row, ["Address"]),
     tier: pick(row, ["Tier"]),
     amount: pick(row, ["Amount"]),
     prize: pick(row, ["Prize"]),
@@ -165,6 +167,7 @@ function membershipToLead(row: IndweLeadRow): Lead {
     // available under raw.status for anyone who wants the funnel position.
     leadStage: LEAD_STAGE_BY_TYPE.membership,
     scheduleFile: "",
+    address: "",
     tier: "",
     amount: "",
     prize: "",
