@@ -67,6 +67,7 @@ export async function POST(req: NextRequest) {
     "Full Name": data.fullName,
     Email: data.email,
     Mobile: data.mobile,
+    Address: data.address || "",
     "Schedule File": data.scheduleFile || "",
     Consent: data.consent ? "Yes" : "No",
     // Every microsite submission is by definition a hot intent signal —
@@ -91,6 +92,7 @@ export async function POST(req: NextRequest) {
         source: sheetRow.Source,
         consent_communication: data.consent ?? false,
         data: {
+          address: data.address || "",
           schedule_file: data.scheduleFile || "",
           lead_stage: sheetRow["Lead Stage"],
         },

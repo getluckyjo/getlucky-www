@@ -31,7 +31,7 @@ const PILLARS = [
     icon: ShieldCheck,
     title: "Get an Insurance Quote",
     blurb: "Obligation-free Indwe quote + complimentary Get Lucky deals.",
-    href: "/#quote",
+    href: "https://indwemicrosite.vercel.app/",
   },
   {
     icon: MapPin,
@@ -84,10 +84,14 @@ export default function Hero() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-md sm:max-w-2xl lg:max-w-5xl mx-auto">
               {PILLARS.map((pillar) => {
                 const Icon = pillar.icon;
+                const isExternal = pillar.href.startsWith("http");
                 return (
                   <Link
                     key={pillar.title}
                     href={pillar.href}
+                    {...(isExternal
+                      ? { target: "_blank", rel: "noopener noreferrer" }
+                      : {})}
                     className="group flex flex-col items-center text-center gap-2 rounded-2xl border border-cream/15 bg-green-dark/40 backdrop-blur-sm px-4 py-5 transition-all hover:border-gold/60 hover:bg-green-dark/70 last:odd:col-span-2 last:odd:max-w-[calc(50%-0.375rem)] last:odd:mx-auto lg:last:odd:col-span-1 lg:last:odd:max-w-none"
                   >
                     <span className="flex h-11 w-11 items-center justify-center rounded-full bg-gold/15 text-gold transition-colors group-hover:bg-gold/25">

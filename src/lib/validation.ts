@@ -59,6 +59,8 @@ export const riskReviewSchema = z.object({
   fullName: requiredString("Full name").max(120),
   email: requiredString("Email").email("Enter a valid email").max(160),
   mobile: phone,
+  // Google Places formatted address (autocomplete) or free-typed fallback.
+  address: z.string().trim().max(300).optional().or(z.literal("")),
   scheduleFile: z.string().trim().url("Schedule file must be a URL").optional().or(z.literal("")),
   consent: z.boolean().optional().default(false),
   source: z.string().trim().max(160).optional().or(z.literal("")),
