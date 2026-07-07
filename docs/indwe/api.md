@@ -127,7 +127,7 @@ Recommended pattern: store the `generatedAt` you receive, pass it back as `since
 | `status`           | enum     | `paid` · `lead` · `pending`. Only `paid` records are returned for `voucher` and `course-entry`. |
 | `source`           | string   | Where the lead came from (`online`, `qr-on-course`, `indwe-microsite`, etc.). |
 | `consent`          | string   | Communications consent. `Yes` / `No` for `risk-review`; empty otherwise. |
-| `leadStage`        | string   | Lead-stage tag (e.g. `Direct Warm Lead` on `risk-review`). Empty when not applicable. |
+| `leadStage`        | enum     | Qualification tag, always set: `General Lead` (competition entry — `voucher`, `course-entry`) · `Warm Lead` (sponsored / in-person — `free-entry`, `partner`, `corporate`, `charity`, `simulator`) · `Quote-Ready Lead` (explicit quote intent — `risk-review`, `membership`). For `membership`, the broker-switch pipeline state is under `raw.status`. |
 | `scheduleFile`     | string   | URL to an uploaded insurance schedule (risk-review only). Empty otherwise. |
 | `tier`             | string   | Entry tier (`voucher` / `course-entry`). Empty otherwise.             |
 | `amount`           | string   | Amount paid in ZAR (`voucher` / `course-entry`). Empty otherwise.     |

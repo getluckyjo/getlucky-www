@@ -55,6 +55,25 @@ const TYPE_LABEL: Record<IndweType, Lead["type"]> = {
   riskReview: "risk-review",
 };
 
+// Canonical Indwe qualification tag per lead type — the single source of truth
+// so every lead reaches Indwe tagged, regardless of which form captured it.
+// The tier tracks *insurance intent*, not payment:
+//   General Lead     — competition-entry intent, no explicit insurance signal
+//   Warm Lead        — engaged, in-person / sponsored context, consent captured
+//   Quote-Ready Lead — explicit quote / risk-review / broker-switch request
+// See docs/indwe/lead-tagging.md for the mapping rationale and sign-off.
+const LEAD_STAGE_BY_TYPE: Record<Lead["type"], string> = {
+  voucher: "General Lead",
+  "course-entry": "General Lead",
+  "free-entry": "Warm Lead",
+  partner: "Warm Lead",
+  corporate: "Warm Lead",
+  charity: "Warm Lead",
+  simulator: "Warm Lead",
+  "risk-review": "Quote-Ready Lead",
+  membership: "Quote-Ready Lead",
+};
+
 // Source rows for a given type. Postgres when configured (Sheet-shaped via the
 // db adapters so normalize() is unchanged), else the legacy Sheets read.
 async function rowsForType(t: IndweType, since?: string): Promise<Record<string, string>[]> {
@@ -108,7 +127,9 @@ function normalize(type: IndweType, row: Record<string, string>): Lead {
     // fallback only covers legacy rows written before that column existed.
     source: pick(row, ["Source"]) || (type === "entry" ? "on-course" : type === "voucher" ? "online" : ""),
     consent: pick(row, ["Consent"]),
-    leadStage: pick(row, ["Lead Stage"]),
+    // Tag is derived from the lead type — the single source of truth — so every
+    // lead (including historical rows) emits exactly one canonical tier string.
+    leadStage: LEAD_STAGE_BY_TYPE[TYPE_LABEL[type]],
     scheduleFile: pick(row, ["Schedule File"]),
     tier: pick(row, ["Tier"]),
     amount: pick(row, ["Amount"]),
@@ -138,9 +159,11 @@ function membershipToLead(row: IndweLeadRow): Lead {
     status: "lead",
     source: "membership-offer",
     consent: "",
-    // Surface the broker-switch pipeline state (pending → proof_received →
-    // verified → credited / rejected) so Indwe sees where the lead is.
-    leadStage: row.status || "",
+    // Requesting an Indwe quote (the broker switch) is the qualifying action,
+    // so the tier is always Quote-Ready. The broker-switch pipeline state
+    // (pending → proof_received → verified → credited / rejected) stays
+    // available under raw.status for anyone who wants the funnel position.
+    leadStage: LEAD_STAGE_BY_TYPE.membership,
     scheduleFile: "",
     tier: "",
     amount: "",

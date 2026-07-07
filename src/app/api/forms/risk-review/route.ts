@@ -71,9 +71,11 @@ export async function POST(req: NextRequest) {
     Consent: data.consent ? "Yes" : "No",
     // Every microsite submission is by definition a hot intent signal —
     // someone clicked through the sponsor mailer/banner specifically to
-    // request a risk review. Tag explicitly for Wilhelm's downstream
-    // pipeline and for human-readability in the Sheet.
-    "Lead Stage": "Direct Warm Lead",
+    // request a risk review. Requesting the review is an explicit quote
+    // action, so it's tagged Quote-Ready (see docs/indwe/lead-tagging.md).
+    // Stored here for human-readability in the Sheet; the Indwe API derives
+    // the same tag by type regardless.
+    "Lead Stage": "Quote-Ready Lead",
     Source: data.source || "indwe-microsite",
   };
 
