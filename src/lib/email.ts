@@ -14,7 +14,7 @@ const FROM = process.env.EMAIL_FROM || `Get Lucky Golf Club <forms@getluckygolf.
 const NOTIFY_TO = process.env.EMAIL_NOTIFY_TO || SITE.email;
 const REPLY_TO = process.env.EMAIL_REPLY_TO || SITE.email;
 
-type SubmissionType = "partner" | "corporate" | "charity" | "simulator" | "agency" | "voucher";
+type SubmissionType = "partner" | "corporate" | "charity" | "simulator" | "agency" | "tour" | "voucher";
 
 const SUBJECT: Record<SubmissionType, string> = {
   partner: "New Partner Course Enquiry",
@@ -22,6 +22,7 @@ const SUBJECT: Record<SubmissionType, string> = {
   charity: "New Charity Golf Day Enquiry",
   simulator: "New Golf Simulator Enquiry",
   agency: "New Agency Partnership Enquiry",
+  tour: "New Golf Tour Operator Enquiry",
   voucher: "New Swing Voucher Purchase",
 };
 

@@ -100,6 +100,19 @@ export const charitySchema = z.object({
   consentCommunication: optionalConsent,
   consentTerms: consent,
 });
+// Golf tour operator enquiry — operator sells R100 entries for the R100k
+// challenge on their tours. The company name is required (it drives the
+// revenue-share relationship); tours per year is a free-text estimate.
+export const tourSchema = z.object({
+  fullName: requiredString("Full name").max(120),
+  mobile: phone,
+  email: requiredString("Email").email("Enter a valid email").max(160),
+  companyName: requiredString("Tour company name").max(120),
+  toursPerYear: z.string().trim().max(40).optional().or(z.literal("")),
+  message: z.string().trim().max(2000).optional().or(z.literal("")),
+  consentCommunication: optionalConsent,
+  consentTerms: consent,
+});
 // Golf simulator partner enquiry — venue adds the R100k challenge to their sim.
 // The venue/business name is required (it drives the revenue-share relationship);
 // location is an optional city/area.
@@ -176,7 +189,8 @@ export type EntryInput = z.infer<typeof entrySchema>;
 // /form-2 — free entry for sponsored/corporate events
 export const freeEntrySchema = z.object({
   name: requiredString("Name").max(120),
-  email: requiredString("Email").email("Enter a valid email").max(160),
+  // Optional on the sponsored form — mobile is the primary contact channel.
+  email: z.string().trim().email("Enter a valid email").max(160).optional().or(z.literal("")),
   mobile: phone,
   course: requiredString("Course").refine(
     (v) => (COURSES as readonly string[]).includes(v),

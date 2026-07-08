@@ -14,6 +14,7 @@ const links = [
   { href: ROUTES.corporate, label: "Corporate Days" },
   { href: ROUTES.charity, label: "Charity Days" },
   { href: ROUTES.simulator, label: "Simulators" },
+  { href: ROUTES.tours, label: "Golf Tours" },
   { href: ROUTES.partner, label: "Partner Courses" },
   { href: ROUTES.agency, label: "Agency" },
 ];

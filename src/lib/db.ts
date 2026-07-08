@@ -66,7 +66,7 @@ export type VoucherRecord = {
 };
 
 export type LeadRecord = {
-  type: "partner" | "corporate" | "charity" | "simulator" | "agency" | "free_entry" | "risk_review";
+  type: "partner" | "corporate" | "charity" | "simulator" | "agency" | "tour" | "free_entry" | "risk_review";
   full_name?: string | null;
   email?: string | null;
   mobile?: string | null;
@@ -337,6 +337,14 @@ export function leadToSheet(type: DbLeadType, r: LeadRow): Record<string, string
         Company: s(r.company),
         Industry: s(d.industry),
         "Budget Range": s(d.budget_range),
+        Message: s(r.message),
+      };
+    case "tour":
+      return {
+        ...base,
+        "Full Name": s(r.full_name),
+        Company: s(r.company),
+        "Tours Per Year": s(d.tours_per_year),
         Message: s(r.message),
       };
     case "free_entry":
