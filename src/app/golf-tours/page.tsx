@@ -107,7 +107,7 @@ export default function GolfToursPage() {
             </h1>
 
             <p className="text-base sm:text-xl text-cream/80 mt-6 max-w-2xl mx-auto leading-relaxed">
-              Sell R100 hole-in-one entries on the signature par-3 of every leg
+              Sell R100 hole-in-one entries on the chosen par-3 of every leg
               of your tour. Your golfers swing for{" "}
               <span className="text-gold font-bold">R100,000</span>, you earn{" "}
               <span className="text-gold font-bold">
