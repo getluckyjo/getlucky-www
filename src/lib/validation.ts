@@ -189,7 +189,8 @@ export type EntryInput = z.infer<typeof entrySchema>;
 // /form-2 — free entry for sponsored/corporate events
 export const freeEntrySchema = z.object({
   name: requiredString("Name").max(120),
-  email: requiredString("Email").email("Enter a valid email").max(160),
+  // Optional on the sponsored form — mobile is the primary contact channel.
+  email: z.string().trim().email("Enter a valid email").max(160).optional().or(z.literal("")),
   mobile: phone,
   course: requiredString("Course").refine(
     (v) => (COURSES as readonly string[]).includes(v),

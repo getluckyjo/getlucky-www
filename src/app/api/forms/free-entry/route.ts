@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   const sheetRow = {
     Timestamp: timestamp,
     Name: d.name,
-    Email: d.email,
+    Email: d.email || "",
     Mobile: d.mobile,
     Course: d.course || "",
     Event: d.event || "",
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
       await insertLead({
         type: "free_entry",
         full_name: d.name,
-        email: d.email,
+        email: d.email || null,
         mobile: d.mobile,
         source: sheetRow.Source,
         consent_communication: d.consentCommunication,
