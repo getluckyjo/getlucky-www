@@ -56,6 +56,7 @@ export default function Footer() {
                 { href: ROUTES.corporate, label: "Corporate Golf Days", external: false },
                 { href: ROUTES.charity, label: "Charity Golf Days", external: false },
                 { href: ROUTES.simulator, label: "Simulator Partners", external: false },
+                { href: ROUTES.tours, label: "Golf Tour Operators", external: false },
                 { href: ROUTES.partner, label: "Become a Partner Course", external: false },
                 { href: SITE.simulator, label: "Golf Simulator", external: true },
                 { href: "https://golfdaypro.co.za", label: "Golf Day Pro", external: true },
