@@ -100,6 +100,19 @@ export const charitySchema = z.object({
   consentCommunication: optionalConsent,
   consentTerms: consent,
 });
+// School fundraising golf day enquiry — mirrors charity, but the host is a
+// school and the school name is required (it drives the fundraising relationship).
+export const schoolSchema = z.object({
+  fullName: requiredString("Full name").max(120),
+  mobile: phone,
+  email: requiredString("Email").email("Enter a valid email").max(160),
+  schoolName: requiredString("School name").max(120),
+  golfCourse: z.string().trim().max(120).optional().or(z.literal("")),
+  golfDayDate: z.string().trim().max(40).optional().or(z.literal("")),
+  message: z.string().trim().max(2000).optional().or(z.literal("")),
+  consentCommunication: optionalConsent,
+  consentTerms: consent,
+});
 // Golf tour operator enquiry — operator sells R100 entries for the R100k
 // challenge on their tours. The company name is required (it drives the
 // revenue-share relationship); tours per year is a free-text estimate.

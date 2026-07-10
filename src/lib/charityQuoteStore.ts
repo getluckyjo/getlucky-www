@@ -38,16 +38,21 @@ function formatRand(n: number): string {
   return "R" + n.toLocaleString("en-ZA");
 }
 
-export function formatCharityQuoteMessage(q: CharityQuote): string {
+// `beneficiary` swaps the wording for pages that share the fundraiser flow
+// (charity golf days vs school fundraising days) without duplicating the store.
+export function formatCharityQuoteMessage(
+  q: CharityQuote,
+  beneficiary: "charity" | "school" = "charity",
+): string {
   const lines: string[] = [];
   lines.push(
-    "We'd like to host a Get Lucky charity golf day with the Hole-in-One Challenge. Here's what we're planning:",
+    `We'd like to host a Get Lucky ${beneficiary} golf day fundraiser with the Hole-in-One Challenge. Here's what we're planning:`,
   );
   lines.push("");
   lines.push(`• Swing price: ${q.swing} per golfer (${q.prize} prize on offer)`);
   lines.push(`• Estimated swings sold: ${q.swings}`);
   lines.push(`• Estimated swing sales: ${formatRand(q.totalRaised)}`);
-  lines.push(`• Estimated raised for our charity (50%): ${formatRand(q.charityShare)}`);
+  lines.push(`• Estimated raised for our ${beneficiary} (50%): ${formatRand(q.charityShare)}`);
   lines.push("");
   lines.push("Please confirm availability and the next steps to set this up.");
   return lines.join("\n");

@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 
 type Lead = {
   id: string;
-  type: "voucher" | "course-entry" | "free-entry" | "partner" | "corporate" | "charity" | "simulator" | "tour" | "risk-review" | "membership";
+  type: "voucher" | "course-entry" | "free-entry" | "partner" | "corporate" | "charity" | "school" | "simulator" | "tour" | "risk-review" | "membership";
   timestamp: string;
   name: string;
   email: string;
@@ -43,7 +43,7 @@ type Lead = {
 // Agency submissions are deliberately excluded — they go to a separate internal pipeline,
 // not to the headline sponsor.
 type IndweType = Exclude<SubmissionType, "agency">;
-const TYPES: IndweType[] = ["voucher", "entry", "freeEntry", "partner", "corporate", "charity", "simulator", "tour", "riskReview"];
+const TYPES: IndweType[] = ["voucher", "entry", "freeEntry", "partner", "corporate", "charity", "school", "simulator", "tour", "riskReview"];
 
 const TYPE_LABEL: Record<IndweType, Lead["type"]> = {
   voucher: "voucher",
@@ -52,6 +52,7 @@ const TYPE_LABEL: Record<IndweType, Lead["type"]> = {
   partner: "partner",
   corporate: "corporate",
   charity: "charity",
+  school: "school",
   simulator: "simulator",
   tour: "tour",
   riskReview: "risk-review",
@@ -71,6 +72,7 @@ const LEAD_STAGE_BY_TYPE: Record<Lead["type"], string> = {
   partner: "Warm Lead",
   corporate: "Warm Lead",
   charity: "Warm Lead",
+  school: "Warm Lead",
   simulator: "Warm Lead",
   tour: "Warm Lead",
   "risk-review": "Quote-Ready Lead",
@@ -94,6 +96,8 @@ async function rowsForType(t: IndweType, since?: string): Promise<Record<string,
       return (await listLeads("corporate", since)).map((r) => leadToSheet("corporate", r));
     case "charity":
       return (await listLeads("charity", since)).map((r) => leadToSheet("charity", r));
+    case "school":
+      return (await listLeads("school", since)).map((r) => leadToSheet("school", r));
     case "simulator":
       return (await listLeads("simulator", since)).map((r) => leadToSheet("simulator", r));
     case "tour":

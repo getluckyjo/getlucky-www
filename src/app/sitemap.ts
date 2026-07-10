@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}${ROUTES.buyVoucher}`, lastModified: now, changeFrequency: "weekly", priority: 0.95 },
     { url: `${baseUrl}${ROUTES.corporate}`, lastModified: now, changeFrequency: "monthly", priority: 0.85 },
     { url: `${baseUrl}${ROUTES.charity}`, lastModified: now, changeFrequency: "monthly", priority: 0.85 },
+    { url: `${baseUrl}${ROUTES.schools}`, lastModified: now, changeFrequency: "monthly", priority: 0.85 },
     { url: `${baseUrl}${ROUTES.simulator}`, lastModified: now, changeFrequency: "monthly", priority: 0.85 },
     { url: `${baseUrl}${ROUTES.tours}`, lastModified: now, changeFrequency: "monthly", priority: 0.85 },
     { url: `${baseUrl}${ROUTES.agency}`, lastModified: now, changeFrequency: "monthly", priority: 0.85 },

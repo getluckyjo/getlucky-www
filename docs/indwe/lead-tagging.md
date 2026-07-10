@@ -52,6 +52,7 @@ Canonical `leadStage` strings: `General Lead` · `Warm Lead` · `Quote-Ready Lea
 | `partner`      | Course partner enquiry | **Warm Lead** |
 | `corporate`    | Corporate golf-day enquiry | **Warm Lead** |
 | `charity`      | Charity golf-day enquiry | **Warm Lead** |
+| `school`       | School fundraising golf-day enquiry | **Warm Lead** |
 | `simulator`    | Simulator venue enquiry | **Warm Lead** |
 | `risk-review`  | Indwe microsite (banner) | **Quote-Ready Lead** |
 | `membership`   | R149 membership / broker switch | **Quote-Ready Lead** |
