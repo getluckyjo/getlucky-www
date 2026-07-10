@@ -26,7 +26,13 @@ function formatRand(n: number): string {
   return "R" + n.toLocaleString("en-ZA");
 }
 
-export default function CharityFundraisingCalculator() {
+// `beneficiary` swaps the wording (and CTA) so the school fundraising page can
+// reuse the same calculator and quote store without duplicating the component.
+export default function CharityFundraisingCalculator({
+  beneficiary = "charity",
+}: {
+  beneficiary?: "charity" | "school";
+}) {
   const [swing, setSwing] = useState<SwingOption>(SWING_OPTIONS[2]);
   const [swings, setSwings] = useState<number>(100);
 
@@ -156,8 +162,8 @@ export default function CharityFundraisingCalculator() {
             <p className="text-sm text-charcoal-light/80 leading-relaxed">
               You keep <span className="font-semibold text-green-dark">half</span>{" "}
               of every swing sold. The other half covers the full Get Lucky
-              activation and the Indwe-underwritten prize — so the day costs your
-              charity nothing and carries zero risk.
+              activation and the Indwe-underwritten prize — so the day costs your{" "}
+              {beneficiary} nothing and carries zero risk.
             </p>
           </div>
         </div>
@@ -173,7 +179,7 @@ export default function CharityFundraisingCalculator() {
 
           <div className="mt-6 bg-gold text-green-dark rounded-xl p-5">
             <p className="text-[10px] font-bold uppercase tracking-widest opacity-70">
-              For Your Cause
+              {beneficiary === "school" ? "For Your School" : "For Your Cause"}
             </p>
             <p className="font-heading text-4xl sm:text-5xl mt-1">
               {formatRand(breakdown.charityShare)}
@@ -204,15 +210,15 @@ export default function CharityFundraisingCalculator() {
           <p className="text-cream/60 text-xs mt-4 leading-relaxed">
             The prize is fully underwritten by{" "}
             <span className="text-gold font-semibold">Indwe Risk Services</span>{" "}
-            — zero cost and zero risk to your charity. Get Lucky runs the whole
-            activation; you keep half of every swing sold.
+            — zero cost and zero risk to your {beneficiary}. Get Lucky runs the
+            whole activation; you keep half of every swing sold.
           </p>
 
           <a
             href="#enquire"
             className="mt-6 block w-full text-center bg-cream hover:bg-white text-green-dark font-bold text-base px-6 py-4 rounded-full transition-all"
           >
-            Lock In Your Charity Day
+            {beneficiary === "school" ? "Lock In Your School Day" : "Lock In Your Charity Day"}
           </a>
         </div>
       </div>
