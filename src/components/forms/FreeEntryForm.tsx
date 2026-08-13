@@ -34,6 +34,7 @@ export default function FreeEntryForm() {
       course: String(fd.get("course") || ""),
       event: String(fd.get("event") || ""),
       consentCommunication: fd.get("consentCommunication") === "on",
+      consentWhatsApp: fd.get("consentWhatsApp") === "on",
       consentTerms: fd.get("consentTerms") === "on",
     };
 
@@ -93,6 +94,10 @@ export default function FreeEntryForm() {
       <div className="space-y-3 pt-2">
         <Checkbox name="consentCommunication" error={errors.consentCommunication}>
           I agree to receive communication from Get Lucky Hole-in-One Challenge and Indwe Risk Services.
+        </Checkbox>
+        <Checkbox name="consentWhatsApp" error={errors.consentWhatsApp}>
+          I agree to receive a WhatsApp from Get Lucky Hole-in-One Challenge and Indwe
+          Risk Services.
         </Checkbox>
         <Checkbox name="consentTerms" required error={errors.consentTerms}>
           I accept the{" "}
