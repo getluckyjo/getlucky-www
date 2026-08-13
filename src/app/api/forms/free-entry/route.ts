@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { freeEntrySchema } from "@/lib/validation";
 import { appendSubmission } from "@/lib/sheets";
 import { isDbConfigured, insertLead } from "@/lib/db";
+import { notifyWhatsAppChannel } from "@/lib/whatsapp";
 
 export const runtime = "nodejs";
 
@@ -54,6 +55,16 @@ export async function POST(req: NextRequest) {
       console.error("Free entry lead DB write failed", err);
     }
   }
+
+  // See the paid entry route: handed over after the entry is recorded, and never
+  // allowed to fail the entry itself.
+  await notifyWhatsAppChannel({
+    name: d.name,
+    mobile: d.mobile,
+    email: d.email,
+    course: d.course,
+    whatsappOptIn: d.consentWhatsApp,
+  });
 
   try {
     await appendSubmission("freeEntry", sheetRow);

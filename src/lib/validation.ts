@@ -37,6 +37,12 @@ export const clubMemberFields = {
     "Choose a partner course",
   ),
   consentCommunication: optionalConsent,
+  // Separate from consentCommunication on purpose. Meta requires WhatsApp to be
+  // named explicitly before any business-initiated message, and "receive
+  // communication" does not name it. Keeping them apart also lets a golfer take
+  // email and a call while declining WhatsApp. Optional, never required —
+  // consent bundled with entry is not freely given.
+  consentWhatsApp: optionalConsent,
   consentTerms: consent,
 } as const;
 
@@ -211,5 +217,6 @@ export const freeEntrySchema = z.object({
   ),
   event: z.string().trim().max(120).optional().or(z.literal("")),
   consentCommunication: optionalConsent,
+  consentWhatsApp: optionalConsent,
   consentTerms: consent,
 });

@@ -4,6 +4,7 @@ import { appendSubmission } from "@/lib/sheets";
 import { isDbConfigured, createEntry } from "@/lib/db";
 import { buildPaymentRequest, processUrl } from "@/lib/payfast";
 import { PRIZE_TIERS } from "@/lib/constants";
+import { notifyWhatsAppChannel } from "@/lib/whatsapp";
 
 export const runtime = "nodejs";
 
@@ -103,6 +104,18 @@ export async function POST(req: NextRequest) {
 
   // Fail closed: if we can't record the pending row, don't take the payment.
   // The env-var guard above only proves the env is set, not that Sheets is up.
+  // Hand the entry to the WhatsApp channel. Deliberately after the entry is
+  // safely recorded and deliberately awaited-but-never-thrown: the golfer is a
+  // redirect away from paying, and a follow-up that does not fire must never
+  // cost them their entry.
+  await notifyWhatsAppChannel({
+    name: d.name,
+    mobile: d.mobile,
+    email: d.email,
+    course: d.course,
+    whatsappOptIn: d.consentWhatsApp,
+  });
+
   try {
     await appendSubmission("entry", sheetRow);
   } catch (err) {

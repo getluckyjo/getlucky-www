@@ -61,6 +61,7 @@ export default function EntryForm() {
       email: String(fd.get("email") || ""),
       mobile: String(fd.get("mobile") || ""),
       consentCommunication: fd.get("consentCommunication") === "on",
+      consentWhatsApp: fd.get("consentWhatsApp") === "on",
       consentTerms: fd.get("consentTerms") === "on",
     };
 
@@ -188,6 +189,11 @@ export default function EntryForm() {
             privacy policy
           </Link>
           ).
+        </Checkbox>
+        <Checkbox name="consentWhatsApp" error={errors.consentWhatsApp}>
+          I&apos;d like Get Lucky to WhatsApp me about my entry, and about 12 months of
+          complimentary Hole-in-One Membership from headline sponsor Indwe Risk Services
+          when I complete an insurance quote with them.
         </Checkbox>
         <Checkbox name="consentTerms" required error={errors.consentTerms}>
           I accept the{" "}
