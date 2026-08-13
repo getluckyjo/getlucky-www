@@ -26,9 +26,7 @@
  * Change this and change CONSENT_FORM_VERSION in the same commit.
  */
 export const WHATSAPP_CONSENT_WORDING =
-  "I'd like Get Lucky to WhatsApp me about my entry, and about 12 months of " +
-  "complimentary Hole-in-One Membership from headline sponsor Indwe Risk Services " +
-  "when I complete an insurance quote with them.";
+  "I agree to receive a WhatsApp from Get Lucky Hole-in-One Challenge and Indwe Risk Services.";
 
 /** Bumped whenever WHATSAPP_CONSENT_WORDING changes. */
 export const CONSENT_FORM_VERSION = "2026-08-v1";

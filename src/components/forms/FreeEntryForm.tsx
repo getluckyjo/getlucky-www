@@ -96,9 +96,8 @@ export default function FreeEntryForm() {
           I agree to receive communication from Get Lucky Hole-in-One Challenge and Indwe Risk Services.
         </Checkbox>
         <Checkbox name="consentWhatsApp" error={errors.consentWhatsApp}>
-          I&apos;d like Get Lucky to WhatsApp me about my entry, and about 12 months of
-          complimentary Hole-in-One Membership from headline sponsor Indwe Risk Services
-          when I complete an insurance quote with them.
+          I agree to receive a WhatsApp from Get Lucky Hole-in-One Challenge and Indwe
+          Risk Services.
         </Checkbox>
         <Checkbox name="consentTerms" required error={errors.consentTerms}>
           I accept the{" "}
