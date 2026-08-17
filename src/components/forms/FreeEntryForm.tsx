@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { COURSES, ROUTES } from "@/lib/constants";
+import { WHATSAPP_CONSENT_WORDING } from "@/lib/whatsapp";
 import {
   Checkbox,
   Field,
@@ -33,7 +34,6 @@ export default function FreeEntryForm() {
       mobile: String(fd.get("mobile") || ""),
       course: String(fd.get("course") || ""),
       event: String(fd.get("event") || ""),
-      consentCommunication: fd.get("consentCommunication") === "on",
       consentWhatsApp: fd.get("consentWhatsApp") === "on",
       consentTerms: fd.get("consentTerms") === "on",
     };
@@ -92,12 +92,13 @@ export default function FreeEntryForm() {
       </Field>
 
       <div className="space-y-3 pt-2">
-        <Checkbox name="consentCommunication" error={errors.consentCommunication}>
-          I agree to receive communication from Get Lucky Hole-in-One Challenge and Indwe Risk Services.
-        </Checkbox>
+        {/*
+          Stored verbatim with every consent record, so it must match
+          WHATSAPP_CONSENT_WORDING in src/lib/whatsapp.ts exactly. Change one and
+          change the other, and bump CONSENT_FORM_VERSION.
+        */}
         <Checkbox name="consentWhatsApp" error={errors.consentWhatsApp}>
-          I agree to receive a WhatsApp from Get Lucky Hole-in-One Challenge and Indwe
-          Risk Services.
+          {WHATSAPP_CONSENT_WORDING}
         </Checkbox>
         <Checkbox name="consentTerms" required error={errors.consentTerms}>
           I accept the{" "}
@@ -106,6 +107,13 @@ export default function FreeEntryForm() {
           </Link>
           {" "}and confirm I am 18 or older.
         </Checkbox>
+        <p className="text-sm text-gray-600">
+          See our{" "}
+          <Link href={ROUTES.privacy} className="text-green-dark underline hover:text-gold">
+            privacy policy
+          </Link>
+          {" "}for how we look after your details.
+        </p>
       </div>
 
       <div className="pt-2">
