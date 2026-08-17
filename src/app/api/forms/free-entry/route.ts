@@ -48,7 +48,10 @@ export async function POST(req: NextRequest) {
         email: d.email || null,
         mobile: d.mobile,
         source: sheetRow.Source,
-        consent_communication: d.consentCommunication,
+        // consent_communication is left unset rather than false. This form no
+        // longer asks the general communication question, and recording a false
+        // would assert the golfer declined something they were never shown.
+        // Null reads as "not asked", which is what happened.
         data: { course: d.course || "", event: d.event || "" },
       });
     } catch (err) {

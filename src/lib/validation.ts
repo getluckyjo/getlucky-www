@@ -37,11 +37,12 @@ export const clubMemberFields = {
     "Choose a partner course",
   ),
   consentCommunication: optionalConsent,
-  // Separate from consentCommunication on purpose. Meta requires WhatsApp to be
-  // named explicitly before any business-initiated message, and "receive
-  // communication" does not name it. Keeping them apart also lets a golfer take
-  // email and a call while declining WhatsApp. Optional, never required —
-  // consent bundled with entry is not freely given.
+  // Meta requires WhatsApp to be named explicitly before any business-initiated
+  // message, and the wording must say what the golfer will be messaged about —
+  // "receive communication" does neither. The entry schemas below drop
+  // consentCommunication and ask this one question instead; the membership form
+  // keeps both. Optional, never required — consent bundled with entry is not
+  // freely given, and would be worthless.
   consentWhatsApp: optionalConsent,
   consentTerms: consent,
 } as const;
@@ -196,13 +197,17 @@ export const voucherSchema = z
   });
 // /form — in-person QR-code paid entry (simpler than /buy-a-swing — no gifting).
 // Entry date is auto-captured server-side from the request timestamp.
+//
+// consentCommunication is omitted rather than removed from clubMemberFields,
+// which the membership form still shares and still renders. The entry forms ask
+// one consent question now, and it is the WhatsApp one.
 export const entrySchema = z.object({
   entryAmount: z.coerce.number().refine(
     (v) => tierEntries.includes(v),
     { message: "Choose an entry amount" },
   ),
   ...clubMemberFields,
-});
+}).omit({ consentCommunication: true });
 export type EntryInput = z.infer<typeof entrySchema>;
 
 // /form-2 — free entry for sponsored/corporate events
@@ -216,7 +221,6 @@ export const freeEntrySchema = z.object({
     "Choose a course",
   ),
   event: z.string().trim().max(120).optional().or(z.literal("")),
-  consentCommunication: optionalConsent,
   consentWhatsApp: optionalConsent,
   consentTerms: consent,
 });

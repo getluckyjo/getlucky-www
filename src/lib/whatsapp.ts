@@ -9,9 +9,13 @@
  *
  * **Consent to "receive communication" is not consent to WhatsApp.** Meta
  * requires the channel to be named explicitly before any business-initiated
- * message. The existing `consentCommunication` checkbox does not name it, which
- * is why this is a separate field rather than a widening of that one — and it
- * lets a golfer accept email and a phone call while declining WhatsApp.
+ * message, and it must say what the golfer will be messaged about. The entry
+ * forms previously carried a general `consentCommunication` checkbox alongside
+ * this one; the two read almost identically, which made the choice between them
+ * meaningless. The general one has been removed from the entry forms, leaving a
+ * single box that names the channel, the sponsor and the offer. The other forms
+ * (corporate, charity, school, simulator, voucher) keep theirs — they do not
+ * feed the WhatsApp channel.
  *
  * **An entry must never fail because this did.** The golfer is mid-payment. A
  * WhatsApp follow-up that does not fire is a lost lead; an entry that does not
@@ -23,13 +27,16 @@
  * so it can be reconstructed later — "we're sure they agreed" is not an answer
  * if Meta or the Information Regulator ask.
  *
+ * The forms render this constant directly rather than repeating the string, so
+ * what the golfer read and what we stored cannot drift apart.
+ *
  * Change this and change CONSENT_FORM_VERSION in the same commit.
  */
 export const WHATSAPP_CONSENT_WORDING =
-  "I agree to receive a WhatsApp from Get Lucky Hole-in-One Challenge and Indwe Risk Services.";
+  "I'd like Get Lucky to WhatsApp me about my entry, and about 12 months of complimentary Hole-in-One Membership from headline sponsor Indwe Risk Services when I complete an insurance quote with them.";
 
 /** Bumped whenever WHATSAPP_CONSENT_WORDING changes. */
-export const CONSENT_FORM_VERSION = "2026-08-v1";
+export const CONSENT_FORM_VERSION = "2026-08-v2";
 
 interface EntryHandoff {
   name: string;
