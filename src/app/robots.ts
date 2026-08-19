@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/"],
+      disallow: ["/api/", "/ops"],
     },
     sitemap: "https://www.getluckygolf.co.za/sitemap.xml",
   };
