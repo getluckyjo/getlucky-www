@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { signFields } from "@/lib/payfast";
+import { isDbConfigured, getEntryPaymentHealth } from "@/lib/db";
 
 /**
  * Daily PayFast + backend health check.
@@ -11,7 +12,28 @@ import { signFields } from "@/lib/payfast";
  *
  * On failure: sends an email to OPS_ALERT_EMAIL. Returns 503 with the failure
  * list so the Claude daily routine can aggregate across all three apps.
+ *
+ * It also answers the only question that actually matters: is entry money still
+ * arriving? Every check above passed green through the whole of August 2026
+ * while every single PayFast ITN was being rejected and ~30 paid entries sat
+ * `pending`. Reachability and a stable MD5 do not prove the money path works —
+ * only "entries are being marked paid" does — see the money-path checks below.
  */
+
+/**
+ * Window for the money-path checks.
+ *
+ * PAID_WINDOW_DAYS: if entries were created in this window and NOT ONE was
+ * marked paid, the payment path is broken. Three days is short enough to catch
+ * a break the same week and long enough to survive a quiet Monday at the tee.
+ *
+ * STUCK_PENDING_HOURS: a golfer pays within a minute of submitting. A row still
+ * `pending` after this long either never paid or — the dangerous case — paid
+ * into an ITN we failed to record.
+ */
+const PAID_WINDOW_DAYS = 3;
+const STUCK_PENDING_HOURS = 24;
+const STUCK_PENDING_ALERT_THRESHOLD = 3;
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -126,6 +148,39 @@ export async function GET() {
       ok: false,
       detail: err instanceof Error ? err.message : String(err),
     });
+  }
+
+  // 5. The money path itself — are entries still being marked paid?
+  if (!isDbConfigured()) {
+    checks.push({
+      name: "entry_payments_flowing",
+      ok: true,
+      detail: "skipped — SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY not set",
+    });
+  } else {
+    const now = Date.now();
+    const sinceISO = new Date(now - PAID_WINDOW_DAYS * 86400_000).toISOString();
+    const stuckBeforeISO = new Date(now - STUCK_PENDING_HOURS * 3600_000).toISOString();
+    try {
+      const health = await getEntryPaymentHealth(sinceISO, stuckBeforeISO);
+      checks.push({
+        name: "entry_payments_flowing",
+        // Silence is only a failure if there was something to be paid for.
+        ok: !(health.created > 0 && health.paid === 0),
+        detail: `${health.paid} paid / ${health.created} created in the last ${PAID_WINDOW_DAYS}d`,
+      });
+      checks.push({
+        name: "stuck_pending_entries",
+        ok: health.stuckPending < STUCK_PENDING_ALERT_THRESHOLD,
+        detail: `${health.stuckPending} entries still pending after ${STUCK_PENDING_HOURS}h`,
+      });
+    } catch (err) {
+      checks.push({
+        name: "entry_payments_flowing",
+        ok: false,
+        detail: err instanceof Error ? err.message : String(err),
+      });
+    }
   }
 
   const allOk = checks.every((c) => c.ok);

@@ -104,3 +104,66 @@ function escape(s: string) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 }
+
+/**
+ * Ops alert — for the failures nobody is watching a screen for.
+ *
+ * Aug 2026: PayFast ITNs started failing signature verification and the notify
+ * route answered 400 and logged a console warning nobody reads. Three weeks and
+ * ~30 entries later it was still failing. Anything on the money path that fails
+ * silently must send one of these.
+ *
+ * Deliberately fire-and-forget: it never throws and never blocks the caller's
+ * own error handling. Uses the Resend REST API directly (same as the health
+ * canary) so it works even if the SDK client can't be constructed.
+ */
+export async function sendOpsAlert(opts: {
+  subject: string;
+  heading: string;
+  detail: Record<string, string | number | boolean | null | undefined>;
+  body?: string;
+}): Promise<boolean> {
+  try {
+    const key = process.env.RESEND_API_KEY;
+    if (!key) {
+      console.error("Ops alert not sent — RESEND_API_KEY not set", opts.subject);
+      return false;
+    }
+    const to = process.env.OPS_ALERT_EMAIL || NOTIFY_TO;
+
+    const rows = Object.entries(opts.detail)
+      .filter(([, v]) => v !== undefined && v !== null && v !== "")
+      .map(
+        ([k, v]) =>
+          `<tr style="border-top:1px solid #e5e5e5"><td style="padding:6px 12px 6px 0;font-weight:600;white-space:nowrap">${escape(k)}</td><td style="padding:6px 0;font-family:monospace;color:#444">${escape(String(v))}</td></tr>`,
+      )
+      .join("");
+
+    const html = `<div style="font-family:system-ui,sans-serif;max-width:640px;margin:0 auto">
+      <h2 style="color:#b91c1c;margin:0 0 8px">${escape(opts.heading)}</h2>
+      ${opts.body ? `<p style="font-size:14px;color:#333">${escape(opts.body)}</p>` : ""}
+      <table style="border-collapse:collapse;width:100%;font-size:13px">${rows}</table>
+      <p style="color:#666;font-size:12px;margin-top:20px">getluckygolf.co.za · ${new Date().toISOString()}</p>
+    </div>`;
+
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: "Get Lucky Ops <ops@getluckygolfclub.com>",
+        to,
+        subject: opts.subject,
+        html,
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) {
+      console.error("Ops alert send failed", { status: res.status, subject: opts.subject });
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("Ops alert send threw", err);
+    return false;
+  }
+}
