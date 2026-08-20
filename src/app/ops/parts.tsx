@@ -203,3 +203,110 @@ export function Bars({
     </figure>
   );
 }
+
+/**
+ * Ordinal tier ramp for the Indwe lead-quality report.
+ *
+ * Tier is ORDINAL — insurance intent increases General → Warm → Quote-Ready —
+ * so it takes a one-hue ramp rather than categorical hues, and the check that
+ * matters is lightness monotonicity, not CVD separation between arbitrary hues.
+ * Computed in OKLab: L = 0.836 / 0.628 / 0.437, steps 0.208 and 0.191 — strictly
+ * decreasing and near-even.
+ */
+export const TIER_RAMP: Record<string, string> = {
+  "General Lead": "#b7d3ad",
+  "Warm Lead": "#5f9a55",
+  "Quote-Ready Lead": "#28602a",
+};
+
+/**
+ * Stacked column chart, one bar per month, segments ordered by intent.
+ *
+ * Quote-Ready sits on the baseline because it is the series the renewal turns
+ * on, and only a baseline-anchored segment can be compared honestly across
+ * months. A 2px surface gap separates segments so adjacent tiers never merge
+ * into one block.
+ */
+export function StackedBars({
+  data,
+  order,
+  caption,
+}: {
+  data: { month: string; counts: Record<string, number>; total: number }[];
+  order: string[];
+  caption: string;
+}) {
+  const W = 620;
+  const H = 190;
+  const padB = 26;
+  const padT = 24;
+  const gap = 3;
+  const max = Math.max(1, ...data.map((d) => d.total));
+  const slot = W / Math.max(1, data.length);
+  const bw = slot - gap * 2;
+  const plotH = H - padB - padT;
+
+  return (
+    <figure className="m-0">
+      <div className="mb-3 flex flex-wrap gap-x-4 gap-y-1">
+        {order.map((t) => (
+          <span key={t} className="inline-flex items-center gap-1.5 text-xs text-charcoal-light">
+            <span
+              className="inline-block h-2.5 w-2.5 rounded-[2px]"
+              style={{ background: TIER_RAMP[t] }}
+              aria-hidden="true"
+            />
+            {t}
+          </span>
+        ))}
+      </div>
+      <div className="overflow-x-auto">
+        <svg
+          viewBox={`0 0 ${W} ${H}`}
+          className="h-[190px] w-full min-w-[420px]"
+          role="img"
+          aria-label={caption}
+        >
+          <line x1="0" y1={H - padB} x2={W} y2={H - padB} stroke="#c9c3ae" strokeWidth="1" />
+          {data.map((d, i) => {
+            const x = i * slot + gap;
+            let cursor = H - padB;
+            return (
+              <g key={d.month}>
+                {order
+                  // Drawn in the order given, from the axis up, so the first
+                  // entry (highest intent) is the one anchored to the baseline.
+                  .map((tier) => {
+                    const v = d.counts[tier] || 0;
+                    if (v === 0) return null;
+                    const h = (v / max) * plotH;
+                    const y = cursor - h;
+                    cursor = y - 2; // 2px surface gap between segments
+                    return (
+                      <rect key={tier} x={x} y={y} width={bw} height={Math.max(h, 1)} rx="2" fill={TIER_RAMP[tier]}>
+                        <title>{`${monthLabel(d.month)} — ${tier}: ${v}`}</title>
+                      </rect>
+                    );
+                  })}
+                <text
+                  x={x + bw / 2}
+                  y={H - padB - (d.total / max) * plotH - 8}
+                  textAnchor="middle"
+                  fontSize="11"
+                  fontWeight="600"
+                  fill="#6a6455"
+                >
+                  {d.total}
+                </text>
+                <text x={x + bw / 2} y={H - padB + 15} textAnchor="middle" fontSize="11" fill="#6a6455">
+                  {monthLabel(d.month)}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+      <figcaption className="mt-1 text-xs text-charcoal-light/70">{caption}</figcaption>
+    </figure>
+  );
+}

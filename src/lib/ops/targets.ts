@@ -70,7 +70,12 @@ export const KPIS: KpiDef[] = [
     label: "Leads to Indwe / month",
     note: "What the sponsorship actually buys. Counted from the live lead feed.",
     kind: "number",
-    baseline: 146,
+    // 267 is the true average across complete months May–Jul, corrected 20 Aug:
+    // the first version of this metric counted only the `leads` table and
+    // omitted paid entries and vouchers, which the feed tags General Lead and
+    // does send. The target is therefore "hold the pre-retrenchment run rate"
+    // rather than a growth number — August is tracking well below it.
+    baseline: 267,
     target: 250,
     direction: "up",
     due: "2026-10-31",

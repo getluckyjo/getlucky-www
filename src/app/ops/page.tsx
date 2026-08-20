@@ -169,6 +169,12 @@ export default async function OpsPage({
             format={(n) => String(n)}
             caption="Leads on the Indwe feed by month"
           />
+          <Link
+            href="/ops/indwe"
+            className="mt-3 inline-block text-sm font-semibold text-green underline"
+          >
+            Lead quality and the 2027 renewal →
+          </Link>
         </div>
       </section>
 

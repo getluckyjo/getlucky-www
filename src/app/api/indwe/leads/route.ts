@@ -10,6 +10,7 @@ import {
   leadToSheet,
 } from "@/lib/db";
 import { isSubsDbConfigured, listIndweLeads, type IndweLeadRow } from "@/lib/subscriptions-db";
+import { LEAD_STAGE_BY_TYPE } from "@/lib/indwe-tiers";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -59,25 +60,8 @@ const TYPE_LABEL: Record<IndweType, Lead["type"]> = {
 };
 
 // Canonical Indwe qualification tag per lead type — the single source of truth
-// so every lead reaches Indwe tagged, regardless of which form captured it.
-// The tier tracks *insurance intent*, not payment:
-//   General Lead     — competition-entry intent, no explicit insurance signal
-//   Warm Lead        — engaged, in-person / sponsored context, consent captured
-//   Quote-Ready Lead — explicit quote / risk-review / broker-switch request
-// See docs/indwe/lead-tagging.md for the mapping rationale and sign-off.
-const LEAD_STAGE_BY_TYPE: Record<Lead["type"], string> = {
-  voucher: "General Lead",
-  "course-entry": "General Lead",
-  "free-entry": "Warm Lead",
-  partner: "Warm Lead",
-  corporate: "Warm Lead",
-  charity: "Warm Lead",
-  school: "Warm Lead",
-  simulator: "Warm Lead",
-  tour: "Warm Lead",
-  "risk-review": "Quote-Ready Lead",
-  membership: "Quote-Ready Lead",
-};
+// lives in src/lib/indwe-tiers.ts so the ops lead-quality report tiers leads
+// exactly as this feed does. See docs/indwe/lead-tagging.md.
 
 // Source rows for a given type. Postgres when configured (Sheet-shaped via the
 // db adapters so normalize() is unchanged), else the legacy Sheets read.
