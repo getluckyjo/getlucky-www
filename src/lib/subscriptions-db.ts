@@ -71,3 +71,33 @@ export async function listIndweLeads(sinceISO?: string): Promise<IndweLeadRow[]>
   if (error) throw new Error(`subscriptions-db.listIndweLeads: ${error.message}`);
   return (data as IndweLeadRow[]) ?? [];
 }
+
+/* -------------------------------------------------------------------------- *
+ * Members (read-only)
+ *
+ * The ops membership funnel needs to know who already belongs to the club, so
+ * that an invite queue never targets an existing member and so the gap between
+ * "golfers who gave us their details" and "golfers who joined" can be measured
+ * at all. Read-only, and only the columns that question needs.
+ * -------------------------------------------------------------------------- */
+
+export type MemberRow = {
+  email: string | null;
+  subscription_status: string | null;
+  plan_type: string | null;
+  club_id: string | null;
+  joined_date: string | null;
+  last_payment_date: string | null;
+};
+
+const MEMBER_SELECT =
+  "email, subscription_status, plan_type, club_id, joined_date, last_payment_date";
+
+export async function listMembers(): Promise<MemberRow[]> {
+  const { data, error } = await db()
+    .from("members")
+    .select(MEMBER_SELECT)
+    .order("joined_date", { ascending: false });
+  if (error) throw new Error(`subscriptions-db.listMembers: ${error.message}`);
+  return (data as MemberRow[]) ?? [];
+}
