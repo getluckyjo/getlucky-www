@@ -310,3 +310,50 @@ export function StackedBars({
     </figure>
   );
 }
+
+/**
+ * Horizontal funnel — one measure (people) narrowing through stages.
+ *
+ * A single measure through ordered stages, so it takes one hue at full strength
+ * and lets bar length carry the magnitude. Colouring each stage differently
+ * would spend the identity channel re-encoding what length already shows.
+ * Each row states its own count and its survival rate from the stage above, so
+ * the drop-off is readable without arithmetic.
+ */
+export function Funnel({
+  stages,
+}: {
+  stages: { label: string; value: number; note?: string }[];
+}) {
+  const max = Math.max(1, ...stages.map((s) => s.value));
+  return (
+    <ol className="m-0 flex list-none flex-col gap-2 p-0">
+      {stages.map((s, i) => {
+        const prev = i > 0 ? stages[i - 1].value : null;
+        const survival = prev && prev > 0 ? Math.round((s.value / prev) * 100) : null;
+        return (
+          <li key={s.label}>
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="text-sm font-medium text-charcoal">{s.label}</span>
+              <span className="shrink-0 text-sm tabular-nums text-charcoal-light">
+                {s.value.toLocaleString("en-ZA")}
+                {survival !== null && (
+                  <span className="ml-2 text-xs text-charcoal-light/60">{survival}% of above</span>
+                )}
+              </span>
+            </div>
+            <div className="mt-1 h-6 w-full overflow-hidden rounded-[3px] bg-cream-dark">
+              <div
+                className="h-full rounded-[3px]"
+                style={{ width: `${Math.max((s.value / max) * 100, 0.6)}%`, background: "#335231" }}
+                role="img"
+                aria-label={`${s.value} ${s.label}`}
+              />
+            </div>
+            {s.note && <p className="mt-1 text-xs text-charcoal-light/70">{s.note}</p>}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}

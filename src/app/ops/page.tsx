@@ -175,6 +175,12 @@ export default async function OpsPage({
           >
             Lead quality and the 2027 renewal →
           </Link>
+          <Link
+            href="/ops/membership"
+            className="mt-1 block text-sm font-semibold text-green underline"
+          >
+            Membership funnel →
+          </Link>
         </div>
       </section>
 
