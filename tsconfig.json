@@ -15,6 +15,9 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    // The node:test suites in tests/ import "../src/lib/x.ts" by real path so
+    // `node --test` can run them straight off TypeScript with no build step.
+    "allowImportingTsExtensions": true,
     "jsx": "react-jsx",
     "incremental": true,
     "plugins": [

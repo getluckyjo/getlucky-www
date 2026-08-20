@@ -374,3 +374,54 @@ export function leadToSheet(type: DbLeadType, r: LeadRow): Record<string, string
       };
   }
 }
+
+/* -------------------------------------------------------------------------- *
+ * Payment-flow health
+ *
+ * "Is the entry money path still working?" cannot be answered by checking that
+ * PayFast is reachable and the signature helper still returns a hash — that is
+ * what the canary checked while every ITN was being rejected for three weeks in
+ * Aug 2026. The only honest signal is the outcome: entries are being created,
+ * and entries are being marked paid.
+ * -------------------------------------------------------------------------- */
+
+export type EntryPaymentHealth = {
+  /** Entries created in the window. */
+  created: number;
+  /** Entries whose paid_at falls in the window. */
+  paid: number;
+  /** Entries still `pending` that are older than the stuck cutoff. */
+  stuckPending: number;
+};
+
+export async function getEntryPaymentHealth(
+  sinceISO: string,
+  stuckBeforeISO: string,
+): Promise<EntryPaymentHealth> {
+  const client = db();
+  const [createdRes, paidRes, stuckRes] = await Promise.all([
+    client
+      .from("entries")
+      .select("reference", { count: "exact", head: true })
+      .gte("created_at", sinceISO),
+    client
+      .from("entries")
+      .select("reference", { count: "exact", head: true })
+      .gte("paid_at", sinceISO),
+    client
+      .from("entries")
+      .select("reference", { count: "exact", head: true })
+      .eq("status", "pending")
+      .lt("created_at", stuckBeforeISO),
+  ]);
+
+  for (const res of [createdRes, paidRes, stuckRes]) {
+    if (res.error) throw new Error(`db.getEntryPaymentHealth: ${res.error.message}`);
+  }
+
+  return {
+    created: createdRes.count ?? 0,
+    paid: paidRes.count ?? 0,
+    stuckPending: stuckRes.count ?? 0,
+  };
+}

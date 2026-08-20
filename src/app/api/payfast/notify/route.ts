@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { updateVoucherStatus, readSubmissions, SubmissionType } from "@/lib/sheets";
-import { sendSubmissionNotification, sendVoucherConfirmation } from "@/lib/email";
+import { sendSubmissionNotification, sendVoucherConfirmation, sendOpsAlert } from "@/lib/email";
 import { verifyNotifySignature, validateNotifyServerSide, isPayfastSourceIpValid } from "@/lib/payfast";
 import { PRIZE_TIERS } from "@/lib/constants";
 import {
@@ -32,10 +32,18 @@ function tabForReference(ref: string): SubmissionType {
  * PayFast Instant Transaction Notification (ITN) handler.
  * Per PayFast docs, validate:
  *   0. source IP resolves to a known PayFast host (defence-in-depth, fail-open)
- *   1. signature matches
+ *   1. signature matches — advisory: a mismatch alerts and continues, because
+ *      PayFast has changed its ITN signature construction under us before
+ *      (Aug 2026) and a signature we cannot reproduce is not proof the payment
+ *      is fake. Step 2 is what actually proves the ITN genuine.
  *   2. server-side: post the body back to PayFast and expect "VALID"
  *   3. amount matches what we expected (trust the row in the Sheet)
  *   4. payment_status === "COMPLETE"
+ *
+ * Every rejection and every failed write sends an ops alert. This route ran
+ * for three weeks in Aug 2026 rejecting real ITNs into a console warning
+ * nobody read; ~30 entries sat `pending` as a result. Nothing here is allowed
+ * to fail quietly again.
  */
 export async function POST(req: NextRequest) {
   const rawBody = await req.text();
@@ -59,16 +67,65 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "bad source" }, { status: 403 });
   }
 
-  // 1. Signature
-  if (!verifyNotifySignature(rawBody, signature)) {
-    console.warn("PayFast ITN signature mismatch", { reference });
-    return NextResponse.json({ error: "bad signature" }, { status: 400 });
+  // 1. Signature (advisory — see the note on this handler)
+  const sig = verifyNotifySignature(rawBody, signature);
+  if (!sig.ok) {
+    console.warn("PayFast ITN signature mismatch", {
+      reference,
+      fields: sig.fieldNames.join(","),
+      emptyFields: sig.emptyFieldNames.join(",") || "(none)",
+      matchedWithoutPassphrase: sig.matchedWithoutPassphrase,
+    });
+    await sendOpsAlert({
+      subject: `[ALERT] PayFast ITN signature mismatch (${reference || "no reference"})`,
+      heading: "PayFast ITN signature could not be reproduced",
+      body:
+        "The notification was NOT dropped — it still has to pass PayFast's own server-side " +
+        "validation below before anything is marked paid. But our signature construction no " +
+        "longer matches PayFast's, which means the ITN payload or the passphrase has changed. " +
+        "Fix that before it hides a real problem.",
+      detail: {
+        reference,
+        payment_status: status,
+        amount_gross: amountGross,
+        pf_payment_id: pfPaymentId,
+        source_ip: sourceIp,
+        fields_received: sig.fieldNames.join(", "),
+        empty_valued_fields: sig.emptyFieldNames.join(", ") || "(none)",
+        matched_without_passphrase: sig.matchedWithoutPassphrase || "(no variant matched)",
+      },
+    });
   }
 
-  // 2. Server-side validation
-  const validated = await validateNotifyServerSide(rawBody).catch(() => false);
-  if (!validated) {
-    console.warn("PayFast ITN server-side validation failed", { reference });
+  // 2. Server-side validation — authoritative. PayFast confirms the payload is
+  //    a real transaction of theirs, which is exactly the proof the signature
+  //    was standing in for.
+  const postback = await validateNotifyServerSide(rawBody);
+  const genuine = postback.valid || (postback.reachable === false && sig.ok);
+  if (!genuine) {
+    console.warn("PayFast ITN rejected", {
+      reference,
+      postback: postback.detail,
+      reachable: postback.reachable,
+      signatureOk: sig.ok,
+    });
+    await sendOpsAlert({
+      subject: `[ALERT] PayFast ITN rejected (${reference || "no reference"})`,
+      heading: "A PayFast ITN was rejected and NOT recorded",
+      body: postback.reachable
+        ? "PayFast's server-side validation did not answer VALID for this notification."
+        : "PayFast's validation endpoint was unreachable and the signature did not verify, " +
+          "so we could not prove the notification is genuine.",
+      detail: {
+        reference,
+        payment_status: status,
+        amount_gross: amountGross,
+        pf_payment_id: pfPaymentId,
+        postback: postback.detail,
+        postback_reachable: postback.reachable,
+        signature_ok: sig.ok,
+      },
+    });
     return NextResponse.json({ error: "validation failed" }, { status: 400 });
   }
 
@@ -100,6 +157,12 @@ export async function POST(req: NextRequest) {
 
   if (!row) {
     console.warn("PayFast ITN unknown reference", { reference, tab });
+    await sendOpsAlert({
+      subject: `[ALERT] PayFast ITN for an unknown reference (${reference || "no reference"})`,
+      heading: "Money moved for a reference we have no row for",
+      body: "The ITN validated but there is no matching entry/voucher row, so nothing was marked paid.",
+      detail: { reference, tab, payment_status: status, amount_gross: amountGross, pf_payment_id: pfPaymentId },
+    });
     // Still respond 200 so PayFast doesn't keep retrying — we'll log
     return new Response("OK", { status: 200 });
   }
@@ -107,6 +170,11 @@ export async function POST(req: NextRequest) {
   const expected = Number(row.Amount || 0).toFixed(2);
   if (amountGross && Number(amountGross).toFixed(2) !== expected) {
     console.warn("PayFast ITN amount mismatch", { reference, expected, got: amountGross });
+    await sendOpsAlert({
+      subject: `[ALERT] PayFast ITN amount mismatch (${reference})`,
+      heading: "A PayFast ITN was rejected on an amount mismatch",
+      detail: { reference, tab, expected, received: amountGross, pf_payment_id: pfPaymentId },
+    });
     return NextResponse.json({ error: "amount mismatch" }, { status: 400 });
   }
 
@@ -115,13 +183,14 @@ export async function POST(req: NextRequest) {
 
   // 4. Status — only treat COMPLETE as paid
   if (status !== "COMPLETE") {
+    const newStatus = status.toLowerCase() || "unknown";
     await updateVoucherStatus(reference, {
-      Status: status.toLowerCase() || "unknown",
+      Status: newStatus,
       "PayFast PaymentID": pfPaymentId,
-    }).catch(console.error);
+    }).catch((err) => reportWriteFailure("Sheets status update", reference, tab, err));
     if (isDbConfigured()) {
-      await markStatus(dbTable, reference, status.toLowerCase() || "unknown", pfPaymentId).catch(
-        console.error,
+      await markStatus(dbTable, reference, newStatus, pfPaymentId).catch((err) =>
+        reportWriteFailure("Postgres markStatus", reference, tab, err),
       );
     }
     return new Response("OK", { status: 200 });
@@ -130,7 +199,7 @@ export async function POST(req: NextRequest) {
   await updateVoucherStatus(reference, {
     Status: "paid",
     "PayFast PaymentID": pfPaymentId,
-  }).catch(console.error);
+  }).catch((err) => reportWriteFailure("Sheets paid update", reference, tab, err));
 
   // Idempotency gate: markPaid returns true only on the first not-paid → paid
   // transition. PayFast resends ITNs, so without this gate a resend would
@@ -141,6 +210,7 @@ export async function POST(req: NextRequest) {
   if (isDbConfigured()) {
     firstPaidTransition = await markPaid(dbTable, reference, pfPaymentId).catch((err) => {
       console.error("PayFast ITN markPaid failed", { reference, err });
+      void reportWriteFailure("Postgres markPaid", reference, tab, err);
       return true;
     });
   }
@@ -200,7 +270,7 @@ export async function POST(req: NextRequest) {
   // For /form entries, the player is on-course right now — no voucher email needed.
   const shouldSendVoucherEmail = tab === "voucher" && recipientEmail && tier;
 
-  await Promise.allSettled([
+  const emailResults = await Promise.allSettled([
     sendSubmissionNotification("voucher", notifyPayload),
     shouldSendVoucherEmail
       ? sendVoucherConfirmation({
@@ -215,5 +285,33 @@ export async function POST(req: NextRequest) {
       : Promise.resolve(),
   ]);
 
+  // allSettled swallows rejections by design; say something when it does. A
+  // paid golfer whose confirmation silently failed is invisible otherwise.
+  const emailErrors = emailResults
+    .filter((r): r is PromiseRejectedResult => r.status === "rejected")
+    .map((r) => (r.reason instanceof Error ? r.reason.message : String(r.reason)));
+  if (emailErrors.length) {
+    console.error("PayFast ITN confirmation email failed", { reference, emailErrors });
+    await sendOpsAlert({
+      subject: `[ALERT] Paid ${tab} recorded but its confirmation email failed (${reference})`,
+      heading: "Payment recorded, confirmation email did not send",
+      detail: { reference, tab, recipient: recipientEmail, errors: emailErrors.join(" | ") },
+    });
+  }
+
   return new Response("OK", { status: 200 });
+}
+
+/**
+ * A write that fails after the money has moved is the worst kind of silence:
+ * PayFast is satisfied, the golfer is charged, and our records say pending.
+ */
+async function reportWriteFailure(what: string, reference: string, tab: string, err: unknown) {
+  console.error(`PayFast ITN ${what} failed`, { reference, err });
+  await sendOpsAlert({
+    subject: `[ALERT] PayFast ITN could not record a payment (${reference})`,
+    heading: `${what} failed after a PayFast payment`,
+    body: "PayFast has confirmed this payment. Our record of it did not save — reconcile by hand.",
+    detail: { reference, tab, failure: what, error: err instanceof Error ? err.message : String(err) },
+  });
 }
