@@ -7,8 +7,7 @@
  * dashboard that fails closed is worse than useless on a Monday morning.
  */
 
-import { isDbConfigured, listEntries, listLeads, type DbLeadType } from "@/lib/db";
-import { isSubsDbConfigured, listIndweLeads } from "@/lib/subscriptions-db";
+import { isDbConfigured, listEntries } from "@/lib/db";
 import { readSubmissions } from "@/lib/sheets";
 
 export type DataSource = "postgres" | "sheets" | "unavailable";
@@ -166,63 +165,23 @@ export async function loadEntryMetrics(months = 6, now = new Date()): Promise<En
   };
 }
 
-// Mirrors the Indwe feed: every lead type the sponsor receives. Agency leads go
-// to a separate internal pipeline and are deliberately excluded, as in
-// /api/indwe/leads.
-const INDWE_LEAD_TYPES: DbLeadType[] = [
-  "partner",
-  "corporate",
-  "charity",
-  "school",
-  "simulator",
-  "tour",
-  "free_entry",
-  "risk_review",
-];
-
+/**
+ * Leads delivered to Indwe.
+ *
+ * Delegates to the lead-quality report so the dashboard and the report can
+ * never disagree about what counts as a lead. An earlier version of this
+ * function counted only the `leads` table and silently omitted paid entries and
+ * vouchers — which the Indwe feed tags as General Leads and does send — so the
+ * KPI under-reported the sponsor's actual delivery by roughly a fifth.
+ */
 export async function loadLeadMetrics(months = 6, now = new Date()): Promise<LeadMetrics> {
-  const window = denseMonths(months, now);
-  const sinceISO = `${window[0]}-01T00:00:00.000Z`;
-
-  const stamps: string[] = [];
-  let source: DataSource = "unavailable";
-  let error: string | null = null;
-
-  try {
-    if (isDbConfigured()) {
-      const lists = await Promise.all(INDWE_LEAD_TYPES.map((t) => listLeads(t, sinceISO)));
-      for (const list of lists) for (const r of list) stamps.push(r.created_at);
-      source = "postgres";
-    } else {
-      const types = ["partner", "corporate", "charity", "school", "simulator", "tour", "freeEntry", "riskReview"] as const;
-      const lists = await Promise.all(types.map((t) => readSubmissions(t, sinceISO)));
-      for (const list of lists) for (const r of list) stamps.push(str(r.Timestamp));
-      source = "sheets";
-    }
-  } catch (e) {
-    error = e instanceof Error ? e.message : String(e);
-    source = "unavailable";
-  }
-
-  // Membership leads live in the separate subscriptions project and are folded
-  // into the same sponsor feed, so they count here too. Optional by design.
-  if (isSubsDbConfigured()) {
-    try {
-      for (const r of await listIndweLeads(sinceISO)) stamps.push(r.created_at);
-    } catch {
-      // A missing membership feed must not blank the whole tile.
-    }
-  }
-
-  const byMonth = window.map((m) => ({
-    month: m,
-    value: stamps.filter((s) => monthOf(s) === m).length,
-  }));
-
+  const { loadIndweReport } = await import("@/lib/ops/indwe");
+  const report = await loadIndweReport(months, now);
   return {
-    source,
-    error,
-    byMonth,
-    currentMonth: byMonth.find((p) => p.month === monthOf(now.toISOString()))?.value ?? 0,
+    source: report.source,
+    error: report.error,
+    byMonth: report.byMonth,
+    currentMonth:
+      report.byMonth.find((p) => p.month === monthOf(now.toISOString()))?.value ?? 0,
   };
 }
