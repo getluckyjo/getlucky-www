@@ -16,6 +16,7 @@
 
 import { isDbConfigured, listVouchers, listEntries, listLeads, type DbLeadType } from "@/lib/db";
 import { isSubsDbConfigured, listIndweLeads } from "@/lib/subscriptions-db";
+import { isWhatsappDbConfigured, listWhatsappLeads } from "@/lib/whatsapp-db";
 import { readSubmissions, type SubmissionType } from "@/lib/sheets";
 import {
   LEAD_STAGE_BY_TYPE,
@@ -161,6 +162,30 @@ export async function loadIndweReport(months = 6, now = new Date()): Promise<Ind
       }
     } catch {
       // Membership leads are additive; their absence is not worth failing the page.
+    }
+  }
+
+  // Completed WhatsApp profiles, from the WhatsApp project's database. Counted
+  // here for the same reason as everything else on this page: a report that
+  // tiers leads differently from the feed Indwe receives is worse than no
+  // report, and these are the highest-intent leads in it.
+  if (isWhatsappDbConfigured()) {
+    try {
+      for (const r of await listWhatsappLeads(sinceISO)) {
+        leads.push(
+          toLead("whatsapp", {
+            Timestamp: r.created_at,
+            Email: s(r.email),
+            Mobile: s(r.phone),
+            Course: s(r.course),
+            Source: "whatsapp-profiling",
+            // Explicit in-conversation consent, which is why the lead exists.
+            Consent: "Yes",
+          }),
+        );
+      }
+    } catch {
+      // Additive, like membership. A missing feed must not blank the page.
     }
   }
 
