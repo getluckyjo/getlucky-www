@@ -27,6 +27,28 @@ export function isWhatsappDbConfigured(): boolean {
 function sql() {
   const url = (process.env.WHATSAPP_DATABASE_URL || "").trim();
   if (!url) throw new Error("WHATSAPP_DATABASE_URL not configured");
+
+  // Checked here rather than left to the driver. `neon()` rejects a malformed
+  // URL by throwing an error whose message contains the whole connection
+  // string, password included — and that message goes straight into the
+  // platform log. A typo should cost a redeploy, not a credential rotation.
+  let host: string;
+  try {
+    host = new URL(url).hostname;
+  } catch {
+    throw new Error(
+      "WHATSAPP_DATABASE_URL is not a valid connection string. Value withheld from this message.",
+    );
+  }
+
+  // The specific typo worth naming: a placeholder left in from the setup notes.
+  // Without this it presents as an unhelpful DNS failure.
+  if (!host || host.startsWith("<") || host.endsWith(">")) {
+    throw new Error(
+      `WHATSAPP_DATABASE_URL still contains a placeholder host ("${host}"). Replace it with the real Neon hostname.`,
+    );
+  }
+
   return neon(url);
 }
 

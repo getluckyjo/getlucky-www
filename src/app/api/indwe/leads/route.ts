@@ -18,6 +18,7 @@ import {
   type WhatsappLeadRow,
 } from "@/lib/whatsapp-db";
 import { LEAD_STAGE_BY_TYPE } from "@/lib/indwe-tiers";
+import { safeErrorMessage } from "@/lib/redact";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -260,7 +261,7 @@ export async function GET(req: NextRequest) {
     if (result.status === "fulfilled") {
       buckets.push(result.value);
     } else {
-      const message = result.reason instanceof Error ? result.reason.message : String(result.reason);
+      const message = safeErrorMessage(result.reason);
       console.error(`Indwe leads read failed for type=${t}:`, message);
       failed.push({ type: t, error: message });
     }
@@ -281,7 +282,7 @@ export async function GET(req: NextRequest) {
       const rows = await listIndweLeads(since);
       leads = leads.concat(rows.map(membershipToLead));
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = safeErrorMessage(err);
       console.error("Indwe leads read failed for type=membership:", message);
       failed.push({ type: "membership", error: message });
     }
@@ -296,7 +297,7 @@ export async function GET(req: NextRequest) {
       const rows = await listWhatsappLeads(since);
       leads = leads.concat(rows.map(whatsappToLead));
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = safeErrorMessage(err);
       console.error("Indwe leads read failed for type=whatsapp:", message);
       failed.push({ type: "whatsapp", error: message });
     }
