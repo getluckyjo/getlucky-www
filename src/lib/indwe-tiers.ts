@@ -24,7 +24,8 @@ export type IndweLeadType =
   | "simulator"
   | "tour"
   | "risk-review"
-  | "membership";
+  | "membership"
+  | "whatsapp";
 
 export type IndweTier = "General Lead" | "Warm Lead" | "Quote-Ready Lead";
 
@@ -40,6 +41,10 @@ export const LEAD_STAGE_BY_TYPE: Record<IndweLeadType, IndweTier> = {
   tour: "Warm Lead",
   "risk-review": "Quote-Ready Lead",
   membership: "Quote-Ready Lead",
+  // Completed the WhatsApp profiling conversation: answered the questions Indwe
+  // need to quote and said yes, explicitly, to their details being shared. That
+  // is the same insurance intent as a risk review, carrying more detail.
+  whatsapp: "Quote-Ready Lead",
 };
 
 /** Ascending insurance intent. Used to order the ramp and the tables. */

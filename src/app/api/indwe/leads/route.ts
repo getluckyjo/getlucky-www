@@ -10,6 +10,13 @@ import {
   leadToSheet,
 } from "@/lib/db";
 import { isSubsDbConfigured, listIndweLeads, type IndweLeadRow } from "@/lib/subscriptions-db";
+import {
+  displayName,
+  isWhatsappDbConfigured,
+  listWhatsappLeads,
+  toIndweRaw,
+  type WhatsappLeadRow,
+} from "@/lib/whatsapp-db";
 import { LEAD_STAGE_BY_TYPE } from "@/lib/indwe-tiers";
 
 export const runtime = "nodejs";
@@ -17,7 +24,7 @@ export const dynamic = "force-dynamic";
 
 type Lead = {
   id: string;
-  type: "voucher" | "course-entry" | "free-entry" | "partner" | "corporate" | "charity" | "school" | "simulator" | "tour" | "risk-review" | "membership";
+  type: "voucher" | "course-entry" | "free-entry" | "partner" | "corporate" | "charity" | "school" | "simulator" | "tour" | "risk-review" | "membership" | "whatsapp";
   timestamp: string;
   name: string;
   email: string;
@@ -174,6 +181,50 @@ function membershipToLead(row: IndweLeadRow): Lead {
   };
 }
 
+/**
+ * Golfers who completed the WhatsApp profiling conversation, from the separate
+ * WhatsApp project's database.
+ *
+ * These are the most qualified leads in the feed, and until now they reached
+ * Indwe by no route at all — the WhatsApp app was built to push them into
+ * `InternetLeads.asmx`, and that push is still unwritten because the field
+ * mapping needs a WSDL nobody has supplied. Folding them in here delivers them
+ * over a contract that already exists and that Indwe already poll.
+ *
+ * The profiling answers go in `raw` rather than becoming new top-level fields.
+ * They are underwriting detail — what cover, what vehicle, where it parks,
+ * currently insured, when to call — and their shape belongs to the
+ * conversation, which changes as questions are cut. `raw` is documented as
+ * free-form, so nothing in Indwe's integration breaks when it does.
+ */
+function whatsappToLead(row: WhatsappLeadRow): Lead {
+  return {
+    id: `whatsapp-${row.id}`,
+    type: "whatsapp",
+    timestamp: row.created_at,
+    name: displayName(row),
+    email: row.email ?? "",
+    mobile: row.phone,
+    course: row.course ?? "",
+    event: "",
+    status: "lead",
+    source: "whatsapp-profiling",
+    // Captured in the conversation against the exact wording the golfer was
+    // shown — stronger evidence than a ticked box, and only consented profiles
+    // are readable at all.
+    consent: "Yes",
+    leadStage: LEAD_STAGE_BY_TYPE.whatsapp,
+    scheduleFile: "",
+    address: row.answers.area ?? "",
+    tier: "",
+    amount: "",
+    prize: "",
+    date: "",
+    payfastPaymentId: "",
+    raw: toIndweRaw(row.answers),
+  };
+}
+
 export async function GET(req: NextRequest) {
   const expected = process.env.INDWE_API_KEY;
   if (!expected) {
@@ -233,6 +284,21 @@ export async function GET(req: NextRequest) {
       const message = err instanceof Error ? err.message : String(err);
       console.error("Indwe leads read failed for type=membership:", message);
       failed.push({ type: "membership", error: message });
+    }
+  }
+
+  // Completed WhatsApp profiles, from the WhatsApp project's database. Optional
+  // and best-effort for the same reason as membership above: a read failure
+  // here degrades the response to `partial` rather than failing the types that
+  // already succeeded.
+  if (isWhatsappDbConfigured()) {
+    try {
+      const rows = await listWhatsappLeads(since);
+      leads = leads.concat(rows.map(whatsappToLead));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error("Indwe leads read failed for type=whatsapp:", message);
+      failed.push({ type: "whatsapp", error: message });
     }
   }
 

@@ -20,10 +20,12 @@ That's it. No pagination, no signing, no webhooks to register. Poll on whatever 
 A single Bearer token shared out-of-band. Treat it like a password — server-side only, never put it in a browser or mobile app.
 
 ```
-Authorization: Bearer 5d7e4e11700461f924a3959299f7e281a04d1590bae43c802120912a2b2caa29
+Authorization: Bearer <YOUR_API_KEY>
 ```
 
-(Your real key will be sent separately.)
+Your key is sent separately and never appears in this document. This repository
+is public — a key written down here is a key that has been published, whatever
+it is captioned as.
 
 ---
 
@@ -32,7 +34,7 @@ Authorization: Bearer 5d7e4e11700461f924a3959299f7e281a04d1590bae43c802120912a2b
 | Param  | Example                          | Effect                                                              |
 |--------|----------------------------------|---------------------------------------------------------------------|
 | `since`| `2026-05-01T00:00:00Z`           | Only return leads with a Timestamp >= this ISO 8601 value.          |
-| `type` | `voucher`                        | Filter to one type. Values: `voucher`, `course-entry`, `free-entry`, `partner`, `corporate`, `risk-review`. |
+| `type` | `voucher`                        | Filter to one type. Values: `voucher`, `course-entry`, `free-entry`, `partner`, `corporate`, `charity`, `school`, `simulator`, `tour`, `risk-review`, `membership`, `whatsapp`. |
 
 Recommended pattern: store the `generatedAt` you receive, pass it back as `since` next poll.
 
@@ -117,7 +119,7 @@ Recommended pattern: store the `generatedAt` you receive, pass it back as `since
 | Field              | Type     | Notes                                                                 |
 |--------------------|----------|-----------------------------------------------------------------------|
 | `id`               | string   | Stable identifier (PayFast reference where applicable). Use for dedup. |
-| `type`             | enum     | `voucher` (online purchase) · `course-entry` (paid QR entry on course) · `free-entry` (sponsored free entry) · `partner` (course partner enquiry) · `corporate` (corporate golf-day enquiry) · `risk-review` (Indwe microsite risk-review request). |
+| `type`             | enum     | `voucher` (online purchase) · `course-entry` (paid QR entry on course) · `free-entry` (sponsored free entry) · `partner` (course partner enquiry) · `corporate` (corporate golf-day enquiry) · `risk-review` (Indwe microsite risk-review request) · `membership` (broker switch) · **`whatsapp` (completed WhatsApp profiling conversation — see below)**. |
 | `timestamp`        | ISO 8601 | When the lead was captured.                                           |
 | `name`             | string   | Best available name (full name / buyer / recipient).                  |
 | `email`            | string   | Best available email.                                                 |
@@ -127,7 +129,7 @@ Recommended pattern: store the `generatedAt` you receive, pass it back as `since
 | `status`           | enum     | `paid` · `lead` · `pending`. Only `paid` records are returned for `voucher` and `course-entry`. |
 | `source`           | string   | Where the lead came from (`online`, `qr-on-course`, `indwe-microsite`, etc.). |
 | `consent`          | string   | Communications consent. `Yes` / `No` for `risk-review`; empty otherwise. |
-| `leadStage`        | enum     | Qualification tag, always set: `General Lead` (competition entry — `voucher`, `course-entry`) · `Warm Lead` (sponsored / in-person — `free-entry`, `partner`, `corporate`, `charity`, `simulator`) · `Quote-Ready Lead` (explicit quote intent — `risk-review`, `membership`). For `membership`, the broker-switch pipeline state is under `raw.status`. |
+| `leadStage`        | enum     | Qualification tag, always set: `General Lead` (competition entry — `voucher`, `course-entry`) · `Warm Lead` (sponsored / in-person — `free-entry`, `partner`, `corporate`, `charity`, `simulator`) · `Quote-Ready Lead` (explicit quote intent — `risk-review`, `membership`, `whatsapp`). For `membership`, the broker-switch pipeline state is under `raw.status`. |
 | `address`          | string   | Physical address (Google Places formatted, or free-typed). Captured on `risk-review`. Empty otherwise. |
 | `scheduleFile`     | string   | URL to an uploaded insurance schedule (risk-review only). Empty otherwise. |
 | `tier`             | string   | Entry tier (`voucher` / `course-entry`). Empty otherwise.             |
@@ -136,6 +138,50 @@ Recommended pattern: store the `generatedAt` you receive, pass it back as `since
 | `date`             | string   | Tee-off date for paid course entries. Empty otherwise.                |
 | `payfastPaymentId` | string   | PayFast payment ID for paid records. Empty otherwise.                 |
 | `raw`              | object   | **Optional safety net.** Original row from our system, for any field not in the normalised shape. You can ignore `raw` entirely — every commonly-used value is now a first-class top-level field. |
+
+---
+
+## WhatsApp leads (`type: "whatsapp"`)
+
+New. These are golfers who entered the hole-in-one challenge, accepted the offer
+of 12 months' complimentary membership for completing an Indwe quote, and then
+answered a short profiling conversation on WhatsApp. They are the only leads in
+this feed that arrive with underwriting detail attached.
+
+Three things worth knowing:
+
+**Consent is explicit and in-conversation.** The golfer was shown the wording and
+answered "yes" to their details going to Indwe. A profile that did not consent is
+never readable, so `consent` is always `Yes` on this type. That is stronger
+evidence than a ticked box on a form.
+
+**They expect a call.** The last message they received says Indwe will call
+shortly to run through their quote, and the membership is earned by *completing*
+that quote — not by requesting one. `raw.preferred_call_time` is when they said
+to ring.
+
+**The answers are in `raw`.** They sit there rather than becoming top-level
+fields because the question list is deliberately short and still being cut, so
+its shape will change. Every key is always present, empty when not asked:
+
+| `raw` key              | Values                              | Question asked |
+|------------------------|-------------------------------------|----------------|
+| `cover`                | `car` · `home` · `both`             | What they want covered |
+| `area`                 | free text                           | Suburb or town the vehicle is kept in |
+| `vehicle`              | free text                           | Make and model |
+| `parking`              | `garage` · `driveway` · `street`    | Where it parks overnight |
+| `tenure`               | `own` · `rent`                      | Own or rent their home |
+| `currently_insured`    | `yes` · `no`                        | Whether they have cover today |
+| `preferred_call_time`  | `morning` · `afternoon` · `anytime` | When to call |
+| `channel`              | always `whatsapp`                   | — |
+
+`id` is stable (`whatsapp-<n>`) and safe to deduplicate on. `mobile` is the
+WhatsApp number in E.164 and is always present; `email` and `course` come from
+the golfer's entry form and may be empty if they messaged us directly.
+
+**If any of these fields is not what you need to quote, say so** — the
+conversation is ours to change, and a question Indwe cannot quote without is
+worth adding far more than one nobody uses is worth keeping.
 
 ---
 
