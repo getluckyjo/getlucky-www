@@ -14,6 +14,7 @@ import {
   displayName,
   isWhatsappDbConfigured,
   listWhatsappLeads,
+  provinceLabel,
   toIndweRaw,
   type WhatsappLeadRow,
 } from "@/lib/whatsapp-db";
@@ -193,10 +194,17 @@ function membershipToLead(row: IndweLeadRow): Lead {
  * over a contract that already exists and that Indwe already poll.
  *
  * The profiling answers go in `raw` rather than becoming new top-level fields.
- * They are underwriting detail — what cover, what vehicle, where it parks,
- * currently insured, when to call — and their shape belongs to the
- * conversation, which changes as questions are cut. `raw` is documented as
- * free-form, so nothing in Indwe's integration breaks when it does.
+ * They are underwriting detail — business or personal, what needs covering,
+ * what it currently costs a month, who they are insured with — and their shape
+ * belongs to the conversation, which changes as questions are cut. `raw` is
+ * documented as free-form, so nothing in Indwe's integration breaks when it
+ * does, and the 27 August 2026 rewrite changed nearly all of it.
+ *
+ * One thing about these leads is different in kind from every other type in
+ * this feed: the golfer holds an appointment. The last message they received
+ * names a specific day and hour, chosen from real working days inside office
+ * hours. Nothing books it — not here, and not on the WhatsApp side — so
+ * `raw.call_slot` is a commitment somebody at Indwe has to keep.
  */
 function whatsappToLead(row: WhatsappLeadRow): Lead {
   return {
@@ -216,7 +224,9 @@ function whatsappToLead(row: WhatsappLeadRow): Lead {
     consent: "Yes",
     leadStage: LEAD_STAGE_BY_TYPE.whatsapp,
     scheduleFile: "",
-    address: row.answers.area ?? "",
+    // The conversation asks for a province rather than a suburb now. It is the
+    // only location we hold, and it is what routes the lead to an Advisor.
+    address: provinceLabel(row.answers.province),
     tier: "",
     amount: "",
     prize: "",
