@@ -4,7 +4,9 @@
  *
  * Its `lead_pushes` table holds one row per golfer who completed the WhatsApp
  * profiling conversation: the questions Indwe need to quote, answered by the
- * golfer, with explicit consent to their details being shared.
+ * golfer, with explicit consent to their details being shared — and, since the
+ * 27 August 2026 rewrite, a specific day and hour they were told an Indwe
+ * Advisor would call.
  *
  * Those leads had no route to Indwe at all. The WhatsApp app was built to push
  * them into `InternetLeads.asmx` and that push has never been written, because
@@ -52,25 +54,116 @@ function sql() {
   return neon(url);
 }
 
-/** The profiling answers, keyed by step id. Absent keys mean the golfer was not asked. */
+/**
+ * The profiling answers, keyed by step id. Absent keys mean the golfer was not
+ * asked — the conversation branches, so a golfer wanting only personal cover
+ * never sees the two business questions and vice versa.
+ *
+ * Rewritten 27 August 2026 alongside the WhatsApp journey. The previous shape
+ * asked about a suburb, a vehicle, where it parked and whether the golfer owned
+ * or rented; none of those questions exist any more. Nothing was lost with
+ * them: no completed profile had ever reached Indwe under the old shape.
+ */
 export type WhatsappAnswers = {
-  /** car | home | both */
+  /** business | personal | both — which line of cover to quote. */
+  line?: string;
+  /** assets | liabilities | both — business only. */
+  business_cover?: string;
+  /** below_15000 | 15000_30000 | above_30000 — monthly, business only. */
+  business_premium?: string;
+  /** car | home | both — personal only. */
   cover?: string;
-  /** Free text — suburb or town the vehicle is kept in. */
-  area?: string;
-  /** Free text — make and model. */
-  vehicle?: string;
-  /** garage | driveway | street */
-  parking?: string;
-  /** own | rent */
-  tenure?: string;
-  /** yes | no — currently insured. */
-  insured?: string;
-  /** morning | afternoon | anytime */
+  /** below_2500 | 2500_5000 | above_5000 — monthly, personal only. */
+  personal_premium?: string;
+  /** Free text. A golfer with no cover answers "no" or "none". */
+  insurer?: string;
+  /** eastern_cape … western_cape — one of the nine. */
+  province?: string;
+  /** YYYY-MM-DD — the working day the golfer chose for their call. */
+  call_date?: string;
+  /** HH:00 — the hour that call starts. Slots run 08:00 to 16:00. */
   call_time?: string;
   /** yes | no — consent to share with Indwe. Only "yes" ever reaches this table. */
   indwe_share?: string;
 };
+
+/**
+ * Stored values that do not read as English on a CRM screen.
+ *
+ * The same reasoning that renames `insured` to `currently_insured` on the way
+ * out: a consultant reading this lead does not have the conversation as
+ * context. `car`, `assets` and `both` are already words and pass through
+ * untouched; `15000_30000` and `kwazulu_natal` are not, and would make someone
+ * guess.
+ */
+const LABELS: Record<string, string> = {
+  // Monthly premium bands, business.
+  below_15000: "Below R15,000",
+  "15000_30000": "R15,000 – R30,000",
+  above_30000: "Above R30,000",
+  // Monthly premium bands, personal.
+  below_2500: "Below R2,500",
+  "2500_5000": "R2,500 – R5,000",
+  above_5000: "Above R5,000",
+  // Provinces.
+  eastern_cape: "Eastern Cape",
+  free_state: "Free State",
+  gauteng: "Gauteng",
+  kwazulu_natal: "KwaZulu-Natal",
+  limpopo: "Limpopo",
+  mpumalanga: "Mpumalanga",
+  north_west: "North West",
+  northern_cape: "Northern Cape",
+  western_cape: "Western Cape",
+};
+
+function label(value: string | undefined): string {
+  if (!value) return "";
+  return LABELS[value] ?? value;
+}
+
+/**
+ * A province as a person would write it.
+ *
+ * Exported because the feed route puts it in the top-level `address` field,
+ * where "kwazulu_natal" would be plainly wrong. An unrecognised value is
+ * returned as-is rather than throwing — a golfer whose answer failed to parse
+ * twice has their raw text stored, and that is still better than a blank.
+ */
+export function provinceLabel(province: string | undefined): string {
+  return label(province);
+}
+
+const MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+/**
+ * The appointment, as a consultant would read it: "Wed 2 Sep, 10:00–11:00".
+ *
+ * Empty rather than approximate when either half is missing or malformed. A
+ * booking answer that could not be parsed twice is stored as the golfer's raw
+ * text, and a slot string assembled out of that would read as an appointment
+ * nobody actually holds — which is the one thing worth being strict about here,
+ * because the golfer was told a specific time.
+ */
+function callSlot(answers: WhatsappAnswers): string {
+  const date = answers.call_date ?? "";
+  const time = answers.call_time ?? "";
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:00$/.test(time)) return "";
+
+  const [year, month, day] = date.split("-").map(Number);
+  const at = new Date(Date.UTC(year, month - 1, day));
+  // Date.UTC rolls an impossible date over (2026-02-31 becomes March), so check
+  // the parts survived rather than trusting the regex alone.
+  if (at.getUTCMonth() !== month - 1 || at.getUTCDate() !== day) return "";
+
+  const hour = Number(time.slice(0, 2));
+  const to = String(hour + 1).padStart(2, "0");
+  return `${DAYS[at.getUTCDay()]} ${day} ${MONTHS[month - 1]}, ${time}–${to}:00`;
+}
 
 export type WhatsappLeadRow = {
   id: number;
@@ -99,18 +192,33 @@ type RawRow = {
  *
  * Every key is always present, empty when the golfer was not asked — an
  * integrator should not need two code paths for a missing key and a blank one.
- * `insured` and `call_time` are renamed to say what they mean without the
- * conversation as context.
+ * A golfer quoting on one line of cover leaves the other line's two keys empty,
+ * which is the common case rather than the exception.
+ *
+ * `insurer` becomes `current_insurer` for the same reason `insured` used to
+ * become `currently_insured`: the key has to mean something to someone who was
+ * not in the conversation.
+ *
+ * `indwe_share` is deliberately absent. It is the consent gate, not
+ * underwriting detail, and passing it through would invite it being read as a
+ * field Indwe can act on.
  */
 export function toIndweRaw(answers: WhatsappAnswers): Record<string, string> {
   return {
+    line: answers.line ?? "",
+    business_cover: answers.business_cover ?? "",
+    business_premium: label(answers.business_premium),
     cover: answers.cover ?? "",
-    area: answers.area ?? "",
-    vehicle: answers.vehicle ?? "",
-    parking: answers.parking ?? "",
-    tenure: answers.tenure ?? "",
-    currently_insured: answers.insured ?? "",
-    preferred_call_time: answers.call_time ?? "",
+    personal_premium: label(answers.personal_premium),
+    current_insurer: answers.insurer ?? "",
+    province: provinceLabel(answers.province),
+    // Both halves of the booking, raw, for anything that wants to sort or diary
+    // by them...
+    call_date: answers.call_date ?? "",
+    call_time: answers.call_time ?? "",
+    // ...and the same thing as a consultant would read it. This is the field
+    // that matters: the golfer was told an Advisor would ring at this time.
+    call_slot: callSlot(answers),
     channel: "whatsapp",
   };
 }

@@ -130,7 +130,7 @@ Recommended pattern: store the `generatedAt` you receive, pass it back as `since
 | `source`           | string   | Where the lead came from (`online`, `qr-on-course`, `indwe-microsite`, etc.). |
 | `consent`          | string   | Communications consent. `Yes` / `No` for `risk-review`; empty otherwise. |
 | `leadStage`        | enum     | Qualification tag, always set: `General Lead` (competition entry — `voucher`, `course-entry`) · `Warm Lead` (sponsored / in-person — `free-entry`, `partner`, `corporate`, `charity`, `simulator`) · `Quote-Ready Lead` (explicit quote intent — `risk-review`, `membership`, `whatsapp`). For `membership`, the broker-switch pipeline state is under `raw.status`. |
-| `address`          | string   | Physical address (Google Places formatted, or free-typed). Captured on `risk-review`. Empty otherwise. |
+| `address`          | string   | Physical address (Google Places formatted, or free-typed). Captured on `risk-review`. On `whatsapp` it carries the golfer's **province**, which is the only location that conversation asks for. Empty otherwise. |
 | `scheduleFile`     | string   | URL to an uploaded insurance schedule (risk-review only). Empty otherwise. |
 | `tier`             | string   | Entry tier (`voucher` / `course-entry`). Empty otherwise.             |
 | `amount`           | string   | Amount paid in ZAR (`voucher` / `course-entry`). Empty otherwise.     |
@@ -155,25 +155,60 @@ answered "yes" to their details going to Indwe. A profile that did not consent i
 never readable, so `consent` is always `Yes` on this type. That is stronger
 evidence than a ticked box on a form.
 
-**They expect a call.** The last message they received says Indwe will call
-shortly to run through their quote, and the membership is earned by *completing*
-that quote — not by requesting one. `raw.preferred_call_time` is when they said
-to ring.
+**They hold an appointment, not a preference.** This changed on 27 August 2026
+and it is the most important thing on this page. The golfer chose a **specific
+day and hour** from a list, and the last message they received reads *"An Indwe
+Advisor will be in touch on Wed 2 Sep, 10:00–11:00."* Every slot they could pick
+was a working day inside 08:00–16:30, never a weekend or a South African public
+holiday, and never less than two hours ahead.
+
+`raw.call_slot` is that appointment, formatted as the golfer read it.
+`raw.call_date` and `raw.call_time` carry the same thing as data for sorting or
+diarising.
+
+**Nothing books it.** Not this feed, and not the WhatsApp system — the slot
+travels on the lead and no calendar anywhere holds it. A golfer stood up on a
+named appointment is a complaint rather than a missed lead, so if honouring
+these is not workable at your end, tell us and we will soften what the golfer is
+promised. That is a copy change on our side and a quick one.
+
+The membership is still earned by *completing* the quote on that call, not by
+requesting one.
 
 **The answers are in `raw`.** They sit there rather than becoming top-level
 fields because the question list is deliberately short and still being cut, so
-its shape will change. Every key is always present, empty when not asked:
+its shape will change. Every key is always present, empty when not asked.
 
-| `raw` key              | Values                              | Question asked |
-|------------------------|-------------------------------------|----------------|
-| `cover`                | `car` · `home` · `both`             | What they want covered |
-| `area`                 | free text                           | Suburb or town the vehicle is kept in |
-| `vehicle`              | free text                           | Make and model |
-| `parking`              | `garage` · `driveway` · `street`    | Where it parks overnight |
-| `tenure`               | `own` · `rent`                      | Own or rent their home |
-| `currently_insured`    | `yes` · `no`                        | Whether they have cover today |
-| `preferred_call_time`  | `morning` · `afternoon` · `anytime` | When to call |
-| `channel`              | always `whatsapp`                   | — |
+The conversation branches on the first question, so a golfer quoting on one line
+of cover leaves the other line's two keys empty. That is the common case, not
+the exception.
+
+| `raw` key           | Values                                                    | Question asked |
+|---------------------|-----------------------------------------------------------|----------------|
+| `line`              | `business` · `personal` · `both`                          | What to quote on |
+| `business_cover`    | `assets` · `liabilities` · `both`                         | Which business risks *(business only)* |
+| `business_premium`  | `Below R15,000` · `R15,000 – R30,000` · `Above R30,000`   | Current monthly premium *(business only)* |
+| `cover`             | `car` · `home` · `both`                                   | Which personal cover *(personal only)* |
+| `personal_premium`  | `Below R2,500` · `R2,500 – R5,000` · `Above R5,000`       | Current monthly premium *(personal only)* |
+| `current_insurer`   | free text                                                 | Who they are insured with — `no` or `none` when they are not |
+| `province`          | one of the nine, e.g. `Western Cape`                      | Which province they are in |
+| `call_slot`         | e.g. `Wed 2 Sep, 10:00–11:00`                             | The appointment, as they read it |
+| `call_date`         | `YYYY-MM-DD`                                              | Same, as data |
+| `call_time`         | `HH:00` — the hour the call starts                        | Same, as data |
+| `channel`           | always `whatsapp`                                         | — |
+
+Premium bands and provinces are sent as words rather than internal codes, so a
+consultant does not need this page open to read a lead.
+
+`call_slot` is empty in the rare case a golfer's booking answer could not be
+read — the underlying text is kept for review on our side. An empty `call_slot`
+means **no appointment was promised**, so treat it as a normal call-when-you-can
+lead rather than a missed slot.
+
+> **Changed on 27 August 2026.** The keys `area`, `vehicle`, `parking`, `tenure`,
+> `currently_insured` and `preferred_call_time` no longer exist — the questions
+> behind them were cut when the conversation was rewritten. No lead ever reached
+> you carrying a value in any of them.
 
 `id` is stable (`whatsapp-<n>`) and safe to deduplicate on. `mobile` is the
 WhatsApp number in E.164 and is always present; `email` and `course` come from
