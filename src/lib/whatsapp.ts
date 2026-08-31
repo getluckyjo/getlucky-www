@@ -41,10 +41,25 @@
  * Change this and change CONSENT_FORM_VERSION in the same commit.
  */
 export const WHATSAPP_CONSENT_WORDING =
-  "I'd like Get Lucky to WhatsApp me about my entry, and about 12 months of complimentary Hole-in-One Membership from headline sponsor Indwe Risk Services when I complete an insurance quote with them.";
+  "Get Lucky can WhatsApp me about my entry, and about 12 months of complimentary Hole-in-One Membership when I complete an insurance quote with Indwe Risk Services.";
 
-/** Bumped whenever WHATSAPP_CONSENT_WORDING changes. */
-export const CONSENT_FORM_VERSION = "2026-08-v2";
+/**
+ * Bumped whenever WHATSAPP_CONSENT_WORDING changes.
+ *
+ * v3 (31 Aug 2026) shortened the wording from 32 words to 26 without changing
+ * what is being agreed to. Dropped: "I'd like" (ticking the box says that),
+ * "headline sponsor" (marketing padding in a consent notice), and a "with them"
+ * whose referent was a clause away.
+ *
+ * Everything load-bearing survived, and each of these is here on purpose:
+ * WhatsApp is named because Meta requires the channel named explicitly; Get
+ * Lucky because the golfer should know who is messaging; the entry AND the
+ * membership because the consent has to cover both topics or messaging about
+ * the offer is not covered; Indwe Risk Services because POPIA wants the third
+ * party named; and "complete an insurance quote" rather than anything looser
+ * because the membership depends on a completed quote, not a request for one.
+ */
+export const CONSENT_FORM_VERSION = "2026-08-v3";
 
 interface EntryHandoff {
   name: string;
