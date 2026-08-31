@@ -18,6 +18,7 @@ import {
   toIndweRaw,
   type WhatsappLeadRow,
 } from "@/lib/whatsapp-db";
+import { personIdForMobile } from "@/lib/person-id";
 import { LEAD_STAGE_BY_TYPE } from "@/lib/indwe-tiers";
 import { safeErrorMessage } from "@/lib/redact";
 
@@ -31,6 +32,18 @@ type Lead = {
   name: string;
   email: string;
   mobile: string;
+  /**
+   * The same golfer, however they reached us — see src/lib/person-id.ts.
+   *
+   * `id` identifies this lead; `personId` identifies the human behind it. A
+   * golfer who entered at a golf day and later completed the WhatsApp
+   * conversation is one person moving from Warm to Quote-Ready, not two
+   * unrelated records.
+   *
+   * Empty means "cannot be linked", never "a new person" — two empty personIds
+   * are not the same golfer and must not be collapsed.
+   */
+  personId: string;
   course: string;
   event: string;
   status: "paid" | "lead" | "pending";
@@ -52,6 +65,14 @@ type Lead = {
 
 // Agency submissions are deliberately excluded — they go to a separate internal pipeline,
 // not to the headline sponsor.
+/**
+ * A lead before its cross-route identity is attached.
+ *
+ * The mappers below build these; personId is derived in one place afterwards so
+ * the three routes cannot drift apart on how a golfer is identified.
+ */
+type RawLead = Omit<Lead, "personId">;
+
 type IndweType = Exclude<SubmissionType, "agency">;
 const TYPES: IndweType[] = ["voucher", "entry", "freeEntry", "partner", "corporate", "charity", "school", "simulator", "tour", "riskReview"];
 
@@ -108,7 +129,7 @@ function pick(row: Record<string, string>, keys: string[]): string {
   return "";
 }
 
-function normalize(type: IndweType, row: Record<string, string>): Lead {
+function normalize(type: IndweType, row: Record<string, string>): RawLead {
   const timestamp = pick(row, ["Timestamp"]);
   const reference = pick(row, ["Reference"]);
   const status = pick(row, ["Status"]).toLowerCase();
@@ -149,7 +170,7 @@ function normalize(type: IndweType, row: Record<string, string>): Lead {
 // corporate, risk-review AND membership — from this one endpoint. The internal
 // source/capture_point are normalized to a single clean "membership-offer" tag;
 // the raw values are preserved under `raw` for anyone who wants the detail.
-function membershipToLead(row: IndweLeadRow): Lead {
+function membershipToLead(row: IndweLeadRow): RawLead {
   return {
     id: row.id || `membership-${row.created_at}-${row.email || row.mobile || ""}`,
     type: "membership",
@@ -206,7 +227,7 @@ function membershipToLead(row: IndweLeadRow): Lead {
  * hours. Nothing books it — not here, and not on the WhatsApp side — so
  * `raw.call_slot` is a commitment somebody at Indwe has to keep.
  */
-function whatsappToLead(row: WhatsappLeadRow): Lead {
+function whatsappToLead(row: WhatsappLeadRow): RawLead {
   return {
     id: `whatsapp-${row.id}`,
     type: "whatsapp",
@@ -265,7 +286,7 @@ export async function GET(req: NextRequest) {
   );
 
   const failed: { type: string; error: string }[] = [];
-  const buckets: Lead[][] = [];
+  const buckets: RawLead[][] = [];
   settled.forEach((result, i) => {
     const t = TYPES[i];
     if (result.status === "fulfilled") {
@@ -281,7 +302,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Failed to read leads", failed }, { status: 500 });
   }
 
-  let leads: Lead[] = buckets.flat();
+  let raw: RawLead[] = buckets.flat();
 
   // Supplemental: membership "switch to Indwe" leads from the Subscriptions
   // project. Optional (skipped when its env vars aren't set) and best-effort —
@@ -290,7 +311,7 @@ export async function GET(req: NextRequest) {
   if (isSubsDbConfigured()) {
     try {
       const rows = await listIndweLeads(since);
-      leads = leads.concat(rows.map(membershipToLead));
+      raw = raw.concat(rows.map(membershipToLead));
     } catch (err) {
       const message = safeErrorMessage(err);
       console.error("Indwe leads read failed for type=membership:", message);
@@ -305,13 +326,17 @@ export async function GET(req: NextRequest) {
   if (isWhatsappDbConfigured()) {
     try {
       const rows = await listWhatsappLeads(since);
-      leads = leads.concat(rows.map(whatsappToLead));
+      raw = raw.concat(rows.map(whatsappToLead));
     } catch (err) {
       const message = safeErrorMessage(err);
       console.error("Indwe leads read failed for type=whatsapp:", message);
       failed.push({ type: "whatsapp", error: message });
     }
   }
+
+  // One derivation for every route, so a golfer cannot be identified one way as
+  // a course entry and another way as a completed WhatsApp profile.
+  let leads: Lead[] = raw.map((l) => ({ ...l, personId: personIdForMobile(l.mobile) }));
 
   if (typeFilter) leads = leads.filter((l) => l.type === typeFilter);
 
