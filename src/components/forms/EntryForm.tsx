@@ -130,51 +130,6 @@ export default function EntryForm() {
             );
           })}
         </div>
-
-        {/* Membership upsell — recurring monthly subscription via PayFast */}
-        <div className="mt-4">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="flex-1 h-px bg-green-dark/15" />
-            <span className="text-[10px] uppercase tracking-widest text-charcoal-light/50 font-semibold">
-              or
-            </span>
-            <div className="flex-1 h-px bg-green-dark/15" />
-          </div>
-          <button
-            type="button"
-            onClick={onJoinClub}
-            disabled={memberPending || pending}
-            className="block w-full rounded-xl bg-gradient-to-br from-gold to-gold-light hover:from-gold-light hover:to-gold disabled:opacity-70 disabled:cursor-not-allowed p-5 text-center shadow-lg ring-2 ring-gold/40 transition-all hover:scale-[1.01] hover:shadow-xl"
-          >
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-green-dark/80">
-              {memberPending ? "Redirecting to PayFast…" : "Join the Club"}
-            </p>
-            <p className="font-heading text-2xl text-green-dark uppercase tracking-wide mt-1.5">
-              R{MEMBERSHIP.amount}<span className="text-sm">/month</span>
-            </p>
-            <p className="text-xs font-medium text-green-dark/85 mt-1">
-              {MEMBERSHIP.pitch}
-            </p>
-
-            {/* Trust signals — stacked rows on phone, 3-up on tablet+ where each
-                column has room for a single line. Pushed to md: so phones in
-                landscape (~640–768) don't squeeze into cramped 3-col. */}
-            <ul className="mt-4 pt-3 border-t border-green-dark/10 grid grid-cols-1 md:grid-cols-3 gap-y-2 md:gap-x-3 md:gap-y-0 text-[11px] text-green-dark/85">
-              <li className="flex items-center justify-center gap-2 md:flex-col md:gap-1.5">
-                <Shield className="w-4 h-4 flex-shrink-0" />
-                <span>Insurance-backed {MEMBERSHIP.prize}</span>
-              </li>
-              <li className="flex items-center justify-center gap-2 md:flex-col md:gap-1.5">
-                <ShieldCheck className="w-4 h-4 flex-shrink-0" />
-                <span>Cancel anytime — email us</span>
-              </li>
-              <li className="flex items-center justify-center gap-2 md:flex-col md:gap-1.5">
-                <Lock className="w-4 h-4 flex-shrink-0" />
-                <span>Card details never stored</span>
-              </li>
-            </ul>
-          </button>
-        </div>
       </Field>
 
       <Field label="Golf Course" name="course" required error={errors.course}>
@@ -227,6 +182,56 @@ export default function EntryForm() {
         <p className="text-xs text-charcoal-light/60 mt-3">
           Secure payment by PayFast. Card, EFT, SnapScan, Zapper.
         </p>
+      </div>
+
+      {/* Membership upsell — recurring monthly subscription via PayFast.
+          Sits below the pay button, not above it: a golfer at a tee box is
+          here to buy one swing, and a second price between them and the
+          fields they have to fill in is a decision they did not come to make.
+          As an alternative offered after the primary action it still reads as
+          "or", which is what it is. */}
+      <div className="pt-4">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="flex-1 h-px bg-green-dark/15" />
+          <span className="text-[10px] uppercase tracking-widest text-charcoal-light/50 font-semibold">
+            or
+          </span>
+          <div className="flex-1 h-px bg-green-dark/15" />
+        </div>
+        <button
+          type="button"
+          onClick={onJoinClub}
+          disabled={memberPending || pending}
+          className="block w-full rounded-xl bg-gradient-to-br from-gold to-gold-light hover:from-gold-light hover:to-gold disabled:opacity-70 disabled:cursor-not-allowed p-5 text-center shadow-lg ring-2 ring-gold/40 transition-all hover:scale-[1.01] hover:shadow-xl"
+        >
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-green-dark/80">
+            {memberPending ? "Redirecting to PayFast…" : "Join the Club"}
+          </p>
+          <p className="font-heading text-2xl text-green-dark uppercase tracking-wide mt-1.5">
+            R{MEMBERSHIP.amount}<span className="text-sm">/month</span>
+          </p>
+          <p className="text-xs font-medium text-green-dark/85 mt-1">
+            {MEMBERSHIP.pitch}
+          </p>
+
+          {/* Trust signals — stacked rows on phone, 3-up on tablet+ where each
+              column has room for a single line. Pushed to md: so phones in
+              landscape (~640–768) don't squeeze into cramped 3-col. */}
+          <ul className="mt-4 pt-3 border-t border-green-dark/10 grid grid-cols-1 md:grid-cols-3 gap-y-2 md:gap-x-3 md:gap-y-0 text-[11px] text-green-dark/85">
+            <li className="flex items-center justify-center gap-2 md:flex-col md:gap-1.5">
+              <Shield className="w-4 h-4 flex-shrink-0" />
+              <span>Insurance-backed {MEMBERSHIP.prize}</span>
+            </li>
+            <li className="flex items-center justify-center gap-2 md:flex-col md:gap-1.5">
+              <ShieldCheck className="w-4 h-4 flex-shrink-0" />
+              <span>Cancel anytime — email us</span>
+            </li>
+            <li className="flex items-center justify-center gap-2 md:flex-col md:gap-1.5">
+              <Lock className="w-4 h-4 flex-shrink-0" />
+              <span>Card details never stored</span>
+            </li>
+          </ul>
+        </button>
       </div>
     </form>
   );
