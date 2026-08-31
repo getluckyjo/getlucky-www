@@ -30,9 +30,21 @@ import { isDbConfigured, getEntryPaymentHealth } from "@/lib/db";
  * STUCK_PENDING_HOURS: a golfer pays within a minute of submitting. A row still
  * `pending` after this long either never paid or — the dangerous case — paid
  * into an ITN we failed to record.
+ *
+ * STUCK_PENDING_WINDOW_HOURS: how far back the stuck count reaches. This bound
+ * is the whole point of the check. An abandoned checkout stays `pending` for
+ * ever, so an unbounded count only ever grows: by 31 Aug 2026 it stood at 163
+ * and had been failing this endpoint every single day since the check was
+ * added on 19 August. A signal that is always red is a signal nobody reads —
+ * which is precisely how the July–August ITN outage ran for nineteen days.
+ *
+ * Bounded, the check answers the question actually worth waking someone for:
+ * is a pile of unpaid entries building up *right now*. The cumulative figure
+ * is still reported, as `pending_backlog`, but it never alarms.
  */
 const PAID_WINDOW_DAYS = 3;
 const STUCK_PENDING_HOURS = 24;
+const STUCK_PENDING_WINDOW_HOURS = 72;
 const STUCK_PENDING_ALERT_THRESHOLD = 3;
 
 export const runtime = "nodejs";
@@ -161,8 +173,9 @@ export async function GET() {
     const now = Date.now();
     const sinceISO = new Date(now - PAID_WINDOW_DAYS * 86400_000).toISOString();
     const stuckBeforeISO = new Date(now - STUCK_PENDING_HOURS * 3600_000).toISOString();
+    const stuckAfterISO = new Date(now - STUCK_PENDING_WINDOW_HOURS * 3600_000).toISOString();
     try {
-      const health = await getEntryPaymentHealth(sinceISO, stuckBeforeISO);
+      const health = await getEntryPaymentHealth(sinceISO, stuckBeforeISO, stuckAfterISO);
       checks.push({
         name: "entry_payments_flowing",
         // Silence is only a failure if there was something to be paid for.
@@ -172,7 +185,17 @@ export async function GET() {
       checks.push({
         name: "stuck_pending_entries",
         ok: health.stuckPending < STUCK_PENDING_ALERT_THRESHOLD,
-        detail: `${health.stuckPending} entries still pending after ${STUCK_PENDING_HOURS}h`,
+        detail:
+          `${health.stuckPending} entries created in the last ${STUCK_PENDING_WINDOW_HOURS}h ` +
+          `and still pending after ${STUCK_PENDING_HOURS}h`,
+      });
+      // Never alarms. Reported so the cumulative figure stays visible without
+      // holding the endpoint permanently red — most of it is ordinary
+      // abandoned checkouts, which no one can act on.
+      checks.push({
+        name: "pending_backlog",
+        ok: true,
+        detail: `${health.pendingBacklog} entries pending in total (all time, informational)`,
       });
     } catch (err) {
       checks.push({
