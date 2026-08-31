@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ROUTES } from "@/lib/constants";
+import { isDbConfigured, getEntry, entryToSheet } from "@/lib/db";
 import { readSubmissions } from "@/lib/sheets";
 
 export const metadata: Metadata = {
@@ -24,14 +25,33 @@ export default async function FormSuccessPage({
   const ref = params.ref || "";
 
   // Best-effort lookup of the entry row so we can show course + prize.
-  // If the Sheet isn't reachable we degrade gracefully and just show the ref.
+  //
+  // Postgres when configured: `reference` is unique, so this is a single
+  // indexed row. It used to read the ENTIRE entry tab out of the Apps Script
+  // and scan it in memory for one match — on the page a golfer lands on the
+  // moment they have paid, with a tab that only ever grows (163 rows and
+  // counting) and an 8-second script timeout in front of it. The slowest page
+  // to render was the one shown to the person who had just given us money.
+  //
+  // Sheets stays as the fallback for the un-migrated case, matching what
+  // /api/payfast/notify does. Either path yields a Sheet-shaped row so the
+  // markup below is unchanged.
+  //
+  // Still best-effort: if neither source answers we show the reference alone
+  // rather than an error. A golfer who has paid should never see a failure
+  // page because a lookup for decoration did not resolve.
   let row: Record<string, string> | null = null;
   if (ref) {
     try {
-      const rows = await readSubmissions("entry");
-      row = rows.find((r) => r.Reference === ref) || null;
+      if (isDbConfigured()) {
+        const rec = await getEntry(ref);
+        row = rec ? entryToSheet(rec) : null;
+      } else {
+        const rows = await readSubmissions("entry");
+        row = rows.find((r) => r.Reference === ref) || null;
+      }
     } catch {
-      // Apps Script unreachable — render minimally.
+      // Neither source answered — render minimally.
     }
   }
 
