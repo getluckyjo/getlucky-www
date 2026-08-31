@@ -58,8 +58,6 @@ export default function EntryForm() {
     const payload = {
       entryAmount: Number(fd.get("entryAmount") || 0),
       course: String(fd.get("course") || ""),
-      name: String(fd.get("name") || ""),
-      email: String(fd.get("email") || ""),
       mobile: String(fd.get("mobile") || ""),
       consentWhatsApp: fd.get("consentWhatsApp") === "on",
       consentTerms: fd.get("consentTerms") === "on",
@@ -183,13 +181,9 @@ export default function EntryForm() {
         <Select name="course" required options={COURSES} placeholder="Select your course" />
       </Field>
 
-      <Field label="Name" name="name" required error={errors.name}>
-        <Input name="name" required autoComplete="name" placeholder="Full name" />
-      </Field>
-
-      <Field label="Email Address" name="email" required error={errors.email}>
-        <Input name="email" type="email" required autoComplete="email" placeholder="you@example.com" />
-      </Field>
+      {/* Name and email are not asked here — PayFast collects them at checkout
+          and returns them in its notification, so asking would be two fields of
+          friction at a tee box for data we are handed a minute later. */}
 
       <Field label="Mobile Number" name="mobile" required error={errors.mobile}>
         <Input name="mobile" type="tel" required autoComplete="tel" placeholder="+27 XX XXX XXX" inputMode="tel" />

@@ -229,6 +229,23 @@ export async function getEntry(reference: string): Promise<EntryRow | null> {
   return (data as EntryRow) ?? null;
 }
 
+/**
+ * Write the buyer's name and email onto a paid entry.
+ *
+ * /form does not ask for either — PayFast collects them on its own checkout and
+ * returns them in the ITN. The caller decides what to include, and should only
+ * pass a field that is currently empty on the row: this overwrites whatever is
+ * there, so it is the caller's job not to clobber a real value with a worse one.
+ */
+export async function backfillEntryContact(
+  reference: string,
+  patch: { name?: string; email?: string },
+): Promise<void> {
+  if (!patch.name && !patch.email) return;
+  const { error } = await db().from("entries").update(patch).eq("reference", reference);
+  if (error) throw new Error(`db.backfillEntryContact: ${error.message}`);
+}
+
 export async function listVouchers(sinceISO?: string): Promise<VoucherRow[]> {
   let q = db().from("vouchers").select("*").order("created_at", { ascending: false });
   if (sinceISO) q = q.gte("created_at", sinceISO);

@@ -201,13 +201,24 @@ export const voucherSchema = z
 // consentCommunication is omitted rather than removed from clubMemberFields,
 // which the membership form still shares and still renders. The entry forms ask
 // one consent question now, and it is the WhatsApp one.
+/**
+ * The paid course entry at /form.
+ *
+ * Name and email are deliberately NOT asked. A golfer filling this in is
+ * standing at a tee box on a phone, and PayFast returns both in its ITN — so
+ * asking is two fields of friction for data we are handed a minute later.
+ * /api/payfast/notify writes them onto the entry row when the payment lands.
+ *
+ * Only this schema drops them. /form-2 (free entry) has no payment step and
+ * therefore nothing to backfill from, so it still asks.
+ */
 export const entrySchema = z.object({
   entryAmount: z.coerce.number().refine(
     (v) => tierEntries.includes(v),
     { message: "Choose an entry amount" },
   ),
   ...clubMemberFields,
-}).omit({ consentCommunication: true });
+}).omit({ consentCommunication: true, name: true, email: true });
 export type EntryInput = z.infer<typeof entrySchema>;
 
 // /form-2 — free entry for sponsored/corporate events

@@ -64,8 +64,9 @@ export async function POST(req: NextRequest) {
     Amount: d.entryAmount,
     Prize: tier.prize,
     Course: d.course,
-    Name: d.name,
-    Email: d.email || "",
+    // Filled in by /api/payfast/notify from the PayFast notification.
+    Name: "",
+    Email: "",
     Mobile: d.mobile,
     Source: source,
     "PayFast PaymentID": "",
@@ -85,8 +86,10 @@ export async function POST(req: NextRequest) {
         amount: d.entryAmount,
         prize: tier.prize,
         course: d.course,
-        name: d.name,
-        email: d.email || null,
+        // Not asked on this form. Backfilled at payment from the PayFast
+        // notification, which carries name_first, name_last and email_address.
+        name: null,
+        email: null,
         mobile: d.mobile,
         source,
         // Recorded here, acted on at payment. The handoff to the WhatsApp
@@ -141,8 +144,10 @@ export async function POST(req: NextRequest) {
       itemName: `${tier.label} — Get Lucky Hole-in-One Challenge`,
       itemDescription: `Course entry for ${d.course} on ${entryDate}, win ${tier.prize}`,
       reference,
-      buyerName: d.name,
-      buyerEmail: d.email || "",
+      // Left blank on purpose: PayFast prompts for them on its own checkout,
+      // which is a page the golfer is already on.
+      buyerName: "",
+      buyerEmail: "",
       buyerMobile: d.mobile,
       customStr1: d.course,
       customStr2: `entry:${entryDate}`,

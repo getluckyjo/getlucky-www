@@ -11,6 +11,7 @@ import {
   getEntry,
   voucherToSheet,
   entryToSheet,
+  backfillEntryContact,
   type EntryRow,
 } from "@/lib/db";
 import { notifyWhatsAppChannel } from "@/lib/whatsapp";
@@ -57,6 +58,12 @@ export async function POST(req: NextRequest) {
   const signature = fields.signature || "";
   const amountGross = fields.amount_gross || "";
   const pfPaymentId = fields.pf_payment_id || "";
+
+  // /form no longer asks for a name or an email — PayFast collects both on its
+  // own checkout, which is a page the golfer is already on, and returns them
+  // here. This is the only place they enter our records.
+  const itnName = [fields.name_first, fields.name_last].filter(Boolean).join(" ").trim();
+  const itnEmail = (fields.email_address || "").trim();
 
   // 0. Source IP (defence-in-depth). Vercel puts the real client IP first in
   //    x-forwarded-for. Only reject when we positively identify a non-PayFast
@@ -205,6 +212,10 @@ export async function POST(req: NextRequest) {
   await updateVoucherStatus(reference, {
     Status: "paid",
     "PayFast PaymentID": pfPaymentId,
+    // Entry rows are written with blank Name/Email and filled in here. Voucher
+    // rows use different column names and already carry their buyer's details.
+    ...(tab === "entry" && itnName ? { Name: itnName } : {}),
+    ...(tab === "entry" && itnEmail ? { Email: itnEmail } : {}),
   }).catch((err) => reportWriteFailure("Sheets paid update", reference, tab, err));
 
   // Idempotency gate: markPaid returns true only on the first not-paid → paid
@@ -222,6 +233,31 @@ export async function POST(req: NextRequest) {
   }
   if (!firstPaidTransition) {
     return new Response("OK", { status: 200 });
+  }
+
+  // Backfill Postgres before anything downstream reads the row: the ops
+  // notification, the WhatsApp handoff and the Indwe feed all want a name.
+  // Only fills what is empty — a value already on the row is never clobbered.
+  if (tab === "entry" && entryRec && isDbConfigured()) {
+    const patch: { name?: string; email?: string } = {};
+    if (!entryRec.name && itnName) patch.name = itnName;
+    if (!entryRec.email && itnEmail) patch.email = itnEmail;
+    if (patch.name || patch.email) {
+      const written = await backfillEntryContact(reference, patch).then(
+        () => true,
+        (err) => {
+          console.error("PayFast ITN entry contact backfill failed", { reference, err });
+          void reportWriteFailure("Postgres backfillEntryContact", reference, tab, err);
+          return false;
+        },
+      );
+      // Carry the values locally either way. The money is recorded and the
+      // golfer is owed their confirmation; a failed write should not also
+      // strip the name off the email and the WhatsApp handoff.
+      entryRec = { ...entryRec, ...patch };
+      row = entryToSheet(entryRec);
+      if (!written) console.warn("PayFast ITN using un-persisted contact details", { reference });
+    }
   }
 
   const tier = PRIZE_TIERS.find((t) => t.label === row.Tier);
