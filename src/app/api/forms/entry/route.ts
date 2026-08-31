@@ -4,7 +4,7 @@ import { appendSubmission } from "@/lib/sheets";
 import { isDbConfigured, createEntry } from "@/lib/db";
 import { buildPaymentRequest, processUrl } from "@/lib/payfast";
 import { PRIZE_TIERS } from "@/lib/constants";
-import { notifyWhatsAppChannel } from "@/lib/whatsapp";
+import { CONSENT_FORM_VERSION } from "@/lib/whatsapp";
 
 export const runtime = "nodejs";
 
@@ -89,6 +89,11 @@ export async function POST(req: NextRequest) {
         email: d.email || null,
         mobile: d.mobile,
         source,
+        // Recorded here, acted on at payment. The handoff to the WhatsApp
+        // channel happens in /api/payfast/notify once the money has actually
+        // arrived, and by then the tick is only knowable if we stored it.
+        consent_whatsapp: d.consentWhatsApp,
+        consent_form_version: CONSENT_FORM_VERSION,
       });
     } catch (err) {
       console.error("Entry DB write failed", err);
@@ -102,20 +107,20 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // The WhatsApp handoff deliberately does NOT happen here.
+  //
+  // It used to, and it fired on form submission — above the PayFast redirect,
+  // before a cent had moved. A golfer who opened the card page and walked away
+  // was still handed over as an entrant and still chased by the follow-up cron:
+  // a marketing message to somebody who never paid, on an account Meta has
+  // restricted once already. Submitting is not entering.
+  //
+  // It now runs in /api/payfast/notify, inside the gate that fires exactly once
+  // per entry however many times PayFast resends. /form-2 is unchanged — it has
+  // no payment step, so there submission genuinely is the moment.
+
   // Fail closed: if we can't record the pending row, don't take the payment.
   // The env-var guard above only proves the env is set, not that Sheets is up.
-  // Hand the entry to the WhatsApp channel. Deliberately after the entry is
-  // safely recorded and deliberately awaited-but-never-thrown: the golfer is a
-  // redirect away from paying, and a follow-up that does not fire must never
-  // cost them their entry.
-  await notifyWhatsAppChannel({
-    name: d.name,
-    mobile: d.mobile,
-    email: d.email,
-    course: d.course,
-    whatsappOptIn: d.consentWhatsApp,
-  });
-
   try {
     await appendSubmission("entry", sheetRow);
   } catch (err) {

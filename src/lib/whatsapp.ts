@@ -17,9 +17,17 @@
  * (corporate, charity, school, simulator, voucher) keep theirs — they do not
  * feed the WhatsApp channel.
  *
- * **An entry must never fail because this did.** The golfer is mid-payment. A
- * WhatsApp follow-up that does not fire is a lost lead; an entry that does not
- * record is a lost customer and, on the paid form, money taken for nothing.
+ * **An entry must never fail because this did.** A WhatsApp follow-up that does
+ * not fire is a lost lead; an entry that does not record is a lost customer
+ * and, on the paid form, money taken for nothing. So this resolves rather than
+ * throws, always — but it reports what happened, because on the paid path the
+ * caller alerts when a golfer who has actually paid is not handed over.
+ *
+ * **On the paid form this fires when the payment succeeds, not when the form is
+ * submitted.** Submitting is not entering: a golfer who opens the PayFast page
+ * and walks away has not entered anything, and messaging them is a marketing
+ * message to somebody who never paid. /form-2 has no payment step, so there
+ * submission is still the right moment.
  */
 
 /**
@@ -44,7 +52,23 @@ interface EntryHandoff {
   email?: string | null;
   course: string;
   whatsappOptIn: boolean;
+  /**
+   * The wording version the golfer actually saw. Defaults to the current
+   * constant for callers handing over the moment the form is submitted; the
+   * paid path passes the version stored on the entry row instead.
+   */
+  formVersion?: string | null;
 }
+
+/**
+ * What happened, so a caller on the money path can alert instead of guessing.
+ * `skipped` means there was nothing to do — not a failure.
+ */
+export type HandoffResult = {
+  ok: boolean;
+  skipped: boolean;
+  detail?: string;
+};
 
 /** The forms collect one name field; the WhatsApp flow greets people by first name. */
 function splitName(full: string): { firstName: string; lastName?: string } {
@@ -64,12 +88,14 @@ function splitName(full: string): { firstName: string; lastName?: string } {
  *
  * Resolves rather than throws, always.
  */
-export async function notifyWhatsAppChannel(entry: EntryHandoff): Promise<void> {
+export async function notifyWhatsAppChannel(entry: EntryHandoff): Promise<HandoffResult> {
   const url = process.env.WHATSAPP_API_URL;
   const secret = process.env.WHATSAPP_API_SECRET;
 
   // Not configured is a normal state, not an error — the channel is not live yet.
-  if (!url || !secret) return;
+  if (!url || !secret) {
+    return { ok: true, skipped: true, detail: "WHATSAPP_API_URL / _SECRET not set" };
+  }
 
   const { firstName, lastName } = splitName(entry.name);
 
@@ -88,22 +114,24 @@ export async function notifyWhatsAppChannel(entry: EntryHandoff): Promise<void> 
         course: entry.course,
         whatsappOptIn: entry.whatsappOptIn,
         consentWording: WHATSAPP_CONSENT_WORDING,
-        formVersion: CONSENT_FORM_VERSION,
+        formVersion: entry.formVersion || CONSENT_FORM_VERSION,
       }),
-      // The golfer is waiting on a payment redirect. Give up quickly rather
-      // than holding them while a downstream service thinks about it.
+      // PayFast wants a 200 within ten seconds and the ITN handler has already
+      // spent some of that. Give up quickly rather than holding the response
+      // while a downstream service thinks about it.
       signal: AbortSignal.timeout(4000),
     });
 
     if (!response.ok) {
-      console.error("whatsapp handoff rejected", {
-        status: response.status,
-        body: (await response.text()).slice(0, 300),
-      });
+      const body = (await response.text()).slice(0, 300);
+      console.error("whatsapp handoff rejected", { status: response.status, body });
+      return { ok: false, skipped: false, detail: `HTTP ${response.status}: ${body}` };
     }
+
+    return { ok: true, skipped: false };
   } catch (error) {
-    console.error("whatsapp handoff failed", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+    const detail = error instanceof Error ? error.message : String(error);
+    console.error("whatsapp handoff failed", { error: detail });
+    return { ok: false, skipped: false, detail };
   }
 }

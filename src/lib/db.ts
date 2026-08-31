@@ -46,6 +46,12 @@ export type EntryRecord = {
   email?: string | null;
   mobile?: string | null;
   source?: string | null;
+  /**
+   * The WhatsApp opt-in, recorded at capture so the handoff can read it later
+   * when the payment succeeds. Never required, never bundled with entry.
+   */
+  consent_whatsapp?: boolean;
+  consent_form_version?: string | null;
 };
 
 export type VoucherRecord = {
@@ -168,7 +174,7 @@ type VoucherRow = {
   created_at: string;
 };
 
-type EntryRow = {
+export type EntryRow = {
   reference: string;
   status: string | null;
   entry_date: string | null;
@@ -181,6 +187,10 @@ type EntryRow = {
   mobile: string | null;
   source: string | null;
   pf_payment_id: string | null;
+  /** Whether the golfer ticked the WhatsApp box. Unknown counts as false. */
+  consent_whatsapp: boolean | null;
+  /** Which consent wording they were shown, so it can be reconstructed. */
+  consent_form_version: string | null;
   created_at: string;
 };
 

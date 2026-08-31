@@ -11,7 +11,9 @@ import {
   getEntry,
   voucherToSheet,
   entryToSheet,
+  type EntryRow,
 } from "@/lib/db";
+import { notifyWhatsAppChannel } from "@/lib/whatsapp";
 
 export const runtime = "nodejs";
 
@@ -136,12 +138,16 @@ export async function POST(req: NextRequest) {
   //    of this handler is unchanged.
   const tab = tabForReference(reference);
   let row: Record<string, string> | undefined;
+  // Held alongside the Sheet-shaped view: the WhatsApp handoff needs the
+  // consent tick, which entryToSheet does not carry.
+  let entryRec: EntryRow | null = null;
   if (isDbConfigured()) {
     if (tab === "entry") {
       const rec = await getEntry(reference).catch((err) => {
         console.error("PayFast ITN DB getEntry failed", { reference, err });
         return null;
       });
+      entryRec = rec;
       row = rec ? entryToSheet(rec) : undefined;
     } else {
       const rec = await getVoucher(reference).catch((err) => {
@@ -270,20 +276,71 @@ export async function POST(req: NextRequest) {
   // For /form entries, the player is on-course right now — no voucher email needed.
   const shouldSendVoucherEmail = tab === "voucher" && recipientEmail && tier;
 
-  const emailResults = await Promise.allSettled([
-    sendSubmissionNotification("voucher", notifyPayload),
-    shouldSendVoucherEmail
-      ? sendVoucherConfirmation({
-          to: recipientEmail,
-          recipientName,
-          tierLabel: tier!.label,
-          prize: tier!.prize,
-          course: row.Course,
-          reference,
-          amount: Number(row.Amount),
+  // Hand a PAID course entry to the WhatsApp channel. This is the moment the
+  // golfer has actually entered — see the note in /api/forms/entry, where this
+  // used to run on form submission and messaged people who never paid.
+  //
+  // Inside the first-paid-transition gate above, so a resent ITN cannot hand
+  // the same golfer over twice. Handed over whether or not they opted in: the
+  // channel records both and messages only the ones who did, which is how we
+  // can show entering never required agreeing to WhatsApp.
+  //
+  // Runs alongside the emails rather than before them, so its 4s timeout does
+  // not add to the ten seconds PayFast allows for this response.
+  if (tab === "entry" && !entryRec) {
+    // Sheets-only fallback: the Sheet has no consent column, so we cannot know
+    // what the golfer chose and will not message them. Legacy path — Postgres
+    // is configured in production — but say so rather than going quiet.
+    console.warn("PayFast ITN: no DB entry row, skipping WhatsApp handoff", { reference });
+  }
+
+  const handoff =
+    tab === "entry" && entryRec
+      ? notifyWhatsAppChannel({
+          name: entryRec.name || "",
+          mobile: entryRec.mobile || "",
+          email: entryRec.email,
+          course: entryRec.course || "",
+          whatsappOptIn: entryRec.consent_whatsapp === true,
+          formVersion: entryRec.consent_form_version,
         })
-      : Promise.resolve(),
+      : Promise.resolve(null);
+
+  const [emailResults, handoffResult] = await Promise.all([
+    Promise.allSettled([
+      sendSubmissionNotification("voucher", notifyPayload),
+      shouldSendVoucherEmail
+        ? sendVoucherConfirmation({
+            to: recipientEmail,
+            recipientName,
+            tierLabel: tier!.label,
+            prize: tier!.prize,
+            course: row.Course,
+            reference,
+            amount: Number(row.Amount),
+          })
+        : Promise.resolve(),
+    ]),
+    handoff,
   ]);
+
+  // A paid golfer who never reaches the WhatsApp channel is a lead bought and
+  // thrown away — quieter than a failed payment, but it is still money spent.
+  if (handoffResult && !handoffResult.ok) {
+    console.error("PayFast ITN WhatsApp handoff failed", {
+      reference,
+      detail: handoffResult.detail,
+    });
+    await sendOpsAlert({
+      subject: `[ALERT] Paid entry recorded but the WhatsApp handoff failed (${reference})`,
+      heading: "Payment recorded, WhatsApp channel never got the entry",
+      body:
+        "The golfer has paid and the entry is marked paid, so nothing is owed. But the " +
+        "WhatsApp channel was never told, so they will not get the follow-up. Hand it over " +
+        "by hand, or re-POST the entry to the channel's /api/entries.",
+      detail: { reference, tab, detail: handoffResult.detail ?? "(no detail)" },
+    });
+  }
 
   // allSettled swallows rejections by design; say something when it does. A
   // paid golfer whose confirmation silently failed is invisible otherwise.
