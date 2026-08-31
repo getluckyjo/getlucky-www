@@ -54,6 +54,7 @@ Recommended pattern: store the `generatedAt` you receive, pass it back as `since
       "name": "Jane Smith",
       "email": "jane@example.com",
       "mobile": "+27821234567",
+      "personId": "+27821234567",
       "course": "Royal Cape",
       "event": "",
       "status": "paid",
@@ -114,6 +115,20 @@ Recommended pattern: store the `generatedAt` you receive, pass it back as `since
 }
 ```
 
+### One golfer, one `personId`
+
+`id` identifies a **lead**. `personId` identifies the **golfer behind it**.
+
+The same person reaches us by more than one route, and each route mints its own `id`. Someone who signs in at a sponsored golf day arrives as a `free-entry` Warm Lead; if they later take the offer and complete the WhatsApp conversation, they arrive again as a `whatsapp` Quote-Ready Lead with a completely unrelated `id`. Deduping on `id` alone, those look like two different people who happen to share a phone number — and the tier upgrade, which is the point of the whole journey, is invisible.
+
+`personId` is that golfer's mobile number in E.164 form, derived identically on every route. So:
+
+- **Dedupe on `id`** to avoid storing the same lead twice. Unchanged.
+- **Group on `personId`** to see one golfer's history, and to recognise a Warm Lead becoming Quote-Ready rather than filing a duplicate.
+
+> **An empty `personId` means "cannot be linked", not "a new person".**
+> It is empty when the number could not be read confidently — malformed, missing, or not a South African mobile. **Two leads with an empty `personId` are not the same golfer and must not be collapsed into one record.** We would rather not link than link the wrong two people.
+
 ### Field reference
 
 | Field              | Type     | Notes                                                                 |
@@ -129,6 +144,7 @@ Recommended pattern: store the `generatedAt` you receive, pass it back as `since
 | `status`           | enum     | `paid` · `lead` · `pending`. Only `paid` records are returned for `voucher` and `course-entry`. |
 | `source`           | string   | Where the lead came from (`online`, `qr-on-course`, `indwe-microsite`, etc.). |
 | `consent`          | string   | Communications consent. `Yes` / `No` for `risk-review`; empty otherwise. |
+| `personId`         | string   | The golfer behind this lead — their mobile in E.164 (`+27821234567`), derived the same way on every route. Group on this to follow one person across lead types and to spot a tier upgrade. Empty when the number could not be read; empty never means "same person". See above. |
 | `leadStage`        | enum     | Qualification tag, always set: `General Lead` (competition entry — `voucher`, `course-entry`) · `Warm Lead` (sponsored / in-person — `free-entry`, `partner`, `corporate`, `charity`, `simulator`) · `Quote-Ready Lead` (explicit quote intent — `risk-review`, `membership`, `whatsapp`). For `membership`, the broker-switch pipeline state is under `raw.status`. |
 | `address`          | string   | Physical address (Google Places formatted, or free-typed). Captured on `risk-review`. On `whatsapp` it carries the golfer's **province**, which is the only location that conversation asks for. Empty otherwise. |
 | `scheduleFile`     | string   | URL to an uploaded insurance schedule (risk-review only). Empty otherwise. |
