@@ -46,6 +46,12 @@ export type EntryRecord = {
   email?: string | null;
   mobile?: string | null;
   source?: string | null;
+  /**
+   * The WhatsApp opt-in, recorded at capture so the handoff can read it later
+   * when the payment succeeds. Never required, never bundled with entry.
+   */
+  consent_whatsapp?: boolean;
+  consent_form_version?: string | null;
 };
 
 export type VoucherRecord = {
@@ -168,7 +174,7 @@ type VoucherRow = {
   created_at: string;
 };
 
-type EntryRow = {
+export type EntryRow = {
   reference: string;
   status: string | null;
   entry_date: string | null;
@@ -181,6 +187,10 @@ type EntryRow = {
   mobile: string | null;
   source: string | null;
   pf_payment_id: string | null;
+  /** Whether the golfer ticked the WhatsApp box. Unknown counts as false. */
+  consent_whatsapp: boolean | null;
+  /** Which consent wording they were shown, so it can be reconstructed. */
+  consent_form_version: string | null;
   created_at: string;
 };
 
@@ -390,16 +400,28 @@ export type EntryPaymentHealth = {
   created: number;
   /** Entries whose paid_at falls in the window. */
   paid: number;
-  /** Entries still `pending` that are older than the stuck cutoff. */
+  /**
+   * Entries old enough to have paid but still `pending`, counted only inside a
+   * bounded recent window. This is the number that can still be acted on.
+   */
   stuckPending: number;
+  /**
+   * Every `pending` row past the stuck cutoff, with no lower bound.
+   *
+   * Informational only, and never alarms. An abandoned checkout stays `pending`
+   * for ever, so this number only ever grows — alerting on it means alerting
+   * every day regardless of whether anything is wrong.
+   */
+  pendingBacklog: number;
 };
 
 export async function getEntryPaymentHealth(
   sinceISO: string,
   stuckBeforeISO: string,
+  stuckAfterISO: string,
 ): Promise<EntryPaymentHealth> {
   const client = db();
-  const [createdRes, paidRes, stuckRes] = await Promise.all([
+  const [createdRes, paidRes, stuckRes, backlogRes] = await Promise.all([
     client
       .from("entries")
       .select("reference", { count: "exact", head: true })
@@ -408,6 +430,13 @@ export async function getEntryPaymentHealth(
       .from("entries")
       .select("reference", { count: "exact", head: true })
       .gte("paid_at", sinceISO),
+    // Bounded on both sides: old enough to have paid, recent enough to matter.
+    client
+      .from("entries")
+      .select("reference", { count: "exact", head: true })
+      .eq("status", "pending")
+      .lt("created_at", stuckBeforeISO)
+      .gte("created_at", stuckAfterISO),
     client
       .from("entries")
       .select("reference", { count: "exact", head: true })
@@ -415,7 +444,7 @@ export async function getEntryPaymentHealth(
       .lt("created_at", stuckBeforeISO),
   ]);
 
-  for (const res of [createdRes, paidRes, stuckRes]) {
+  for (const res of [createdRes, paidRes, stuckRes, backlogRes]) {
     if (res.error) throw new Error(`db.getEntryPaymentHealth: ${res.error.message}`);
   }
 
@@ -423,5 +452,6 @@ export async function getEntryPaymentHealth(
     created: createdRes.count ?? 0,
     paid: paidRes.count ?? 0,
     stuckPending: stuckRes.count ?? 0,
+    pendingBacklog: backlogRes.count ?? 0,
   };
 }
