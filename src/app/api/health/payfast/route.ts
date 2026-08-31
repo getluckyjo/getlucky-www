@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { signFields } from "@/lib/payfast";
 import { isDbConfigured, getEntryPaymentHealth } from "@/lib/db";
+import { readSubmissions } from "@/lib/sheets";
 
 /**
  * Daily PayFast + backend health check.
@@ -118,22 +119,36 @@ export async function GET() {
     });
   }
 
-  // 3. Sheets web app reachable (HEAD to the Apps Script URL)
+  // 3. The Sheet can actually be used, not merely reached.
+  //
+  // This was an unauthenticated HEAD passing on `status < 500`, which meant the
+  // 403 an Apps Script returns to an anonymous HEAD counted as healthy — and it
+  // read green on 31 Aug 2026 while proving nothing. It would also have read
+  // green with the wrong secret, a revoked deployment, or a script throwing on
+  // every call, because none of those change the status of a HEAD.
+  //
+  // That is the same mistake this endpoint was rewritten to stop making: the
+  // canary measured whether PayFast was reachable and whether an MD5 computed,
+  // both true throughout the three weeks every ITN was being rejected.
+  //
+  // The question worth asking is not "does the host answer" but "would an entry
+  // be written right now" — /api/forms/entry fails closed on Sheets and returns
+  // 503 to the golfer if appendSubmission throws. So this calls the real thing:
+  // real URL, real secret, redirects followed, and both a non-2xx and a
+  // script-level error thrown rather than swallowed. `since` is set to now so
+  // the script has nothing to return and the check stays cheap.
+  //
+  // An empty result is a pass. We are testing the pipe, not its contents.
   try {
-    const url = process.env.SHEETS_WEBAPP_URL;
-    if (!url) throw new Error("SHEETS_WEBAPP_URL not set");
-    const res = await fetch(url, {
-      method: "HEAD",
-      signal: AbortSignal.timeout(5000),
-    });
+    const rows = await readSubmissions("entry", new Date().toISOString());
     checks.push({
-      name: "sheets_reachable",
-      ok: res.status < 500,
-      detail: `HTTP ${res.status}`,
+      name: "sheets_working",
+      ok: true,
+      detail: `authenticated read OK (${rows.length} rows since now)`,
     });
   } catch (err) {
     checks.push({
-      name: "sheets_reachable",
+      name: "sheets_working",
       ok: false,
       detail: err instanceof Error ? err.message : String(err),
     });
