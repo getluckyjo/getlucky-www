@@ -1,6 +1,22 @@
 # Indwe — Get Lucky Golf Club Leads API
 
-Hi Wilhelm — this is the lead feed for the Indwe sponsorship. One read-only HTTPS endpoint, one Bearer token, every lead captured across the Get Lucky Golf Club website and on-course QR-code forms returned as normalised JSON.
+Hi Wilhelm — this is the lead feed for the Indwe sponsorship. One read-only HTTPS endpoint, one Bearer token, normalised JSON.
+
+---
+
+## What changed — the feed now sends quote-ready leads only
+
+**Previously** this endpoint returned every lead captured across the website and the on-course QR forms: competition entries, vouchers, corporate enquiries, the lot. Most of those were people who had shown no insurance intent at all, and you were left to sort them.
+
+**Now** the default response carries one kind of lead: a golfer who took the Indwe offer inside WhatsApp, answered the underwriting questions, and consented explicitly to their details reaching you. Type `whatsapp`, tier `Quote-Ready Lead`.
+
+Nothing upstream has changed. Entries still come in from the course QR forms and still flow into the WhatsApp conversation. What changed is that only the ones who finish it are sent to you.
+
+**Two things to expect.**
+
+The volume will be much lower and the quality much higher. That is the intent — you are receiving the end of the funnel, not the top of it.
+
+And **`count` will be `0` until the first golfer completes the journey.** No golfer has completed it yet, so a zero response is the honest current state rather than a broken feed. Every response now carries a `deliveredTypes` array saying what was asked for, so the two can be told apart. If you ever want the wider set back, ask for it with `?type=` — nothing has been deleted.
 
 ---
 
@@ -34,7 +50,9 @@ it is captioned as.
 | Param  | Example                          | Effect                                                              |
 |--------|----------------------------------|---------------------------------------------------------------------|
 | `since`| `2026-05-01T00:00:00Z`           | Only return leads with a Timestamp >= this ISO 8601 value.          |
-| `type` | `voucher`                        | Filter to one type. Values: `voucher`, `course-entry`, `free-entry`, `partner`, `corporate`, `charity`, `school`, `simulator`, `tour`, `risk-review`, `membership`, `whatsapp`. |
+| `type` | `course-entry`                   | Ask for one specific type instead of the default. Values: `voucher`, `course-entry`, `free-entry`, `partner`, `corporate`, `charity`, `school`, `simulator`, `tour`, `risk-review`, `membership`, `whatsapp`. |
+
+Note that `type` now **widens** rather than narrows. Omit it and you get quote-ready WhatsApp leads only; pass it and you get exactly the type you asked for. Every type listed above is still captured and still available on request.
 
 Recommended pattern: store the `generatedAt` you receive, pass it back as `since` next poll.
 
@@ -46,6 +64,7 @@ Recommended pattern: store the `generatedAt` you receive, pass it back as `since
 {
   "count": 2,
   "generatedAt": "2026-05-04T17:32:11.482Z",
+  "deliveredTypes": ["whatsapp"],
   "leads": [
     {
       "id": "GL-VCH-7H3K9",
@@ -113,6 +132,10 @@ Recommended pattern: store the `generatedAt` you receive, pass it back as `since
   ]
 }
 ```
+
+> The worked examples below show several lead types, because each is still
+> reachable with `?type=`. On the default response you will see `whatsapp`
+> leads only — the section further down describes exactly what one carries.
 
 ### Field reference
 

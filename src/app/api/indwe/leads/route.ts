@@ -55,6 +55,26 @@ type Lead = {
 type IndweType = Exclude<SubmissionType, "agency">;
 const TYPES: IndweType[] = ["voucher", "entry", "freeEntry", "partner", "corporate", "charity", "school", "simulator", "tour", "riskReview"];
 
+/**
+ * What the feed delivers when no `type` is asked for.
+ *
+ * Indwe receive the qualified end of the funnel only: a golfer who took the
+ * offer inside WhatsApp, answered the underwriting questions and said yes,
+ * explicitly, to their details being shared. That is what `whatsapp` means —
+ * a `lead_pushes` row, written only after the consent gate.
+ *
+ * Nothing upstream changed. Entries still arrive from /form and /form-2 and
+ * still flow into the WhatsApp journey exactly as before; this changes who
+ * reaches Indwe, not who is captured. The other types remain reachable by
+ * asking for them with `?type=`, and /ops/indwe still reports the whole funnel
+ * because it reads the databases directly rather than through this route.
+ *
+ * Expect a count of zero until the journey produces its first completion. That
+ * is the honest state, not a fault — `deliveredTypes` on every response says
+ * what was asked for, so an empty feed can be told apart from a broken one.
+ */
+const DEFAULT_DELIVERED: Lead["type"][] = ["whatsapp"];
+
 const TYPE_LABEL: Record<IndweType, Lead["type"]> = {
   voucher: "voucher",
   entry: "course-entry",
@@ -251,9 +271,15 @@ export async function GET(req: NextRequest) {
   const url = new URL(req.url);
   const since = url.searchParams.get("since") || undefined;
   const typeFilter = url.searchParams.get("type") as Lead["type"] | null;
+  const wanted = new Set<Lead["type"]>(typeFilter ? [typeFilter] : DEFAULT_DELIVERED);
+
+  // Only read what will be delivered. Filtering after the fact would run every
+  // query and throw the rows away, which on the default path is ten database
+  // reads for a response that carries none of them.
+  const webTypes = TYPES.filter((t) => wanted.has(TYPE_LABEL[t]));
 
   const settled = await Promise.allSettled(
-    TYPES.map(async (t) => {
+    webTypes.map(async (t) => {
       const rows = await rowsForType(t, since);
       // Payment is not a prerequisite for a lead. Vouchers and course entries
       // flow to Indwe the moment they're captured, carrying their real status
@@ -267,7 +293,7 @@ export async function GET(req: NextRequest) {
   const failed: { type: string; error: string }[] = [];
   const buckets: Lead[][] = [];
   settled.forEach((result, i) => {
-    const t = TYPES[i];
+    const t = webTypes[i];
     if (result.status === "fulfilled") {
       buckets.push(result.value);
     } else {
@@ -277,7 +303,10 @@ export async function GET(req: NextRequest) {
     }
   });
 
-  if (failed.length === TYPES.length) {
+  // Every requested web read failed — that is a broken feed, not an empty one.
+  // Guarded on webTypes rather than TYPES: on the default path webTypes is
+  // empty, and 0 === 0 would turn a perfectly healthy response into a 500.
+  if (webTypes.length > 0 && failed.length === webTypes.length) {
     return NextResponse.json({ error: "Failed to read leads", failed }, { status: 500 });
   }
 
@@ -287,7 +316,7 @@ export async function GET(req: NextRequest) {
   // project. Optional (skipped when its env vars aren't set) and best-effort —
   // a read failure here degrades to `partial` rather than failing the whole
   // response, since the core lead types above already succeeded.
-  if (isSubsDbConfigured()) {
+  if (wanted.has("membership") && isSubsDbConfigured()) {
     try {
       const rows = await listIndweLeads(since);
       leads = leads.concat(rows.map(membershipToLead));
@@ -302,7 +331,7 @@ export async function GET(req: NextRequest) {
   // and best-effort for the same reason as membership above: a read failure
   // here degrades the response to `partial` rather than failing the types that
   // already succeeded.
-  if (isWhatsappDbConfigured()) {
+  if (wanted.has("whatsapp") && isWhatsappDbConfigured()) {
     try {
       const rows = await listWhatsappLeads(since);
       leads = leads.concat(rows.map(whatsappToLead));
@@ -313,13 +342,18 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  if (typeFilter) leads = leads.filter((l) => l.type === typeFilter);
+  // Belt and braces. Nothing outside `wanted` should have been read at all,
+  // so this only fires if a type label and its fetch ever drift apart.
+  leads = leads.filter((l) => wanted.has(l.type));
 
   leads.sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1));
 
   return NextResponse.json({
     count: leads.length,
     generatedAt: new Date().toISOString(),
+    // Says what was asked for, so `count: 0` reads as "none qualified yet"
+    // rather than "the feed is broken".
+    deliveredTypes: [...wanted],
     leads,
     ...(failed.length > 0 && { partial: true, failed }),
   });
