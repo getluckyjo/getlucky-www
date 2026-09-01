@@ -16,10 +16,25 @@ export async function POST(req: NextRequest) {
 
   const parsed = freeEntrySchema.safeParse(body);
   if (!parsed.success) {
+    const fieldErrors = parsed.error.flatten().fieldErrors;
+    // Field names only, never values.
+    //
+    // On 1 Sep 2026 two entries were rejected here a minute apart, interleaved
+    // with PayFast notifications from what looked like the same golfer, and
+    // afterwards there was no way to tell which field had failed — nothing was
+    // written down. This is the door money comes through: an ordinary mistyped
+    // number and a validator rejecting something golfers legitimately type look
+    // identical from outside, and only one of them is our problem.
+    //
+    // The form sets noValidate, so the browser does not block an incomplete
+    // submit and a 400 here is a normal thing to see. It is the *pattern* that
+    // matters — the same field failing repeatedly is a bug, a spread of fields
+    // is people being people. Values are personal data and stay out of the log.
+    console.warn("Free entry form rejected", { fields: Object.keys(fieldErrors) });
     return NextResponse.json(
       {
         error: "Please check the highlighted fields.",
-        fieldErrors: flattenErrors(parsed.error.flatten().fieldErrors),
+        fieldErrors: flattenErrors(fieldErrors),
       },
       { status: 400 },
     );
