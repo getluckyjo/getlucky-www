@@ -121,6 +121,24 @@ async function rowsForType(t: IndweType, since?: string): Promise<Record<string,
   }
 }
 
+/**
+ * Can Indwe do anything with this lead?
+ *
+ * A name or an email is the bar. A mobile alone is not enough — that was the
+ * complaint — but a Quote-Ready lead is never withheld for being thin.
+ *
+ * That exemption is deliberate. A `whatsapp` lead is a golfer who answered the
+ * underwriting questions and consented explicitly to being shared, and its name
+ * comes from a lateral join to `entries` that returns empty if it ever misses.
+ * Losing the most valuable lead in the feed to a failed join, silently, is a
+ * far worse outcome than passing on a thin one — and `personId` gives Indwe the
+ * mobile in a form they can match on.
+ */
+function isDeliverable(l: Lead): boolean {
+  if (l.name.trim() || l.email.trim()) return true;
+  return l.leadStage === "Quote-Ready Lead";
+}
+
 function pick(row: Record<string, string>, keys: string[]): string {
   for (const k of keys) {
     const v = row[k];
@@ -338,6 +356,30 @@ export async function GET(req: NextRequest) {
   // a course entry and another way as a completed WhatsApp profile.
   let leads: Lead[] = raw.map((l) => ({ ...l, personId: personIdForMobile(l.mobile) }));
 
+  // Withhold a lead nobody can act on.
+  //
+  // /form stopped asking for a name and an email on 31 Aug 2026 — PayFast
+  // returns both, and they are written onto the entry when the payment lands.
+  // But the entry row is created at form submit, so for the minute or two
+  // between submitting and paying it holds a mobile number and nothing else.
+  // This feed deliberately sends pending entries so Indwe see the whole funnel,
+  // and Indwe poll every twelve to fifteen minutes — so any entry submitted
+  // shortly before a poll is captured in that state, including one that goes on
+  // to pay perfectly. It is a race, not only an abandoned checkout.
+  //
+  // Indwe reported six such leads on 1 Sep. Five shared one mobile and were
+  // captured 08:58–09:00 SAST, which is 06:58–07:00 UTC — the same three
+  // minutes in which four PayFast notifications arrived and were accepted. They
+  // were caught mid-payment, not after walking away.
+  //
+  // Sending the whole funnel was decided when a pending entry still carried a
+  // name, an email and a mobile — a lead somebody could work. That premise
+  // changed; this restores it rather than reversing the decision. Contactable
+  // pending entries still flow, and a withheld one appears on the next poll
+  // once payment fills in the missing detail.
+  const withheld = leads.filter((l) => !isDeliverable(l)).length;
+  leads = leads.filter(isDeliverable);
+
   if (typeFilter) leads = leads.filter((l) => l.type === typeFilter);
 
   leads.sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1));
@@ -345,6 +387,10 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     count: leads.length,
     generatedAt: new Date().toISOString(),
+    // Reported rather than dropped quietly. A feed that silently sheds rows is
+    // how this project has lost things before; a number here means the next
+    // person to ask "where did that lead go" has an answer.
+    withheldIncomplete: withheld,
     leads,
     ...(failed.length > 0 && { partial: true, failed }),
   });
