@@ -202,7 +202,19 @@ export default function EntryForm() {
           type="button"
           onClick={onJoinClub}
           disabled={memberPending || pending}
-          className="block w-full rounded-xl bg-gradient-to-br from-gold to-gold-light hover:from-gold-light hover:to-gold disabled:opacity-70 disabled:cursor-not-allowed p-5 text-center shadow-lg ring-2 ring-gold/40 transition-all hover:scale-[1.01] hover:shadow-xl"
+          /* Deliberately quieter than the pay button above it.
+             Moving this below the pay button was not enough on its own. It was
+             a filled gold gradient with shadow-lg, ring-2 and p-5, while
+             SubmitButton is flat green with no shadow and no ring — so the
+             secondary action was the loudest thing on the page, and on a phone
+             both are full width. A golfer reaching for "pay R150" met a
+             R149/month subscription first.
+             Outlined and tinted rather than filled: no shadow, no ring, no
+             hover scale. Still obviously a distinct offer worth tapping, just no
+             longer competing with the thing they came to do. If this ever
+             regains a gradient or a shadow, hold it next to SubmitButton before
+             shipping. */
+          className="block w-full rounded-xl border border-gold bg-gold/10 hover:bg-gold/20 disabled:opacity-70 disabled:cursor-not-allowed p-4 text-center transition-colors"
         >
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-green-dark/80">
             {memberPending ? "Redirecting to PayFast…" : "Join the Club"}
