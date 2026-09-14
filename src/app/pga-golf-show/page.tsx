@@ -67,20 +67,20 @@ export default function PgaGolfShowPage() {
             One Shot at {PGA_GOLF_SHOW.prize}
           </h1>
           <p className="text-sm sm:text-base text-green-dark/75 mt-3 leading-relaxed">
-            Your name, your number, and a follow on Instagram. Then find the Get Lucky stand and
-            swing.
+            Your name and your number, and a follow on Instagram if you have it. Then find the
+            Get Lucky stand and swing.
           </p>
         </div>
 
         {/* Indwe — headline sponsor, kept small and above the form so it is
             seen before the golfer reads the WhatsApp offer that names it. */}
-        <div className="mb-4 rounded-xl bg-white border border-green-dark/10 px-4 py-3">
+        <div className="mb-4 rounded-xl bg-white border border-green-dark/10 px-6 py-5 sm:py-6 flex justify-center">
           <Image
             src="/images/indwe-sponsor-banner.png"
             alt="Proudly Sponsored by Indwe Risk Services — Authorised Financial Services Provider FSP 3425"
             width={1920}
             height={292}
-            className="w-full h-auto"
+            className="w-full max-w-[360px] h-auto"
             priority
           />
         </div>
