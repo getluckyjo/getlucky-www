@@ -67,8 +67,7 @@ export default function PgaGolfShowPage() {
             One Shot at {PGA_GOLF_SHOW.prize}
           </h1>
           <p className="text-sm sm:text-base text-green-dark/75 mt-3 leading-relaxed">
-            Your name and your number, and a follow on Instagram if you have it. Then find the
-            Get Lucky stand and swing.
+            Your name and your number, and a follow on Instagram if you have it.
           </p>
         </div>
 
