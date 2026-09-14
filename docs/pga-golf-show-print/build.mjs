@@ -86,20 +86,19 @@ function a5({ qr, bleed }) {
 
     <div style="flex:1"></div>
 
-    <div style="text-align:center;padding:0 10mm">
+    <div style="text-align:center;padding:0 14mm;margin-bottom:6mm">
       <div class="eyebrow" style="font-size:6.5pt;opacity:.75">In partnership with</div>
-      <div style="display:flex;justify-content:center;align-items:center;gap:9mm;margin-top:3mm">
-        <img src="${logos.move}" style="height:7.5mm">
-        <img src="${logos.takomo}" style="height:5mm">
-        <img src="${logos.badi}" style="height:6.5mm">
+      <div style="display:flex;justify-content:center;align-items:center;gap:12mm;margin-top:4.5mm">
+        <img src="${logos.move}" style="height:7mm">
+        <img src="${logos.takomo}" style="height:4.6mm">
+        <img src="${logos.badi}" style="height:6.2mm">
       </div>
     </div>
 
-    <div class="card" style="margin:4.5mm 10mm 0;padding:3mm 8mm;display:flex;justify-content:center">
-      <img src="${logos.indwe}" style="height:10mm">
+    <!-- Headline sponsor: a white band across the full width, into the bleed. -->
+    <div style="background:#fff;margin:0 -${b}mm -${b}mm;padding:6mm ${10 + b}mm ${6 + b}mm;display:flex;justify-content:center;border-top:0.25mm solid rgba(25,50,98,0.12)">
+      <img src="${logos.indwe}" style="width:100%;height:auto">
     </div>
-
-    <div class="muted" style="text-align:center;font-size:6pt;margin:3mm 10mm ${6 + b}mm">Free entry. 18 and older. By entering you accept the terms at getluckygolf.co.za/terms.</div>
   </div></body></html>`;
 }
 
@@ -134,13 +133,13 @@ function lanyard({ qr, bleed }) {
 
     <div style="flex:1"></div>
 
-    <div style="display:flex;justify-content:center;align-items:center;gap:4mm;padding:0 5mm">
-      <img src="${logos.move}" style="height:3.6mm">
-      <img src="${logos.takomo}" style="height:2.4mm">
-      <img src="${logos.badi}" style="height:3.2mm">
+    <div style="display:flex;justify-content:center;align-items:center;gap:6mm;margin-bottom:3mm">
+      <img src="${logos.move}" style="height:3.8mm">
+      <img src="${logos.takomo}" style="height:2.5mm">
+      <img src="${logos.badi}" style="height:3.4mm">
     </div>
-    <div class="card" style="margin:2mm 5mm ${4 + b}mm;padding:1.5mm 4mm;display:flex;justify-content:center">
-      <img src="${logos.indwe}" style="height:5mm">
+    <div style="background:#fff;margin:0 -${b}mm -${b}mm;padding:3mm ${5 + b}mm ${3 + b}mm;display:flex;justify-content:center;border-top:0.25mm solid rgba(25,50,98,0.12)">
+      <img src="${logos.indwe}" style="width:100%;height:auto">
     </div>
   </div></body></html>`;
 }
