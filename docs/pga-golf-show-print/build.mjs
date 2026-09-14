@@ -87,8 +87,7 @@ function a5({ qr, bleed }) {
     <div style="flex:1"></div>
 
     <div style="text-align:center;padding:0 14mm;margin-bottom:6mm">
-      <div class="eyebrow" style="font-size:6.5pt;opacity:.75">In partnership with</div>
-      <div style="display:flex;justify-content:center;align-items:center;gap:12mm;margin-top:4.5mm">
+      <div style="display:flex;justify-content:center;align-items:center;gap:12mm">
         <img src="${logos.move}" style="height:7mm">
         <img src="${logos.takomo}" style="height:4.6mm">
         <img src="${logos.badi}" style="height:6.2mm">
