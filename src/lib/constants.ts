@@ -101,4 +101,35 @@ export const ROUTES = {
   voucherCancel: "/buy-a-swing/cancel",
   terms: "/terms",
   privacy: "/privacy",
+  pgaGolfShow: "/pga-golf-show",
+} as const;
+
+/**
+ * The PGA Golf & Lifestyle Show, 18–20 September 2026 — a simulator
+ * hole-in-one at the Get Lucky stand. Free shot at R25,000 for an entry with a
+ * name and a number; no payment step.
+ *
+ * `course` is what the WhatsApp opening reads back to the golfer: the template
+ * says "thanks for entering ... at {{course}}", so it is phrased as a place.
+ *
+ * Sponsor logos are read from public/logos/sponsors/<file>. The strip falls
+ * back to a wordmark for any file that is missing, so a logo can be dropped in
+ * without a code change.
+ */
+export const PGA_GOLF_SHOW = {
+  name: "PGA Golf & Lifestyle Show",
+  year: 2026,
+  dates: "18–20 September 2026",
+  prize: "R25,000",
+  prizeAmount: 25000,
+  course: "the PGA Golf Show",
+  event: "PGA Golf & Lifestyle Show 2026 — Simulator Hole-in-One",
+  source: "getluckygolf.co.za /pga-golf-show",
+  instagramHandle: "getluckygolfclub",
+  sponsors: [
+    { name: "Move Golf", file: "move-golf.png" },
+    { name: "Takomo", file: "takomo.png" },
+    { name: "Badi Golf", file: "badi-golf.png" },
+  ],
+  showLogo: { name: "PGA Golf & Lifestyle Show", file: "pga-golf-show.png" },
 } as const;
