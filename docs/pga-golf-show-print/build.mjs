@@ -62,38 +62,39 @@ function a5({ qr, bleed }) {
     @page { size: ${W}mm ${H}mm; margin: 0; }
     html, body { width: ${W}mm; height: ${H}mm; }
     .page { width: ${W}mm; height: ${H}mm; padding: ${b}mm; }
-    .mast { height: 13mm; padding: 0 10mm; font-size: 8.5pt; margin: -${b}mm -${b}mm 0; padding-top: ${b}mm; padding-left: ${10 + b}mm; padding-right: ${10 + b}mm; height: ${13 + b}mm; }
+    .mast { justify-content: center; font-size: 8pt; letter-spacing: 0.22em; margin: -${b}mm -${b}mm 0; padding-top: ${b}mm; height: ${8 + b}mm; }
   </style></head><body><div class="page">
-    <div class="mast"><span>PGA Golf &amp; Lifestyle Show</span><span style="letter-spacing:0.12em;opacity:.85">18–20 September 2026</span></div>
+    <div class="mast"><span>18–20 September 2026</span></div>
 
-    <div class="lockups" style="gap:6mm;margin-top:7mm">
-      <img src="${logos.pga}" style="height:18mm">
+    <div class="lockups" style="gap:6mm;margin-top:9mm">
+      <img src="${logos.pga}" style="height:19mm">
       <div class="divider" style="height:15mm"></div>
-      <img src="${logos.challenge}" style="height:20mm">
+      <img src="${logos.challenge}" style="height:21mm">
     </div>
 
-    <div style="text-align:center;margin-top:6mm;padding:0 10mm">
+    <div style="text-align:center;margin-top:7mm;padding:0 10mm">
       <div class="eyebrow" style="font-size:8.5pt">Simulator Hole-in-One · Free Entry</div>
-      <div class="heading" style="font-size:38pt;margin-top:2.5mm">One Shot<br>at R25,000</div>
-      <div class="muted" style="font-size:10.5pt;line-height:1.35;margin-top:3mm">Scan, enter your name and number, and swing.<br>No payment. Follow us on Instagram if you have it.</div>
+      <div class="heading" style="font-size:44pt;margin-top:3mm">One Shot<br>at R25,000</div>
+      <div class="muted" style="font-size:10.5pt;line-height:1.35;margin-top:4mm">Scan, enter your name and number, and swing.</div>
     </div>
 
-    <div class="card" style="margin:5mm auto 0;width:76mm;padding:4mm 4mm 3.5mm;text-align:center;border-top:1.4mm solid ${GREEN}">
+    <div class="card" style="margin:6mm auto 0;width:68mm;padding:4mm 4mm 3.5mm;text-align:center;border-top:1.4mm solid ${GREEN}">
       <div class="eyebrow" style="font-size:8pt;margin-bottom:3mm">Scan to enter</div>
-      <div class="qr" style="width:54mm;height:54mm;margin:0 auto">${qr}</div>
+      <div class="qr" style="width:46mm;height:46mm;margin:0 auto">${qr}</div>
       <div style="font-size:8pt;font-weight:700;margin-top:3mm;letter-spacing:0.02em">${URL_SHOWN}</div>
     </div>
 
     <!-- Partners sit centred in whatever room is left above the sponsor band,
          so the breathing space above and below them is equal. -->
     <div style="flex:1;display:flex;justify-content:center;align-items:center;gap:12mm;padding:0 14mm">
-      <img src="${logos.takomo}" style="height:4.6mm">
+      <img src="${logos.takomo}" style="height:5.1mm">
       <img src="${logos.move}" style="height:7mm">
-      <img src="${logos.badi}" style="height:6.2mm">
+      <img src="${logos.badi}" style="height:6.8mm">
     </div>
 
-    <!-- Headline sponsor: a white band across the full width, into the bleed. -->
-    <div style="background:#fff;margin:0 -${b}mm -${b}mm;padding:4mm ${10 + b}mm ${4 + b}mm;display:flex;justify-content:center;border-top:0.25mm solid rgba(25,50,98,0.12)">
+    <!-- Headline sponsor: a white band across the full width, into the bleed,
+         under a navy rule that answers the masthead at the top. -->
+    <div style="background:#fff;margin:0 -${b}mm -${b}mm;padding:4mm ${10 + b}mm ${4 + b}mm;display:flex;justify-content:center;border-top:1.2mm solid ${NAVY}">
       <img src="${logos.indwe}" style="width:80%;height:auto">
     </div>
   </div></body></html>`;
@@ -107,9 +108,9 @@ function lanyard({ qr, bleed }) {
     @page { size: ${W}mm ${H}mm; margin: 0; }
     html, body { width: ${W}mm; height: ${H}mm; }
     .page { width: ${W}mm; height: ${H}mm; padding: ${b}mm; }
-    .mast { height: ${10 + b}mm; margin: -${b}mm -${b}mm 0; padding-top: ${b}mm; justify-content: center; font-size: 5.5pt; letter-spacing: 0.15em; }
+    .mast { height: ${10 + b}mm; margin: -${b}mm -${b}mm 0; padding-top: ${b}mm; justify-content: center; font-size: 7pt; letter-spacing: 0.2em; }
   </style></head><body><div class="page">
-    <div class="mast"><span>PGA Golf &amp; Lifestyle Show · 18–20 Sep</span></div>
+    <div class="mast"><span>18–20 Sep 2026</span></div>
 
     <div class="lockups" style="gap:3mm;margin-top:3mm">
       <img src="${logos.pga}" style="height:9mm">
@@ -122,18 +123,44 @@ function lanyard({ qr, bleed }) {
       <div class="heading" style="font-size:16pt;margin-top:1mm">One Shot at R25,000</div>
     </div>
 
-    <div class="card" style="margin:2mm auto 0;width:40mm;padding:2.2mm 2.2mm 1.8mm;text-align:center;border-top:1mm solid ${GREEN}">
-      <div class="eyebrow" style="font-size:5.5pt;margin-bottom:1.2mm">Scan to enter</div>
-      <div class="qr" style="width:30mm;height:30mm;margin:0 auto">${qr}</div>
-      <div style="font-size:5.2pt;font-weight:700;margin-top:1.5mm">${URL_SHOWN}</div>
+    <div class="card" style="margin:2mm auto 0;width:42mm;padding:2.2mm 2.2mm 2.2mm;text-align:center;border-top:1mm solid ${GREEN}">
+      <div class="eyebrow" style="font-size:5.5pt;margin-bottom:1.5mm">Scan to enter</div>
+      <div class="qr" style="width:34mm;height:34mm;margin:0 auto">${qr}</div>
     </div>
 
     <div style="flex:1;display:flex;justify-content:center;align-items:center;gap:6mm">
-      <img src="${logos.takomo}" style="height:2.5mm">
+      <img src="${logos.takomo}" style="height:2.8mm">
       <img src="${logos.move}" style="height:3.8mm">
-      <img src="${logos.badi}" style="height:3.4mm">
+      <img src="${logos.badi}" style="height:3.7mm">
     </div>
-    <div style="background:#fff;margin:0 -${b}mm -${b}mm;padding:2.2mm ${5 + b}mm ${2.2 + b}mm;display:flex;justify-content:center;border-top:0.25mm solid rgba(25,50,98,0.12)">
+    <div style="background:#fff;margin:0 -${b}mm -${b}mm;padding:2.2mm ${5 + b}mm ${2.2 + b}mm;display:flex;justify-content:center;border-top:1mm solid ${NAVY}">
+      <img src="${logos.indwe}" style="width:82%;height:auto">
+    </div>
+  </div></body></html>`;
+}
+
+function lanyardBack({ bleed }) {
+  // The reverse: a card that flips on the lanyard still points people the
+  // right way. Same top band as the front so the clip zone matches.
+  const b = bleed ? 3 : 0;
+  const W = 74 + 2 * b, H = 105 + 2 * b;
+  return `<!doctype html><html><head><meta charset="utf-8"><style>${css}
+    @page { size: ${W}mm ${H}mm; margin: 0; }
+    html, body { width: ${W}mm; height: ${H}mm; }
+    .page { width: ${W}mm; height: ${H}mm; padding: ${b}mm; }
+    .mast { height: ${10 + b}mm; margin: -${b}mm -${b}mm 0; padding-top: ${b}mm; justify-content: center; font-size: 7pt; letter-spacing: 0.2em; }
+  </style></head><body><div class="page">
+    <div class="mast"><span>18–20 Sep 2026</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 7mm;gap:5mm">
+      <img src="${logos.challenge}" style="height:26mm">
+      <div>
+        <div class="eyebrow" style="font-size:5.5pt">Simulator Hole-in-One · Free Entry</div>
+        <div class="heading" style="font-size:16pt;margin-top:1mm">One Shot at R25,000</div>
+      </div>
+      <div class="muted" style="font-size:8pt;line-height:1.35">Scan the front to enter.</div>
+      <img src="${logos.pga}" style="height:12mm;margin-top:1mm">
+    </div>
+    <div style="background:#fff;margin:0 -${b}mm -${b}mm;padding:2.2mm ${5 + b}mm ${2.2 + b}mm;display:flex;justify-content:center;border-top:1mm solid ${NAVY}">
       <img src="${logos.indwe}" style="width:82%;height:auto">
     </div>
   </div></body></html>`;
@@ -145,9 +172,11 @@ const jobs = [
   ["pga-show-a5-bleed3mm", a5, URL_A5, [154, 216], true],
   ["pga-show-lanyard-a7", lanyard, URL_LANYARD, [74, 105], false],
   ["pga-show-lanyard-a7-bleed3mm", lanyard, URL_LANYARD, [80, 111], true],
+  ["pga-show-lanyard-a7-back", lanyardBack, null, [74, 105], false],
+  ["pga-show-lanyard-a7-back-bleed3mm", lanyardBack, null, [80, 111], true],
 ];
 for (const [name, build, url, [w, h], bleed] of jobs) {
-  const qr = await qrSvg(url);
+  const qr = url ? await qrSvg(url) : "";
   const html = build({ qr, bleed });
   const page = await browser.newPage({ viewport: { width: Math.round(w * 3.7795), height: Math.round(h * 3.7795) }, deviceScaleFactor: 3 });
   await page.setContent(html, { waitUntil: "load" });
