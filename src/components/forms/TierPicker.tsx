@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Check, Crown, Sparkles, Trophy } from "lucide-react";
+import { ArrowRight, Check, Crown, Dices, Sparkles, Trophy } from "lucide-react";
 import { PRIZE_TIERS, type PrizeTier } from "@/lib/constants";
 import { findTier, formatRand, tierMultiplier, upsellCopy } from "@/lib/tiers";
+import { spinSchedule, VERDICTS } from "@/lib/golf-gods";
 
 /**
  * Prize-first entry picker shared by the tee-box form and the voucher form.
@@ -36,31 +37,114 @@ export default function TierPicker({
   const upsell = upsellCopy(current.entryAmount);
   const top = PRIZE_TIERS[PRIZE_TIERS.length - 1];
 
+  // "What do the golf gods say?" — a roulette run around the six cards that
+  // slows and lands on a random rung, then picks it. hot is the card the
+  // light is on mid-spin; verdict is the line the gods deliver on landing.
+  const [hot, setHot] = useState<number | null>(null);
+  const [verdict, setVerdict] = useState<{ tier: PrizeTier; line: string; burst: number } | null>(null);
+  const timers = useRef<number[]>([]);
+  const spinning = hot !== null;
+
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+
+  function askTheGods() {
+    if (spinning) return;
+    const landing = Math.floor(Math.random() * PRIZE_TIERS.length);
+    const line = VERDICTS[Math.floor(Math.random() * VERDICTS.length)];
+    const reduce =
+      typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const land = () => {
+      setHot(null);
+      onChange(PRIZE_TIERS[landing].entryAmount);
+      setVerdict({ tier: PRIZE_TIERS[landing], line, burst: Date.now() });
+      buzz(reduce ? 0 : 30);
+    };
+    if (reduce) {
+      land();
+      return;
+    }
+    setVerdict(null);
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+    const steps = spinSchedule(PRIZE_TIERS.length, landing);
+    let at = 0;
+    steps.forEach((delay, i) => {
+      at += delay;
+      timers.current.push(
+        window.setTimeout(() => {
+          setHot(i % PRIZE_TIERS.length);
+          buzz(4);
+        }, at),
+      );
+    });
+    timers.current.push(window.setTimeout(land, at + 260));
+  }
+
   function pick(amount: number) {
     if (amount === value) return;
     onChange(amount);
-    // A short tick on phones that support it. Guarded: desktop Safari and
-    // Firefox have no vibrate, and some browsers throw without a gesture.
-    try {
-      if (typeof navigator !== "undefined" && typeof navigator.vibrate === "function") navigator.vibrate(8);
-    } catch {
-      /* decorative */
-    }
+    setVerdict(null);
+    buzz(8);
   }
 
   return (
     <div className="space-y-3">
       <div className={`grid ${columns} gap-3 pt-2`}>
-        {PRIZE_TIERS.map((t) => (
+        {PRIZE_TIERS.map((t, i) => (
           <TierCard
             key={t.entryAmount}
             tier={t}
             checked={t.entryAmount === value}
+            hot={hot === i}
+            dimmed={spinning && hot !== i}
             jackpot={t.entryAmount === top.entryAmount}
             onPick={() => pick(t.entryAmount)}
           />
         ))}
       </div>
+
+      <div className="relative">
+        <button
+          type="button"
+          onClick={askTheGods}
+          disabled={spinning}
+          aria-live="polite"
+          className="gods-button group w-full flex items-center justify-center gap-2.5 rounded-xl border-2 border-gold bg-green-dark px-4 py-3 text-cream transition-all hover:bg-green active:scale-[0.99] disabled:cursor-wait"
+        >
+          <Dices className={`w-5 h-5 text-gold ${spinning ? "animate-spin" : "group-hover:rotate-12 transition-transform"}`} />
+          <span className="font-heading text-base sm:text-lg uppercase tracking-wide">
+            {spinning ? "Consulting the gods…" : "What do the golf gods say?"}
+          </span>
+          {!spinning && (
+            <span className="hidden sm:inline text-[10px] font-semibold uppercase tracking-widest text-gold/80">
+              Auto-pick
+            </span>
+          )}
+        </button>
+        {verdict && (
+          <div key={verdict.burst} className="gods-burst pointer-events-none absolute inset-0" aria-hidden>
+            {CONFETTI.map((c, i) => (
+              <span key={i} className="gods-confetti" style={c} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {verdict && (
+        <p
+          key={verdict.burst}
+          className="tier-rise flex items-start gap-2 rounded-xl border border-gold/50 bg-gold/10 px-4 py-3 text-sm text-green-dark"
+          role="status"
+        >
+          <Sparkles className="w-4 h-4 mt-0.5 flex-shrink-0 text-gold" />
+          <span>
+            <span className="font-bold">The golf gods say {verdict.tier.label}.</span>{" "}
+            {verdict.line}{" "}
+            <span className="font-heading text-base uppercase tracking-wide text-gold">{verdict.tier.prize}</span>
+            <span className="text-green-dark/70"> for {verdict.tier.entry}.</span>
+          </span>
+        </p>
+      )}
 
       <PayoutStrip tier={current} />
 
@@ -87,14 +171,44 @@ export default function TierPicker({
   );
 }
 
+/** A short haptic tick on phones that support it. Guarded: desktop Safari and
+ *  Firefox have no vibrate, and some browsers throw without a gesture. */
+function buzz(ms: number) {
+  if (ms <= 0) return;
+  try {
+    if (typeof navigator !== "undefined" && typeof navigator.vibrate === "function") navigator.vibrate(ms);
+  } catch {
+    /* decorative */
+  }
+}
+
+/** Where each confetti piece flies, as CSS variables read by .gods-confetti. */
+const CONFETTI: React.CSSProperties[] = Array.from({ length: 18 }, (_, i) => {
+  const angle = (i / 18) * Math.PI * 2;
+  const dist = 70 + (i % 3) * 30;
+  return {
+    "--dx": `${Math.cos(angle) * dist}px`,
+    "--dy": `${Math.sin(angle) * dist - 40}px`,
+    "--rot": `${(i * 47) % 360}deg`,
+    animationDelay: `${(i % 4) * 30}ms`,
+    background: i % 3 === 0 ? "var(--gold-light)" : i % 3 === 1 ? "var(--gold)" : "var(--cream)",
+  } as React.CSSProperties;
+});
+
 function TierCard({
   tier,
   checked,
+  hot,
+  dimmed,
   jackpot,
   onPick,
 }: {
   tier: PrizeTier;
   checked: boolean;
+  /** The roulette light is on this card mid-spin. */
+  hot: boolean;
+  /** Mid-spin and the light is elsewhere. */
+  dimmed: boolean;
   jackpot: boolean;
   onPick: () => void;
 }) {
@@ -111,9 +225,9 @@ function TierCard({
 
   return (
     <label
-      className={`@container relative isolate cursor-pointer overflow-hidden rounded-xl border-2 px-2 pt-6 pb-3 text-center transition-all duration-200 active:scale-95 ${shell} ${
-        jackpot ? "tier-shimmer" : ""
-      }`}
+      className={`@container relative isolate cursor-pointer overflow-hidden rounded-xl border-2 px-2 pt-6 pb-3 text-center active:scale-95 ${
+        hot || dimmed ? "transition-none" : "transition-all duration-200"
+      } ${shell} ${jackpot ? "tier-shimmer" : ""} ${hot ? "tier-hot" : ""} ${dimmed ? "opacity-50 saturate-50" : ""}`}
     >
       <input
         type="radio"
@@ -220,7 +334,7 @@ function PayoutStrip({ tier }: { tier: PrizeTier }) {
         </p>
         <p className="mt-1 text-xs text-cream/70">
           for a <span className="font-bold text-cream">{tier.entry}</span> swing ·{" "}
-          <span className="font-bold text-gold-light tabular-nums">{mult.toLocaleString("en-US")}× your entry</span>
+          <span className="font-bold text-gold-light tabular-nums whitespace-nowrap">{mult.toLocaleString("en-US")}× your entry</span>
         </p>
       </div>
     </div>
