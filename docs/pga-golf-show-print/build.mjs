@@ -84,19 +84,17 @@ function a5({ qr, bleed }) {
       <div style="font-size:8pt;font-weight:700;margin-top:3mm;letter-spacing:0.02em">${URL_SHOWN}</div>
     </div>
 
-    <div style="flex:1"></div>
-
-    <div style="text-align:center;padding:0 14mm;margin-bottom:6mm">
-      <div style="display:flex;justify-content:center;align-items:center;gap:12mm">
-        <img src="${logos.move}" style="height:7mm">
-        <img src="${logos.takomo}" style="height:4.6mm">
-        <img src="${logos.badi}" style="height:6.2mm">
-      </div>
+    <!-- Partners sit centred in whatever room is left above the sponsor band,
+         so the breathing space above and below them is equal. -->
+    <div style="flex:1;display:flex;justify-content:center;align-items:center;gap:12mm;padding:0 14mm">
+      <img src="${logos.move}" style="height:7mm">
+      <img src="${logos.takomo}" style="height:4.6mm">
+      <img src="${logos.badi}" style="height:6.2mm">
     </div>
 
     <!-- Headline sponsor: a white band across the full width, into the bleed. -->
-    <div style="background:#fff;margin:0 -${b}mm -${b}mm;padding:6mm ${10 + b}mm ${6 + b}mm;display:flex;justify-content:center;border-top:0.25mm solid rgba(25,50,98,0.12)">
-      <img src="${logos.indwe}" style="width:100%;height:auto">
+    <div style="background:#fff;margin:0 -${b}mm -${b}mm;padding:4mm ${10 + b}mm ${4 + b}mm;display:flex;justify-content:center;border-top:0.25mm solid rgba(25,50,98,0.12)">
+      <img src="${logos.indwe}" style="width:80%;height:auto">
     </div>
   </div></body></html>`;
 }
@@ -121,24 +119,22 @@ function lanyard({ qr, bleed }) {
 
     <div style="text-align:center;margin-top:2.5mm;padding:0 5mm">
       <div class="eyebrow" style="font-size:5.5pt">Simulator Hole-in-One · Free Entry</div>
-      <div class="heading" style="font-size:17pt;margin-top:1.2mm">One Shot at R25,000</div>
+      <div class="heading" style="font-size:16pt;margin-top:1mm">One Shot at R25,000</div>
     </div>
 
-    <div class="card" style="margin:2.5mm auto 0;width:44mm;padding:2.5mm 2.5mm 2mm;text-align:center;border-top:1mm solid ${GREEN}">
-      <div class="eyebrow" style="font-size:5.5pt;margin-bottom:1.5mm">Scan to enter</div>
-      <div class="qr" style="width:34mm;height:34mm;margin:0 auto">${qr}</div>
+    <div class="card" style="margin:2mm auto 0;width:40mm;padding:2.2mm 2.2mm 1.8mm;text-align:center;border-top:1mm solid ${GREEN}">
+      <div class="eyebrow" style="font-size:5.5pt;margin-bottom:1.2mm">Scan to enter</div>
+      <div class="qr" style="width:30mm;height:30mm;margin:0 auto">${qr}</div>
       <div style="font-size:5.2pt;font-weight:700;margin-top:1.5mm">${URL_SHOWN}</div>
     </div>
 
-    <div style="flex:1"></div>
-
-    <div style="display:flex;justify-content:center;align-items:center;gap:6mm;margin-bottom:3mm">
+    <div style="flex:1;display:flex;justify-content:center;align-items:center;gap:6mm">
       <img src="${logos.move}" style="height:3.8mm">
       <img src="${logos.takomo}" style="height:2.5mm">
       <img src="${logos.badi}" style="height:3.4mm">
     </div>
-    <div style="background:#fff;margin:0 -${b}mm -${b}mm;padding:3mm ${5 + b}mm ${3 + b}mm;display:flex;justify-content:center;border-top:0.25mm solid rgba(25,50,98,0.12)">
-      <img src="${logos.indwe}" style="width:100%;height:auto">
+    <div style="background:#fff;margin:0 -${b}mm -${b}mm;padding:2.2mm ${5 + b}mm ${2.2 + b}mm;display:flex;justify-content:center;border-top:0.25mm solid rgba(25,50,98,0.12)">
+      <img src="${logos.indwe}" style="width:82%;height:auto">
     </div>
   </div></body></html>`;
 }
