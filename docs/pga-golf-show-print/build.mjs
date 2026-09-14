@@ -87,8 +87,8 @@ function a5({ qr, bleed }) {
     <!-- Partners sit centred in whatever room is left above the sponsor band,
          so the breathing space above and below them is equal. -->
     <div style="flex:1;display:flex;justify-content:center;align-items:center;gap:12mm;padding:0 14mm">
-      <img src="${logos.move}" style="height:7mm">
       <img src="${logos.takomo}" style="height:4.6mm">
+      <img src="${logos.move}" style="height:7mm">
       <img src="${logos.badi}" style="height:6.2mm">
     </div>
 
@@ -129,8 +129,8 @@ function lanyard({ qr, bleed }) {
     </div>
 
     <div style="flex:1;display:flex;justify-content:center;align-items:center;gap:6mm">
-      <img src="${logos.move}" style="height:3.8mm">
       <img src="${logos.takomo}" style="height:2.5mm">
+      <img src="${logos.move}" style="height:3.8mm">
       <img src="${logos.badi}" style="height:3.4mm">
     </div>
     <div style="background:#fff;margin:0 -${b}mm -${b}mm;padding:2.2mm ${5 + b}mm ${2.2 + b}mm;display:flex;justify-content:center;border-top:0.25mm solid rgba(25,50,98,0.12)">
