@@ -31,8 +31,8 @@ Dressed in the show's identity rather than ours: navy `#193262`, green
 in `globals.css` redefines the colour variables for the page, which is enough
 to re-colour the shared form primitives because the Tailwind theme block is
 `inline`. The show's lockup and the challenge lockup share the top; Move Golf,
-Takomo and Badi Golf sit under the form; Indwe closes the page as headline
-sponsor with the same banner as the course forms.
+Takomo and Badi Golf sit under the form; Indwe sits directly above the form as
+headline sponsor, the horizontal banner kept small.
 
 Logos are in `public/logos/sponsors/`, prepared from the artwork uploaded to
 `getluckyjo/pgashow` (trimmed; Badi's white-on-black wordmark cropped and

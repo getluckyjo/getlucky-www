@@ -17,8 +17,8 @@ export const metadata: Metadata = {
  * Same bones as /form (no global nav, a phone scanning the QR at the stand
  * lands straight in the form) but dressed in the show's identity rather than
  * ours: navy and green on cream, the show's lockup first, the challenge
- * lockup beside it. The co-sponsors sit under the form and Indwe closes the
- * page as headline sponsor, the same banner as the course forms.
+ * lockup beside it. Indwe sits directly above the form as headline sponsor,
+ * small, and the co-sponsors under it.
  * `.pga-theme` (globals.css) re-colours the shared form primitives.
  */
 export default function PgaGolfShowPage() {
@@ -72,6 +72,19 @@ export default function PgaGolfShowPage() {
           </p>
         </div>
 
+        {/* Indwe — headline sponsor, kept small and above the form so it is
+            seen before the golfer reads the WhatsApp offer that names it. */}
+        <div className="mb-4 rounded-xl bg-white border border-green-dark/10 px-4 py-3">
+          <Image
+            src="/images/indwe-sponsor-banner.png"
+            alt="Proudly Sponsored by Indwe Risk Services — Authorised Financial Services Provider FSP 3425"
+            width={1920}
+            height={292}
+            className="w-full h-auto"
+            priority
+          />
+        </div>
+
         <div className="bg-white rounded-2xl shadow-xl shadow-green-dark/10 border-t-4 border-green p-5 sm:p-7">
           <PgaGolfShowEntryForm />
         </div>
@@ -93,28 +106,6 @@ export default function PgaGolfShowPage() {
               </li>
             ))}
           </ul>
-        </div>
-      </div>
-
-      {/* Indwe — headline sponsor. Stacked on mobile, wide on desktop. */}
-      <div className="max-w-md mx-auto px-4 pb-6">
-        <div className="rounded-xl overflow-hidden border border-green-dark/10 shadow-lg shadow-green-dark/10 bg-white">
-          <div className="sm:hidden flex justify-center p-6">
-            <Image
-              src="/logos/indwe-stacked.png"
-              alt="Proudly Sponsored by Indwe Risk Services"
-              width={600}
-              height={400}
-              className="w-auto h-auto max-w-[240px]"
-            />
-          </div>
-          <iframe
-            src="/indwe-banner/index.html"
-            title="Indwe Risk Services — Headline Sponsor"
-            loading="lazy"
-            className="hidden sm:block w-full border-0"
-            style={{ aspectRatio: "1600 / 333", minHeight: "170px" }}
-          />
         </div>
       </div>
 
