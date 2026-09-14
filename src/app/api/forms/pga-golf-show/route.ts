@@ -65,8 +65,8 @@ export async function POST(req: NextRequest) {
         data: {
           course: PGA_GOLF_SHOW.course,
           event: PGA_GOLF_SHOW.event,
-          // The golfer's word, not a verified follow — Instagram has no API
-          // that would let us check.
+          // Optional, and the golfer's word rather than a verified follow —
+          // Instagram has no API that would let us check.
           instagram_follow: d.instagramFollow,
           consent_whatsapp: d.consentWhatsApp,
         },

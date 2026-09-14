@@ -3,8 +3,9 @@
  *
  * Run with: npm test  (node --test, no test framework dependency)
  *
- * Three things worth pinning: the Instagram follow is a condition of entry, the
- * WhatsApp box is not, and the form asks for nothing beyond a name and a number.
+ * Three things worth pinning: neither the Instagram follow nor the WhatsApp box
+ * is required, the follow is still recorded when given, and the form asks for
+ * nothing beyond a name and a number.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -20,15 +21,26 @@ const good = {
   consentTerms: true,
 };
 
-test("a name, a number and the two required boxes is a complete entry", () => {
+test("a name, a number and the terms box is a complete entry", () => {
   const r = pgaGolfShowEntrySchema.safeParse(good);
   assert.ok(r.success);
 });
 
-test("the Instagram follow is a condition of entry", () => {
+test("the Instagram follow is optional — not everyone has Instagram", () => {
   const r = pgaGolfShowEntrySchema.safeParse({ ...good, instagramFollow: false });
-  assert.equal(r.success, false);
-  assert.ok(r.error?.flatten().fieldErrors.instagramFollow?.[0]);
+  assert.ok(r.success);
+  assert.equal(r.data?.instagramFollow, false);
+  const { instagramFollow: _omitted, ...withoutFollow } = good;
+  void _omitted;
+  const r2 = pgaGolfShowEntrySchema.safeParse(withoutFollow);
+  assert.ok(r2.success);
+  assert.equal(r2.data?.instagramFollow, false);
+});
+
+test("a follow that was given is recorded", () => {
+  const r = pgaGolfShowEntrySchema.safeParse(good);
+  assert.ok(r.success);
+  assert.equal(r.data?.instagramFollow, true);
 });
 
 test("WhatsApp consent is optional and defaults to false", () => {

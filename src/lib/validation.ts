@@ -238,14 +238,14 @@ export const freeEntrySchema = z.object({
 // /pga-golf-show — free simulator entry at the PGA Golf & Lifestyle Show.
 //
 // Name and number only: a golfer at a show stand with a queue behind them.
-// Email is not asked. Following @getluckygolfclub on Instagram is a condition
-// of entry, so the box is required — but a follow cannot be verified from
-// outside Instagram, so this is the golfer's word, recorded as such. The
-// WhatsApp box stays optional: consent bundled with entry is not freely given.
+// Email is not asked. The Instagram follow is asked for but optional — not
+// everyone has Instagram, and a follow cannot be verified from outside it
+// anyway, so what is recorded is the golfer's word. The WhatsApp box is
+// optional too: consent bundled with entry is not freely given.
 export const pgaGolfShowEntrySchema = z.object({
   name: requiredString("Name").max(120),
   mobile: phone,
-  instagramFollow: z.literal(true, { error: "Follow us on Instagram to enter" }),
+  instagramFollow: optionalConsent,
   consentWhatsApp: optionalConsent,
   consentTerms: consent,
 });

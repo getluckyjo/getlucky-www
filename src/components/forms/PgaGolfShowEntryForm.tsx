@@ -22,11 +22,12 @@ import {
  * with a queue behind them, so everything that is not a name, a number or a
  * condition of entry has been cut.
  *
- * The Instagram follow is a condition of entry, and there is no way to verify
- * a follow from outside Instagram. So the step is: tap the button, which opens
- * the profile in a new tab (the Instagram app on a phone), and the box ticks
- * itself when they come back. A golfer who already follows can tick it by
- * hand. It is their word, and it is recorded as their word.
+ * The Instagram follow is asked for but optional — not everyone has
+ * Instagram — and there is no way to verify a follow from outside it. So the
+ * step is: tap the button, which opens the profile in a new tab (the Instagram
+ * app on a phone), and the box ticks itself when they come back. A golfer who
+ * already follows can tick it by hand. It is their word, recorded as their
+ * word.
  */
 export default function PgaGolfShowEntryForm() {
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -120,10 +121,10 @@ export default function PgaGolfShowEntryForm() {
         <Input name="mobile" type="tel" required autoComplete="tel" placeholder="+27 XX XXX XXX" inputMode="tel" />
       </Field>
 
-      {/* Instagram follow — a condition of entry. */}
+      {/* Instagram follow — asked for, optional. */}
       <div className="rounded-xl border border-green-dark/15 bg-cream/60 p-4 space-y-3">
         <p className="text-xs font-semibold uppercase tracking-widest text-green-dark/70">
-          Follow us to enter <span className="text-gold">*</span>
+          Follow us on Instagram
         </p>
         <a
           href={instagramUrl}
@@ -154,6 +155,9 @@ export default function PgaGolfShowEntryForm() {
             {tappedFollow ? " Thanks — tap Follow in the app and come back here." : ""}
           </span>
         </label>
+        <p className="text-xs text-charcoal-light/60">
+          Optional. Not on Instagram? Skip this and carry on.
+        </p>
         {errors.instagramFollow && (
           <span className="block ml-8 text-xs text-red-600 font-medium" role="alert">
             {errors.instagramFollow}
