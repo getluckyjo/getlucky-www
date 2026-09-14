@@ -80,7 +80,7 @@ export default function PgaGolfShowEntryForm() {
         if (data?.fieldErrors) setErrors(data.fieldErrors);
         setTopError(
           data?.error ||
-            "We couldn't record your entry just now. Please try again, or ask someone at the stand.",
+            "We couldn't record your entry just now. Please try again in a moment.",
         );
         setPending(false);
         if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
@@ -100,8 +100,8 @@ export default function PgaGolfShowEntryForm() {
         title="You're in"
         body={
           optedIn
-            ? `Show this screen at the Get Lucky stand and take your shot at ${PGA_GOLF_SHOW.prize}. Keep an eye on WhatsApp — we'll message you about your entry and the 12 months of complimentary membership.`
-            : `Show this screen at the Get Lucky stand and take your shot at ${PGA_GOLF_SHOW.prize}. Good luck.`
+            ? `You're entered for a shot at ${PGA_GOLF_SHOW.prize}. Keep an eye on WhatsApp — we'll message you about your entry and the 12 months of complimentary membership.`
+            : `You're entered for a shot at ${PGA_GOLF_SHOW.prize}. Good luck.`
         }
       />
     );
@@ -193,7 +193,7 @@ export default function PgaGolfShowEntryForm() {
       <div className="pt-2">
         <SubmitButton pending={pending}>Enter for free →</SubmitButton>
         <p className="text-xs text-charcoal-light/60 mt-3">
-          No payment. One free shot at {PGA_GOLF_SHOW.prize} on the simulator at the Get Lucky stand.
+          No payment. One free shot at {PGA_GOLF_SHOW.prize} on the simulator.
         </p>
       </div>
     </form>
