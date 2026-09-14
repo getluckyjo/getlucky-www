@@ -3,9 +3,10 @@
  *
  * Run with: npm test  (node --test, no test framework dependency)
  *
- * Three things worth pinning: neither the Instagram follow nor the WhatsApp box
- * is required, the follow is still recorded when given, and the form asks for
- * nothing beyond a name and a number.
+ * Three things worth pinning: neither the Instagram tap nor the WhatsApp box
+ * is required, the tap is still recorded when given, and the form asks for
+ * nothing beyond a name and a number. The terms are accepted by pressing
+ * Enter, so the form always sends them as accepted.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -21,7 +22,7 @@ const good = {
   consentTerms: true,
 };
 
-test("a name, a number and the terms box is a complete entry", () => {
+test("a name and a number, with the terms accepted by pressing Enter, is a complete entry", () => {
   const r = pgaGolfShowEntrySchema.safeParse(good);
   assert.ok(r.success);
 });
@@ -37,7 +38,7 @@ test("the Instagram follow is optional — not everyone has Instagram", () => {
   assert.equal(r2.data?.instagramFollow, false);
 });
 
-test("a follow that was given is recorded", () => {
+test("an Instagram tap is recorded", () => {
   const r = pgaGolfShowEntrySchema.safeParse(good);
   assert.ok(r.success);
   assert.equal(r.data?.instagramFollow, true);
