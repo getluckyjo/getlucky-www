@@ -58,25 +58,17 @@ export default function Form2Page() {
         </div>
       </div>
 
-      {/* Indwe sponsor banner — stacked on mobile, wide on desktop */}
+      {/* Indwe sponsor banner — the animated strip at every width. It used
+          to fall back to a static stacked logo on phones; the banner's type
+          scales with its own viewport, and the 170px floor gives its three
+          slides room on a narrow screen. */}
       <div className="max-w-md mx-auto px-4 pb-8 sm:pb-12">
         <div className="rounded-xl overflow-hidden border border-white/30 shadow-2xl bg-white">
-          {/* Mobile: stacked logo */}
-          <div className="sm:hidden flex justify-center p-6">
-            <Image
-              src="/logos/indwe-stacked.png"
-              alt="Proudly Sponsored by Indwe Risk Services"
-              width={600}
-              height={400}
-              className="w-auto h-auto max-w-[240px]"
-            />
-          </div>
-          {/* Desktop: wide banner */}
           <iframe
             src="/indwe-banner/index.html"
             title="Indwe Risk Services — Headline Sponsor"
             loading="lazy"
-            className="hidden sm:block w-full border-0"
+            className="block w-full border-0"
             style={{ aspectRatio: "1600 / 333", minHeight: "170px" }}
           />
         </div>
