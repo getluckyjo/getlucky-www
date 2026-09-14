@@ -17,10 +17,16 @@ a number. No payment.
 - The **WhatsApp opt-in** is the same box, same wording, as the course forms.
   It is optional. Consent bundled with entry is not freely given.
 - Every entry is handed to the WhatsApp service (`getluckyjo/twillio`) through
-  the existing `notifyWhatsAppChannel()` seam, exactly as `/form-2` does.
-  Opted-in golfers get the `entry_followup` template automatically; the rest are
-  recorded there and never messaged. The course sent is "the PGA Golf Show", so
-  the opening reads "thanks for entering ... at the PGA Golf Show".
+  the existing `notifyWhatsAppChannel()` seam, exactly as `/form-2` does. The
+  rest are recorded there and never messaged.
+- **The course sent is "the PGA Golf Show", and that string is load-bearing.**
+  The WhatsApp service matches on it (`SHOW_COURSES` in its `templates.ts`) to
+  give show entrants their own journey: the original v1 opening
+  (`entry_followup_show`, "Good luck out there... Interested?"), then one
+  consent question, then "an Indwe Advisor will be in touch to arrange a time".
+  No underwriting questions, no booking. Change `PGA_GOLF_SHOW.course` and
+  change it there too, or show entrants silently get the full nine-question
+  course journey. `/form` and `/form-2` are untouched.
 - Recorded as a `free_entry` lead in Postgres and on the `freeEntry` sheet tab,
   with `Source` = `getluckygolf.co.za /pga-golf-show`. The Indwe feed and the ops
   scorecard pick it up without a new lead type.
