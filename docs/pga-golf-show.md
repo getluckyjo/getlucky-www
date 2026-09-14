@@ -26,24 +26,26 @@ a number. No payment.
 
 ## Branding
 
-Co-branded above the form with the show and the stand's co-sponsors (Move
-Golf, Takomo, Badi Golf); Indwe below as headline sponsor, the same banner as
-the course forms.
+Dressed in the show's identity rather than ours: navy `#193262`, green
+`#418441` and cream `#f6f4db`, sampled from the show's own lockup. `.pga-theme`
+in `globals.css` redefines the colour variables for the page, which is enough
+to re-colour the shared form primitives because the Tailwind theme block is
+`inline`. The show's lockup and the challenge lockup share the top; Move Golf,
+Takomo and Badi Golf sit under the form; Indwe closes the page as headline
+sponsor with the same banner as the course forms.
 
-Logos are read from `public/logos/sponsors/`:
+Logos are in `public/logos/sponsors/`, prepared from the artwork uploaded to
+`getluckyjo/pgashow` (trimmed; Badi's white-on-black wordmark cropped and
+inverted so it sits on white):
 
 | File | Who |
 |---|---|
-| `pga-golf-show.png` | PGA Golf & Lifestyle Show |
+| `pga-golf-show.png` | PGA Golf & Lifestyle Show 2026 |
 | `move-golf.png` | Move Golf |
 | `takomo.png` | Takomo |
 | `badi-golf.png` | Badi Golf |
 
-`SponsorLogo` falls back to a wordmark for any file that is missing, so the
-page ships before the artwork arrives and dropping the file in is the whole
-deployment. Transparent PNGs, roughly 3:1, dark artwork — they sit on white.
-Change a filename in `PGA_GOLF_SHOW.sponsors` in `src/lib/constants.ts` if a
-partner sends an SVG.
+`SponsorLogo` falls back to a wordmark for any file that goes missing.
 
 ## Not indexed
 

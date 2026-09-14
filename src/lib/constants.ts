@@ -112,9 +112,9 @@ export const ROUTES = {
  * `course` is what the WhatsApp opening reads back to the golfer: the template
  * says "thanks for entering ... at {{course}}", so it is phrased as a place.
  *
- * Sponsor logos are read from public/logos/sponsors/<file>. The strip falls
- * back to a wordmark for any file that is missing, so a logo can be dropped in
- * without a code change.
+ * Logos live in public/logos/sponsors/<file>, prepared from the artwork in
+ * getluckyjo/pgashow. The strip falls back to a wordmark for any file that
+ * goes missing. Colours are in `.pga-theme` in globals.css.
  */
 export const PGA_GOLF_SHOW = {
   name: "PGA Golf & Lifestyle Show",

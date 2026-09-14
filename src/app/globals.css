@@ -40,6 +40,26 @@ html {
   scroll-behavior: smooth;
 }
 
+/*
+ * PGA Golf & Lifestyle Show co-brand (/pga-golf-show).
+ *
+ * The theme block above is `inline`, so every utility resolves to the raw
+ * variable at runtime — which means a subtree can be re-coloured by
+ * redefining the variables on a wrapper, and the shared form primitives pick
+ * the show's palette up without a fork. Navy, green and cream are sampled
+ * from the show's own lockup (getluckyjo/pgashow).
+ */
+.pga-theme {
+  --green: #418441;
+  --green-light: #4f9a4f;
+  --green-dark: #193262;
+  --cream: #f6f4db;
+  --cream-dark: #e9e6c8;
+  --gold: #418441;
+  --gold-light: #8cc08c;
+  --background: #f6f4db;
+}
+
 /* Focus indicators for keyboard navigation */
 :focus-visible {
   outline: 2px solid var(--gold);
