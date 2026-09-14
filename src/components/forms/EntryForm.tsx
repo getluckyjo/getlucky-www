@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Lock, Shield, ShieldCheck } from "lucide-react";
-import { COURSES, MEMBERSHIP, ROUTES } from "@/lib/constants";
+import { COURSES, ROUTES } from "@/lib/constants";
 import { WHATSAPP_CONSENT_WORDING } from "@/lib/whatsapp";
 import {
   Checkbox,
@@ -16,19 +15,11 @@ import {
 } from "./FormPrimitives";
 import TierPicker from "./TierPicker";
 
-// Membership signups live on the dedicated subscription site
-// (membership.getluckygolfclub.com), which owns the recurring-billing flow,
-// the welcome-email template and the subscriber database. The form-side
-// upsell pushes the generic Get Lucky join page rather than course-specific
-// deep links — the membership site handles club selection downstream.
-const MEMBERSHIP_JOIN_URL = "https://membership.getluckygolfclub.com/join/get-lucky";
-
 export default function EntryForm() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [pending, setPending] = useState(false);
   const [topError, setTopError] = useState<string | null>(null);
   const [tier, setTier] = useState<number>(150);
-  const [memberPending, setMemberPending] = useState(false);
 
   // Clear the error for a field as the user fixes it, and drop the top banner
   // on the first edit. Without this, "Name is required" sticks around while
@@ -39,14 +30,6 @@ export default function EntryForm() {
     const name = t.name;
     setErrors((prev) => (prev[name] ? { ...prev, [name]: undefined } : prev));
     setTopError((prev) => (prev ? null : prev));
-  }
-
-  function onJoinClub() {
-    if (memberPending || pending) return;
-    setErrors({});
-    setTopError(null);
-    setMemberPending(true);
-    window.location.href = MEMBERSHIP_JOIN_URL;
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -154,68 +137,6 @@ export default function EntryForm() {
         <p className="text-xs text-charcoal-light/60 mt-2">
           Secure payment by PayFast. Card, EFT, SnapScan, Zapper.
         </p>
-      </div>
-
-      {/* Membership upsell — recurring monthly subscription via PayFast.
-          Sits below the pay button, not above it: a golfer at a tee box is
-          here to buy one swing, and a second price between them and the
-          fields they have to fill in is a decision they did not come to make.
-          As an alternative offered after the primary action it still reads as
-          "or", which is what it is. */}
-      <div className="pt-4">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="flex-1 h-px bg-green-dark/15" />
-          <span className="text-[10px] uppercase tracking-widest text-charcoal-light/50 font-semibold">
-            or
-          </span>
-          <div className="flex-1 h-px bg-green-dark/15" />
-        </div>
-        <button
-          type="button"
-          onClick={onJoinClub}
-          disabled={memberPending || pending}
-          /* Deliberately quieter than the pay button above it.
-             Moving this below the pay button was not enough on its own. It was
-             a filled gold gradient with shadow-lg, ring-2 and p-5, while
-             SubmitButton is flat green with no shadow and no ring — so the
-             secondary action was the loudest thing on the page, and on a phone
-             both are full width. A golfer reaching for "pay R150" met a
-             R149/month subscription first.
-             Outlined and tinted rather than filled: no shadow, no ring, no
-             hover scale. Still obviously a distinct offer worth tapping, just no
-             longer competing with the thing they came to do. If this ever
-             regains a gradient or a shadow, hold it next to SubmitButton before
-             shipping. */
-          className="block w-full rounded-xl border border-gold bg-gold/10 hover:bg-gold/20 disabled:opacity-70 disabled:cursor-not-allowed p-4 text-center transition-colors"
-        >
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-green-dark/80">
-            {memberPending ? "Redirecting to PayFast…" : "Join the Club"}
-          </p>
-          <p className="font-heading text-2xl text-green-dark uppercase tracking-wide mt-1.5">
-            R{MEMBERSHIP.amount}<span className="text-sm">/month</span>
-          </p>
-          <p className="text-xs font-medium text-green-dark/85 mt-1">
-            {MEMBERSHIP.pitch}
-          </p>
-
-          {/* Trust signals — stacked rows on phone, 3-up on tablet+ where each
-              column has room for a single line. Pushed to md: so phones in
-              landscape (~640–768) don't squeeze into cramped 3-col. */}
-          <ul className="mt-4 pt-3 border-t border-green-dark/10 grid grid-cols-1 md:grid-cols-3 gap-y-2 md:gap-x-3 md:gap-y-0 text-[11px] text-green-dark/85">
-            <li className="flex items-center justify-center gap-2 md:flex-col md:gap-1.5">
-              <Shield className="w-4 h-4 flex-shrink-0" />
-              <span>Insurance-backed {MEMBERSHIP.prize}</span>
-            </li>
-            <li className="flex items-center justify-center gap-2 md:flex-col md:gap-1.5">
-              <ShieldCheck className="w-4 h-4 flex-shrink-0" />
-              <span>Cancel anytime — email us</span>
-            </li>
-            <li className="flex items-center justify-center gap-2 md:flex-col md:gap-1.5">
-              <Lock className="w-4 h-4 flex-shrink-0" />
-              <span>Card details never stored</span>
-            </li>
-          </ul>
-        </button>
       </div>
     </form>
   );
