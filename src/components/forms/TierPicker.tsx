@@ -109,17 +109,12 @@ export default function TierPicker({
           onClick={askTheGods}
           disabled={spinning}
           aria-live="polite"
-          className="gods-button group w-full flex items-center justify-center gap-2.5 rounded-xl border-2 border-gold bg-green-dark px-4 py-3 text-cream transition-all hover:bg-green active:scale-[0.99] disabled:cursor-wait"
+          className="gods-button group w-full flex items-center justify-center gap-2.5 rounded-xl border-2 border-gold bg-gradient-to-br from-gold-light via-gold to-gold px-4 py-3 text-green-dark shadow-md transition-all hover:from-gold-light hover:via-gold-light hover:to-gold active:scale-[0.99] disabled:cursor-wait"
         >
-          <Dices className={`w-5 h-5 text-gold ${spinning ? "animate-spin" : "group-hover:rotate-12 transition-transform"}`} />
-          <span className="font-heading text-base sm:text-lg uppercase tracking-wide">
+          <Dices className={`w-5 h-5 flex-shrink-0 ${spinning ? "animate-spin" : "group-hover:rotate-12 transition-transform"}`} />
+          <span className="font-heading text-base sm:text-lg uppercase tracking-wide whitespace-nowrap">
             {spinning ? "Consulting the gods…" : "What do the golf gods say?"}
           </span>
-          {!spinning && (
-            <span className="hidden sm:inline text-[10px] font-semibold uppercase tracking-widest text-gold/80">
-              Auto-pick
-            </span>
-          )}
         </button>
         {verdict && (
           <div key={verdict.burst} className="gods-burst pointer-events-none absolute inset-0" aria-hidden>
