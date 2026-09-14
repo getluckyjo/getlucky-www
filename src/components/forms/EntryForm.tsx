@@ -61,7 +61,8 @@ export default function EntryForm() {
       course: String(fd.get("course") || ""),
       mobile: String(fd.get("mobile") || ""),
       consentWhatsApp: fd.get("consentWhatsApp") === "on",
-      consentTerms: fd.get("consentTerms") === "on",
+      // Accepted by pressing the pay button; the line under it says so.
+      consentTerms: true,
     };
 
     try {
@@ -129,33 +130,28 @@ export default function EntryForm() {
         <Checkbox name="consentWhatsApp" error={errors.consentWhatsApp}>
           {WHATSAPP_CONSENT_WORDING}
         </Checkbox>
-        <Checkbox name="consentTerms" required error={errors.consentTerms}>
-          I accept the{" "}
-          <Link href={ROUTES.terms} className="text-green-dark underline hover:text-gold">
-            terms &amp; conditions
-          </Link>
-          {" "}and confirm I am 18 or older.
-        </Checkbox>
-        {/*
-          The privacy policy link used to hang off the general communication
-          checkbox. That checkbox is gone; the link is not optional, so it sits
-          here rather than inside the consent wording, which has to stay
-          verbatim.
-        */}
-        <p className="text-sm text-gray-600">
-          See our{" "}
-          <Link href={ROUTES.privacy} className="text-green-dark underline hover:text-gold">
-            privacy policy
-          </Link>
-          {" "}for how we look after your details.
-        </p>
       </div>
 
       <div className="pt-2">
         <SubmitButton pending={pending}>
           Pay R{tier} via PayFast →
         </SubmitButton>
-        <p className="text-xs text-charcoal-light/60 mt-3">
+        {/* The terms are accepted by pressing the button, as on the PGA show
+            form, rather than by a box of their own. The WhatsApp box above is
+            the only checkbox left, on purpose: it is a genuine choice and must
+            never be merged with anything required (src/lib/whatsapp.ts). */}
+        <p className="text-xs text-charcoal-light/70 mt-3 leading-relaxed">
+          By paying you accept the{" "}
+          <Link href={ROUTES.terms} className="text-green-dark underline hover:text-gold">
+            terms &amp; conditions
+          </Link>
+          {" "}and confirm you are 18 or older. See our{" "}
+          <Link href={ROUTES.privacy} className="text-green-dark underline hover:text-gold">
+            privacy policy
+          </Link>
+          {" "}for how we look after your details.
+        </p>
+        <p className="text-xs text-charcoal-light/60 mt-2">
           Secure payment by PayFast. Card, EFT, SnapScan, Zapper.
         </p>
       </div>
