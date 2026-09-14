@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { COURSES, PRIZE_TIERS } from "./constants";
+import { COURSES, PRIZE_TIERS } from "./constants.ts";
 
 const requiredString = (field: string) =>
   z.string({ error: `${field} is required` }).trim().min(1, `${field} is required`);
@@ -235,3 +235,18 @@ export const freeEntrySchema = z.object({
   consentWhatsApp: optionalConsent,
   consentTerms: consent,
 });
+// /pga-golf-show — free simulator entry at the PGA Golf & Lifestyle Show.
+//
+// Name and number only: a golfer at a show stand with a queue behind them.
+// Email is not asked. Following @getluckygolfclub on Instagram is a condition
+// of entry, so the box is required — but a follow cannot be verified from
+// outside Instagram, so this is the golfer's word, recorded as such. The
+// WhatsApp box stays optional: consent bundled with entry is not freely given.
+export const pgaGolfShowEntrySchema = z.object({
+  name: requiredString("Name").max(120),
+  mobile: phone,
+  instagramFollow: z.literal(true, { error: "Follow us on Instagram to enter" }),
+  consentWhatsApp: optionalConsent,
+  consentTerms: consent,
+});
+export type PgaGolfShowEntryInput = z.infer<typeof pgaGolfShowEntrySchema>;

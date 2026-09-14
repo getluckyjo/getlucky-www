@@ -48,7 +48,7 @@ Canonical `leadStage` strings: `General Lead` · `Warm Lead` · `Quote-Ready Lea
 |----------------|-------------|----------------------|
 | `voucher`      | Online competition purchase | **General Lead** |
 | `course-entry` | On-course paid QR entry | **General Lead** |
-| `free-entry`   | `/form-2` sponsored golf-day entry | **Warm Lead** |
+| `free-entry`   | `/form-2` sponsored golf-day entry, `/pga-golf-show` show entry | **Warm Lead** |
 | `partner`      | Course partner enquiry | **Warm Lead** |
 | `corporate`    | Corporate golf-day enquiry | **Warm Lead** |
 | `charity`      | Charity golf-day enquiry | **Warm Lead** |

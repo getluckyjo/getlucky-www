@@ -47,6 +47,7 @@ See `.env.example` for the full list. Summary (full matrix produced in Phase 4):
 - `src/lib/email.ts` — Resend wrappers
 - `src/app/api/payfast/notify/` — PayFast ITN (payment confirmation) handler
 - `src/app/api/forms/` — form submission endpoints
+- `src/app/pga-golf-show/` — free simulator entry at the PGA Golf & Lifestyle Show (`docs/pga-golf-show.md`)
 - `src/app/api/health/payfast/` — daily PayFast health canary (Vercel cron, 06:00 UTC)
 - `src/app/api/indwe/`, `src/app/api/sponsor/` — partner lead APIs
 
