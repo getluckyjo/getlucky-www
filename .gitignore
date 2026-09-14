@@ -27,3 +27,4 @@ node_modules/
 *.log
 ~$*
 .~lock.*
+docs/pga-golf-show-print/out/
