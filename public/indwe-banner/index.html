@@ -12,7 +12,6 @@
     font-style: normal;
     font-display: swap;
   }
-
   @font-face {
     font-family: 'Arial Narrow';
     src: url('ArialNarrowBold.ttf') format('truetype');
@@ -21,25 +20,38 @@
     font-display: swap;
   }
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  /*
+   * Three slides on a 15s loop, built like a billboard: one idea per slide,
+   * type that reads from across a room, and one action. The sponsor slide
+   * stays white so the logo is on brand; the two message slides go deep
+   * Indwe blue with white type for contrast. Three things say "tap me" on
+   * every slide: a WhatsApp-green pill, a corner chat chip while the pill is
+   * off screen, and a progress line along the bottom that shows the banner
+   * is live. The whole banner is one link to WhatsApp.
+   */
+  :root {
+    --indwe: #0066a2;
+    --indwe-deep: #063b60;
+    --indwe-night: #032740;
+    --sky: #9fdcff;
+    --wa: #25d366;
+    --wa-dark: #1ebe5d;
+    --white: #ffffff;
+    --loop: 15s;
   }
 
-  html, body {
-    height: 100%;
-  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
 
   body {
-    background: #f0f0f0;
+    background: #ffffff;
     display: flex;
     align-items: stretch;
     justify-content: stretch;
     min-height: 100vh;
   }
 
-  .banner-container {
+  .banner {
     width: 100%;
     height: 100%;
     min-height: 100vh;
@@ -50,192 +62,263 @@
     position: relative;
     font-family: 'Arial Narrow', Arial, Helvetica, sans-serif;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  /* --- Slides use absolute stacking with opacity --- */
+  /* ---------- Slides ---------- */
   .slide {
     position: absolute;
     inset: 0;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    text-align: center;
     opacity: 0;
-    animation-duration: 15s;
+    animation-duration: var(--loop);
     animation-timing-function: ease-in-out;
     animation-iteration-count: infinite;
-    background: #ffffff;
   }
 
-  /* Slide 1: Sponsor image */
-  .slide-sponsor {
-    animation-name: slide1;
-  }
-
-  .slide-sponsor picture {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
+  /* 1 · Sponsor — white, logo breathing slowly */
+  .slide-sponsor { animation-name: show-1; background: #ffffff; }
+  .slide-sponsor picture { display: block; width: 100%; height: 100%; }
   .slide-sponsor img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    padding: 0;
+    padding: 3% 5%;
+    animation: breathe var(--loop) ease-in-out infinite;
   }
-
   @media (max-width: 640px) {
-    .slide-sponsor img {
-      padding: 12px 0;
-    }
+    /* Room at the foot for the chat chip and the progress line */
+    .slide-sponsor img { padding: 10px 12px 30px; }
   }
 
-  /* Slide 2: Campaign Copy */
-  .slide-copy {
-    animation-name: slide2;
-    flex-direction: column;
-    padding: 0 8%;
+  /* 2 & 3 · Message slides — deep blue with a soft spotlight */
+  .slide-blue {
+    background:
+      radial-gradient(120% 140% at 18% 0%, rgba(159, 220, 255, 0.28), transparent 55%),
+      radial-gradient(90% 120% at 100% 100%, rgba(0, 102, 162, 0.9), transparent 60%),
+      linear-gradient(135deg, var(--indwe-night) 0%, var(--indwe-deep) 55%, var(--indwe) 100%);
+    color: var(--white);
+    padding: 4% 8%;
+    gap: clamp(6px, 1.2vw, 14px);
   }
+  .slide-copy { animation-name: show-2; }
+  .slide-cta { animation-name: show-3; }
 
-  .copy-line-1,
-  .copy-line-2 {
-    font-size: clamp(22px, 3.6vw, 46px);
+  .eyebrow {
+    font-size: clamp(9px, 1.1vw, 14px);
     font-weight: 700;
-    color: #0066a2;
-    text-align: center;
-    line-height: 1.3;
-    letter-spacing: 1.5px;
+    letter-spacing: 3px;
     text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.65);
   }
 
-  /* Slide 3: CTA */
-  .slide-cta {
-    animation-name: slide3;
-    flex-direction: column;
-    gap: clamp(5px, 1vw, 12px);
-    padding: 0 8%;
-  }
-
-  .cta-text {
-    font-size: clamp(20px, 3.4vw, 44px);
+  .headline {
+    font-size: clamp(22px, 5vw, 60px);
     font-weight: 700;
-    color: #0066a2;
-    text-align: center;
-    letter-spacing: 1.5px;
-    line-height: 1.2;
+    line-height: 1;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+    text-wrap: balance;
+  }
+  .headline .accent { color: var(--sky); }
+
+  .sub {
+    font-size: clamp(13px, 1.9vw, 24px);
+    font-weight: 700;
+    color: var(--sky);
+    letter-spacing: 0.5px;
   }
 
-  .cta-sub {
-    font-size: clamp(14px, 2vw, 26px);
+  .signoff {
+    font-size: clamp(9px, 1.05vw, 13px);
     font-weight: 700;
-    color: #0066a2;
-    text-align: center;
-    letter-spacing: 1px;
-    line-height: 1.2;
-    margin-top: -2px;
-  }
-
-  .cta-signoff {
-    font-size: clamp(10px, 1.2vw, 15px);
-    font-weight: 700;
-    color: #0066a2;
-    text-align: center;
     letter-spacing: 2.5px;
     text-transform: uppercase;
-    opacity: 0.85;
+    color: rgba(255, 255, 255, 0.55);
   }
 
-  .cta-underline {
-    width: clamp(60px, 8vw, 120px);
-    height: 3px;
-    background: #0066a2;
-    margin: 0 auto;
+  /* Lines rise in one after the other when the slide arrives */
+  .slide-copy .rise, .slide-cta .rise {
+    animation: rise var(--loop) ease-out infinite;
   }
+  .slide-copy .rise:nth-child(1) { animation-delay: 0s; }
+  .slide-copy .rise:nth-child(2) { animation-delay: 0.12s; }
+  .slide-copy .rise:nth-child(3) { animation-delay: 0.24s; }
+  .slide-cta .rise { animation-name: rise-3; }
+  .slide-cta .rise:nth-child(1) { animation-delay: 0s; }
+  .slide-cta .rise:nth-child(2) { animation-delay: 0.12s; }
+  .slide-cta .rise:nth-child(3) { animation-delay: 0.24s; }
+  .slide-cta .rise:nth-child(4) { animation-delay: 0.36s; }
 
-  .cta-button {
-    display: inline-block;
-    padding: clamp(6px, 1vw, 12px) clamp(20px, 3vw, 44px);
-    background: #0066a2;
-    color: #ffffff;
+  /* ---------- The action: a WhatsApp-green pill ---------- */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: clamp(6px, 0.8vw, 12px);
+    padding: clamp(8px, 1.1vw, 15px) clamp(18px, 2.6vw, 36px);
+    border-radius: 999px;
+    background: var(--wa);
+    color: var(--white);
     font-family: 'Arial Narrow', Arial, Helvetica, sans-serif;
-    font-size: clamp(11px, 1.4vw, 18px);
+    font-size: clamp(13px, 1.6vw, 22px);
     font-weight: 700;
-    letter-spacing: 2.5px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
     text-decoration: none;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease;
+    box-shadow: 0 10px 30px -8px rgba(37, 211, 102, 0.7), 0 0 0 0 rgba(37, 211, 102, 0.5);
+    animation: pulse 2.2s ease-in-out infinite;
+    transition: background 0.25s ease, transform 0.25s ease;
+    margin-top: clamp(2px, 0.6vw, 8px);
+  }
+  .pill svg { width: 1.15em; height: 1.15em; flex-shrink: 0; }
+  .banner:hover .pill { background: var(--wa-dark); transform: translateY(-1px) scale(1.03); }
+
+  /* ---------- Persistent tap cues ---------- */
+  /* Corner chip: on screen while the pill is not */
+  .chip {
+    position: absolute;
+    right: clamp(8px, 1.2vw, 16px);
+    bottom: clamp(10px, 1.4vw, 18px);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px 5px 8px;
+    border-radius: 999px;
+    background: var(--wa);
+    color: var(--white);
+    font-size: clamp(10px, 1.05vw, 13px);
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    box-shadow: 0 6px 18px -6px rgba(0, 0, 0, 0.35);
+    animation: chip var(--loop) ease-in-out infinite;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .chip svg { width: 1.2em; height: 1.2em; }
+
+  /* Progress line: one sweep per loop, so the banner reads as live */
+  .progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.08);
+    z-index: 2;
+  }
+  .progress::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 0;
+    background: var(--wa);
+    animation: sweep var(--loop) linear infinite;
   }
 
-  .cta-button:hover {
-    background: #004d7a;
+  /* ---------- Timing: 0–4.5s sponsor · 4.5–9.5s copy · 9.5–14.5s cta ---------- */
+  @keyframes show-1 {
+    0%   { opacity: 1; }
+    30%  { opacity: 1; }
+    33%  { opacity: 0; }
+    97%  { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes show-2 {
+    0%   { opacity: 0; }
+    33%  { opacity: 0; }
+    36%  { opacity: 1; }
+    63%  { opacity: 1; }
+    66%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
+  @keyframes show-3 {
+    0%   { opacity: 0; }
+    66%  { opacity: 0; }
+    69%  { opacity: 1; }
+    97%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  /* Lines start 10px low and settle as their slide fades in */
+  @keyframes rise {
+    0%, 33%  { transform: translateY(10px); opacity: 0; }
+    38%, 63% { transform: translateY(0); opacity: 1; }
+    66%, 100% { transform: translateY(10px); opacity: 0; }
+  }
+  @keyframes rise-3 {
+    0%, 66%  { transform: translateY(10px); opacity: 0; }
+    71%, 97% { transform: translateY(0); opacity: 1; }
+    100%     { transform: translateY(10px); opacity: 0; }
+  }
+  @keyframes chip {
+    0%, 63%   { opacity: 1; transform: translateY(0); }
+    66%, 97%  { opacity: 0; transform: translateY(6px); }
+    100%      { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes breathe {
+    0%, 33%, 100% { transform: scale(1); }
+    16%            { transform: scale(1.035); }
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 10px 30px -8px rgba(37, 211, 102, 0.7), 0 0 0 0 rgba(37, 211, 102, 0.55); }
+    50%      { box-shadow: 0 10px 30px -8px rgba(37, 211, 102, 0.9), 0 0 0 10px rgba(37, 211, 102, 0); }
+  }
+  @keyframes sweep {
+    from { width: 0; }
+    to   { width: 100%; }
   }
 
-  /*
-    15s total cycle:
-    Slide 1: 0s – 4.5s   (visible 0% – 30%)
-    Slide 2: 4.5s – 9.5s (visible 30% – 63%)
-    Slide 3: 9.5s – 14.5s(visible 63% – 97%)
-    Fade transitions: ~0.25s each (~1.5%)
-  */
-
-  @keyframes slide1 {
-    0%    { opacity: 1; }
-    30%   { opacity: 1; }
-    33%   { opacity: 0; }
-    97%   { opacity: 0; }
-    100%  { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .slide-sponsor img, .pill, .rise { animation: none !important; opacity: 1; transform: none; }
+    .chip { animation: chip var(--loop) step-end infinite; }
   }
-
-  @keyframes slide2 {
-    0%    { opacity: 0; }
-    33%   { opacity: 0; }
-    36%   { opacity: 1; }
-    63%   { opacity: 1; }
-    66%   { opacity: 0; }
-    100%  { opacity: 0; }
-  }
-
-  @keyframes slide3 {
-    0%    { opacity: 0; }
-    66%   { opacity: 0; }
-    69%   { opacity: 1; }
-    97%   { opacity: 1; }
-    100%  { opacity: 0; }
-  }
-
 </style>
 </head>
 <body>
 
-<div class="banner-container" onclick="window.open('https://wa.me/27609615091?text=Hi%20Indwe%2C%20I%27d%20like%20to%20chat%20about%20insurance.', '_blank')" role="banner" aria-label="Indwe Risk Services Sponsorship Banner">
+<div class="banner"
+     onclick="window.open('https://wa.me/27609615091?text=Hi%20Indwe%2C%20I%27d%20like%20to%20chat%20about%20insurance.', '_blank')"
+     role="link" tabindex="0"
+     onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"
+     aria-label="Indwe Risk Services — WhatsApp us about insurance">
 
-  <!-- Slide 1: Proudly Sponsored By (pixel-perfect PNG) -->
+  <!-- 1 · Sponsor -->
   <div class="slide slide-sponsor">
-    <!-- The wide artwork is a thin strip; on a phone the iframe is nearly
-         2:1 and the wide strip sits tiny in the middle, so the stacked logo
-         takes over below 640px and fills the box. -->
     <picture>
       <source media="(max-width: 640px)" srcset="/logos/indwe-stacked.png" />
       <img src="indwe-sponsor-banner.png" alt="Proudly Sponsored By Indwe Risk Services – Authorised Financial Services Provider FSP 3425" />
     </picture>
   </div>
 
-  <!-- Slide 2: Campaign Copy – blue on white -->
-  <div class="slide slide-copy">
-    <span class="copy-line-1">Taking risks playing golf is fun.</span>
-    <span class="copy-line-2">Let us handle the rest.</span>
+  <!-- 2 · Message -->
+  <div class="slide slide-blue slide-copy">
+    <div class="eyebrow rise">Indwe Risk Services</div>
+    <div class="headline rise">Taking risks playing golf is fun.</div>
+    <div class="headline accent rise"><span class="accent">Let us handle the rest.</span></div>
   </div>
 
-  <!-- Slide 3: CTA – blue on white -->
-  <div class="slide slide-cta">
-    <div class="cta-text">WhatsApp us.</div>
-    <div class="cta-sub">Only about insurance please.</div>
-    <a href="https://wa.me/27609615091?text=Hi%20Indwe%2C%20I%27d%20like%20to%20chat%20about%20insurance." target="_blank" rel="noopener" class="cta-button" onclick="event.stopPropagation();">Open WhatsApp</a>
-    <div class="cta-signoff">Indwe Risk Services.</div>
+  <!-- 3 · Action -->
+  <div class="slide slide-blue slide-cta">
+    <div class="headline rise">WhatsApp us.</div>
+    <div class="sub rise">Only about insurance please.</div>
+    <a class="pill rise" href="https://wa.me/27609615091?text=Hi%20Indwe%2C%20I%27d%20like%20to%20chat%20about%20insurance." target="_blank" rel="noopener" onclick="event.stopPropagation();">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.48-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.91-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.06 2.87 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35M12.05 21.8h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.9-9.88 2.64 0 5.12 1.03 6.99 2.9a9.82 9.82 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.89 9.88m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.33.16 11.89c0 2.1.55 4.14 1.59 5.95L0 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.33 11.89-11.89 0-3.18-1.24-6.16-3.48-8.41"/></svg>
+      Chat on WhatsApp
+    </a>
+    <div class="signoff rise">Indwe Risk Services · FSP 3425</div>
   </div>
+
+  <!-- Tap cues on every slide -->
+  <div class="chip" aria-hidden="true">
+    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.48-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.91-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.06 2.87 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35M12.05 21.8h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.9-9.88 2.64 0 5.12 1.03 6.99 2.9a9.82 9.82 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.89 9.88m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.33.16 11.89c0 2.1.55 4.14 1.59 5.95L0 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.33 11.89-11.89 0-3.18-1.24-6.16-3.48-8.41"/></svg>
+    Chat
+  </div>
+  <div class="progress" aria-hidden="true"></div>
 
 </div>
 
