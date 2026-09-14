@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Lock, Shield, ShieldCheck } from "lucide-react";
-import { COURSES, MEMBERSHIP, PRIZE_TIERS, ROUTES } from "@/lib/constants";
+import { COURSES, MEMBERSHIP, ROUTES } from "@/lib/constants";
 import { WHATSAPP_CONSENT_WORDING } from "@/lib/whatsapp";
 import {
   Checkbox,
@@ -14,6 +14,7 @@ import {
   Select,
   SubmitButton,
 } from "./FormPrimitives";
+import TierPicker from "./TierPicker";
 
 // Membership signups live on the dedicated subscription site
 // (membership.getluckygolfclub.com), which owns the recurring-billing flow,
@@ -102,34 +103,9 @@ export default function EntryForm() {
     <form onSubmit={onSubmit} onChange={onFieldChange} noValidate className="space-y-5">
       {topError && <FormErrorBanner message={topError} />}
 
-      <Field label="Entry Amount" name="entryAmount" required error={errors.entryAmount}>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {PRIZE_TIERS.map((t) => {
-            const checked = tier === t.entryAmount;
-            return (
-              <label
-                key={t.entryAmount}
-                className={`relative cursor-pointer rounded-xl p-3 text-center transition-all border-2 ${
-                  checked
-                    ? "border-gold bg-gold/10 ring-2 ring-gold/30"
-                    : "border-green-dark/15 bg-white hover:border-gold/40"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="entryAmount"
-                  value={t.entryAmount}
-                  checked={checked}
-                  onChange={() => setTier(t.entryAmount)}
-                  className="sr-only"
-                />
-                <p className="text-base font-black text-green-dark">{t.entry}</p>
-                <p className="text-[10px] uppercase tracking-wider text-charcoal-light/60 mt-0.5">Win</p>
-                <p className="text-xs font-bold text-gold">{t.prize}</p>
-              </label>
-            );
-          })}
-        </div>
+      {/* Prize first, stake second: see TierPicker for the reasoning. */}
+      <Field label="Pick Your Prize" name="entryAmount" required error={errors.entryAmount}>
+        <TierPicker value={tier} onChange={setTier} />
       </Field>
 
       <Field label="Golf Course" name="course" required error={errors.course}>

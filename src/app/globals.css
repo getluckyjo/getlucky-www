@@ -77,3 +77,50 @@ html {
   background: var(--green);
   border-radius: 3px;
 }
+
+/*
+ * Prize-first tier picker (TierPicker.tsx).
+ *
+ * Three motions, all decorative and all switched off under
+ * prefers-reduced-motion: a gold sweep across the jackpot card so the top
+ * rung never sits still, a soft breathing glow on the selected card, and a
+ * pop when a selection lands. The payout count-up lives in JS and checks the
+ * same media query.
+ */
+@keyframes tier-shimmer {
+  0% { transform: translateX(-150%) skewX(-20deg); }
+  60%, 100% { transform: translateX(250%) skewX(-20deg); }
+}
+@keyframes tier-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 169, 78, 0.55), 0 8px 24px -8px rgba(201, 169, 78, 0.6); }
+  50% { box-shadow: 0 0 0 6px rgba(201, 169, 78, 0), 0 8px 24px -8px rgba(201, 169, 78, 0.9); }
+}
+@keyframes tier-pop {
+  0% { transform: scale(0.96); }
+  55% { transform: scale(1.05); }
+  100% { transform: scale(1.03); }
+}
+@keyframes tier-rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.tier-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(232, 212, 139, 0.35), transparent);
+  animation: tier-shimmer 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+.tier-selected {
+  animation: tier-pop 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.4) both, tier-glow 2.4s ease-in-out 0.28s infinite;
+}
+.tier-rise {
+  animation: tier-rise 0.32s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tier-shimmer::after { animation: none; display: none; }
+  .tier-selected { animation: none; transform: scale(1.03); box-shadow: 0 8px 24px -8px rgba(201, 169, 78, 0.6); }
+  .tier-rise { animation: none; }
+}

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { COURSES, PRIZE_TIERS, ROUTES } from "@/lib/constants";
+import { COURSES, ROUTES } from "@/lib/constants";
 import {
   Checkbox,
   Field,
@@ -14,6 +14,7 @@ import {
   SubmitButton,
   Textarea,
 } from "./FormPrimitives";
+import TierPicker from "./TierPicker";
 
 export default function VoucherForm() {
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -106,41 +107,8 @@ export default function VoucherForm() {
     <form ref={formRef} onSubmit={onSubmit} noValidate className="space-y-6">
       {topError && <FormErrorBanner message={topError} />}
 
-      <Field label="Choose Your Entry" name="entryAmount" required error={errors.entryAmount}>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          {PRIZE_TIERS.map((t) => {
-            const checked = tier === t.entryAmount;
-            return (
-              <label
-                key={t.entryAmount}
-                className={`relative cursor-pointer rounded-xl p-4 text-center transition-all border-2 ${
-                  checked
-                    ? "border-gold bg-gold/10 ring-2 ring-gold/30"
-                    : "border-green-dark/15 bg-white hover:border-gold/40"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="entryAmount"
-                  value={t.entryAmount}
-                  defaultChecked={t.entryAmount === 250}
-                  className="sr-only"
-                />
-                {t.popular && (
-                  <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-green-dark text-gold text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full whitespace-nowrap">
-                    Popular
-                  </span>
-                )}
-                <p className="text-[10px] font-medium uppercase tracking-wider text-charcoal-light/60 mb-1">
-                  Entry
-                </p>
-                <p className="text-lg font-black text-green-dark mb-1">{t.entry}</p>
-                <p className="text-[10px] font-medium uppercase tracking-wider text-charcoal-light/60 mb-1">Win</p>
-                <p className="text-sm font-bold text-gold">{t.prize}</p>
-              </label>
-            );
-          })}
-        </div>
+      <Field label="Pick Your Prize" name="entryAmount" required error={errors.entryAmount}>
+        <TierPicker value={tier} onChange={setTier} columns="grid-cols-2 sm:grid-cols-3 lg:grid-cols-6" />
       </Field>
 
       <Field label="Your Course" name="course" required error={errors.course}>

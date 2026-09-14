@@ -37,12 +37,12 @@ export const MEMBERSHIP = {
 } as const;
 
 export const PRIZE_TIERS = [
-  { entry: "R50", entryAmount: 50, prize: "R25,000", popular: false, label: "Bronze Swing" },
-  { entry: "R100", entryAmount: 100, prize: "R60,000", popular: false, label: "Silver Swing" },
-  { entry: "R150", entryAmount: 150, prize: "R100,000", popular: false, label: "Birdie Swing" },
-  { entry: "R250", entryAmount: 250, prize: "R200,000", popular: true, label: "Gold Swing" },
-  { entry: "R500", entryAmount: 500, prize: "R500,000", popular: false, label: "Platinum Swing" },
-  { entry: "R1,000", entryAmount: 1000, prize: "R1,000,000", popular: false, label: "Diamond Swing" },
+  { entry: "R50", entryAmount: 50, prize: "R25,000", prizeAmount: 25000, popular: false, label: "Bronze Swing" },
+  { entry: "R100", entryAmount: 100, prize: "R60,000", prizeAmount: 60000, popular: false, label: "Silver Swing" },
+  { entry: "R150", entryAmount: 150, prize: "R100,000", prizeAmount: 100000, popular: false, label: "Birdie Swing" },
+  { entry: "R250", entryAmount: 250, prize: "R200,000", prizeAmount: 200000, popular: true, label: "Gold Swing" },
+  { entry: "R500", entryAmount: 500, prize: "R500,000", prizeAmount: 500000, popular: false, label: "Platinum Swing" },
+  { entry: "R1,000", entryAmount: 1000, prize: "R1,000,000", prizeAmount: 1000000, popular: false, label: "Diamond Swing" },
 ] as const;
 
 export type PrizeTier = (typeof PRIZE_TIERS)[number];
