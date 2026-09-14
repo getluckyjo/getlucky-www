@@ -87,11 +87,9 @@ export default function EntryForm() {
     <form onSubmit={onSubmit} onChange={onFieldChange} noValidate className="space-y-5">
       {topError && <FormErrorBanner message={topError} />}
 
-      {/* Prize first, stake second: see TierPicker for the reasoning. */}
-      <Field label="Pick Your Prize" name="entryAmount" required error={errors.entryAmount}>
-        <TierPicker value={tier} onChange={setTier} />
-      </Field>
-
+      {/* Course and number first, then the bet. The two quick fields are out
+          of the way before the picker, so the prize and the pay button sit
+          together at the bottom with nothing between them. */}
       <Field label="Golf Course" name="course" required error={errors.course}>
         <Select name="course" required options={COURSES} placeholder="Select your course" />
       </Field>
@@ -102,6 +100,11 @@ export default function EntryForm() {
 
       <Field label="Mobile Number" name="mobile" required error={errors.mobile}>
         <Input name="mobile" type="tel" required autoComplete="tel" placeholder="+27 XX XXX XXX" inputMode="tel" />
+      </Field>
+
+      {/* Prize first, stake second: see TierPicker for the reasoning. */}
+      <Field label="Pick Your Prize" name="entryAmount" required error={errors.entryAmount}>
+        <TierPicker value={tier} onChange={setTier} />
       </Field>
 
       <div className="space-y-3 pt-2">
