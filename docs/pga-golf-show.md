@@ -9,13 +9,17 @@ a number. No payment.
 - Asks for **name and mobile only**. No email, no course, no event field — the
   show is the "course".
 - **Asks for a follow of @getluckygolfclub on Instagram, optionally.** The
-  button opens the profile in a new tab (the Instagram app on a phone) and ticks
-  the box for the golfer when they come back. Not everyone has Instagram, so an
-  entry goes through without it. Instagram has no API that lets us verify a
-  follow, so this is the golfer's word and is recorded as their word
-  (`data.instagram_follow` on the lead).
-- The **WhatsApp opt-in** is the same box, same wording, as the course forms.
-  It is optional. Consent bundled with entry is not freely given.
+  button opens the profile in a new tab (the Instagram app on a phone), and
+  the tap is what gets recorded (`data.instagram_follow` on the lead). Not
+  everyone has Instagram, so an entry goes through without it. There is no
+  checkbox: Instagram has no API that lets us verify a follow, so a box was
+  only ever the golfer's word too.
+- **The terms are accepted by pressing Enter.** The line under the button says
+  so, with the terms and privacy links. No checkbox.
+- The **WhatsApp opt-in is the only checkbox on the form**, same wording as
+  the course forms, and optional. It must never be merged with anything
+  required: consent bundled with entry is not freely given, and this account
+  has been restricted by Meta once already.
 - Every entry is handed to the WhatsApp service (`getluckyjo/twillio`) through
   the existing `notifyWhatsAppChannel()` seam, exactly as `/form-2` does. The
   rest are recorded there and never messaged.

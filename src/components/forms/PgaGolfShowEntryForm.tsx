@@ -18,16 +18,20 @@ import {
 /**
  * The simulator entry at the PGA Golf & Lifestyle Show.
  *
- * Two fields and three boxes. A golfer at a show stand is typing on a phone
- * with a queue behind them, so everything that is not a name, a number or a
- * condition of entry has been cut.
+ * Two fields, one button and one box. A golfer at a show stand is typing on
+ * a phone with a queue behind them, so everything else has been cut.
+ *
+ * The terms are accepted by pressing Enter — the line under the button says
+ * so — rather than by a box of their own. The WhatsApp box is the only
+ * checkbox on the form, on purpose: it is a genuine choice and must never be
+ * merged with anything required, or the consent is bundled with entry and
+ * worth nothing (src/lib/whatsapp.ts).
  *
  * The Instagram follow is asked for but optional — not everyone has
  * Instagram — and there is no way to verify a follow from outside it. So the
- * step is: tap the button, which opens the profile in a new tab (the Instagram
- * app on a phone), and the box ticks itself when they come back. A golfer who
- * already follows can tick it by hand. It is their word, recorded as their
- * word.
+ * step is one tap: the button opens the profile in a new tab (the Instagram
+ * app on a phone) and the tap is what gets recorded. A checkbox added nothing
+ * to that, since it was only ever the golfer's word too.
  */
 export default function PgaGolfShowEntryForm() {
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -35,7 +39,6 @@ export default function PgaGolfShowEntryForm() {
   const [submitted, setSubmitted] = useState(false);
   const [optedIn, setOptedIn] = useState(false);
   const [topError, setTopError] = useState<string | null>(null);
-  const [instagramFollow, setInstagramFollow] = useState(false);
   const [tappedFollow, setTappedFollow] = useState(false);
 
   function onFieldChange(e: React.ChangeEvent<HTMLFormElement>) {
@@ -47,11 +50,8 @@ export default function PgaGolfShowEntryForm() {
   }
 
   function onFollowTap() {
-    // The link itself opens Instagram; this just records that they went and
-    // ticks the box so they have nothing to do when they come back.
+    // The link itself opens Instagram; this just records that they went.
     setTappedFollow(true);
-    setInstagramFollow(true);
-    setErrors((prev) => (prev.instagramFollow ? { ...prev, instagramFollow: undefined } : prev));
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -64,9 +64,10 @@ export default function PgaGolfShowEntryForm() {
     const payload = {
       name: String(fd.get("name") || ""),
       mobile: String(fd.get("mobile") || ""),
-      instagramFollow,
+      instagramFollow: tappedFollow,
       consentWhatsApp: fd.get("consentWhatsApp") === "on",
-      consentTerms: fd.get("consentTerms") === "on",
+      // Accepted by pressing Enter; the line under the button says so.
+      consentTerms: true,
     };
 
     try {
@@ -141,58 +142,39 @@ export default function PgaGolfShowEntryForm() {
           {tappedFollow ? "Opened Instagram" : `Follow @${PGA_GOLF_SHOW.instagramHandle}`}
           <ExternalLink className="h-4 w-4 opacity-80" aria-hidden />
         </a>
-        <label htmlFor="instagramFollow" className="flex items-start gap-3 cursor-pointer">
-          <input
-            id="instagramFollow"
-            name="instagramFollow"
-            type="checkbox"
-            checked={instagramFollow}
-            onChange={(e) => setInstagramFollow(e.target.checked)}
-            className="mt-1 w-5 h-5 rounded border-green-dark/30 text-green focus:ring-gold/30 focus:ring-2 cursor-pointer flex-shrink-0"
-          />
-          <span className="text-sm text-charcoal-light/90 leading-relaxed">
-            I&apos;m following @{PGA_GOLF_SHOW.instagramHandle} on Instagram.
-            {tappedFollow ? " Thanks — tap Follow in the app and come back here." : ""}
-          </span>
-        </label>
         <p className="text-xs text-charcoal-light/60">
-          Optional. Not on Instagram? Skip this and carry on.
+          {tappedFollow
+            ? "Thanks — tap Follow in the app and come back here."
+            : "Optional. Not on Instagram? Skip this and carry on."}
         </p>
-        {errors.instagramFollow && (
-          <span className="block ml-8 text-xs text-red-600 font-medium" role="alert">
-            {errors.instagramFollow}
-          </span>
-        )}
       </div>
 
-      <div className="space-y-3 pt-1">
+      <div className="pt-1">
         {/*
-          Stored verbatim with every consent record, so it must match
-          WHATSAPP_CONSENT_WORDING in src/lib/whatsapp.ts exactly. Change one and
-          change the other, and bump CONSENT_FORM_VERSION.
+          The only checkbox on the form. Stored verbatim with every consent
+          record, so it must match WHATSAPP_CONSENT_WORDING in
+          src/lib/whatsapp.ts exactly. Change one and change the other, and
+          bump CONSENT_FORM_VERSION.
         */}
         <Checkbox name="consentWhatsApp" error={errors.consentWhatsApp}>
           {WHATSAPP_CONSENT_WORDING}
         </Checkbox>
-        <Checkbox name="consentTerms" required error={errors.consentTerms}>
-          I accept the{" "}
+      </div>
+
+      <div className="pt-2">
+        <SubmitButton pending={pending}>Enter for free →</SubmitButton>
+        <p className="text-xs text-charcoal-light/70 mt-3 leading-relaxed">
+          By entering you accept the{" "}
           <Link href={ROUTES.terms} className="text-green-dark underline hover:text-gold">
             terms &amp; conditions
           </Link>
-          {" "}and confirm I am 18 or older.
-        </Checkbox>
-        <p className="text-sm text-gray-600">
-          See our{" "}
+          {" "}and confirm you are 18 or older. See our{" "}
           <Link href={ROUTES.privacy} className="text-green-dark underline hover:text-gold">
             privacy policy
           </Link>
           {" "}for how we look after your details.
         </p>
-      </div>
-
-      <div className="pt-2">
-        <SubmitButton pending={pending}>Enter for free →</SubmitButton>
-        <p className="text-xs text-charcoal-light/60 mt-3">
+        <p className="text-xs text-charcoal-light/60 mt-2">
           No payment. One free shot at {PGA_GOLF_SHOW.prize} on the simulator.
         </p>
       </div>

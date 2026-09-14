@@ -240,8 +240,10 @@ export const freeEntrySchema = z.object({
 // Name and number only: a golfer at a show stand with a queue behind them.
 // Email is not asked. The Instagram follow is asked for but optional — not
 // everyone has Instagram, and a follow cannot be verified from outside it
-// anyway, so what is recorded is the golfer's word. The WhatsApp box is
-// optional too: consent bundled with entry is not freely given.
+// anyway, so what is recorded is that they tapped through. The terms are
+// accepted by pressing Enter (the form sends true; the line under the button
+// says so). The WhatsApp box is the only checkbox, and optional: consent
+// bundled with entry is not freely given.
 export const pgaGolfShowEntrySchema = z.object({
   name: requiredString("Name").max(120),
   mobile: phone,
