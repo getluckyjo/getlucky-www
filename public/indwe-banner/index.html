@@ -100,7 +100,7 @@
   .slide-cta {
     animation-name: slide3;
     flex-direction: column;
-    gap: clamp(8px, 1.5vw, 18px);
+    gap: clamp(5px, 1vw, 12px);
     padding: 0 8%;
   }
 
@@ -112,6 +112,26 @@
     letter-spacing: 1.5px;
     line-height: 1.2;
     text-transform: uppercase;
+  }
+
+  .cta-sub {
+    font-size: clamp(14px, 2vw, 26px);
+    font-weight: 700;
+    color: #0066a2;
+    text-align: center;
+    letter-spacing: 1px;
+    line-height: 1.2;
+    margin-top: -2px;
+  }
+
+  .cta-signoff {
+    font-size: clamp(10px, 1.2vw, 15px);
+    font-weight: 700;
+    color: #0066a2;
+    text-align: center;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    opacity: 0.85;
   }
 
   .cta-underline {
@@ -178,7 +198,7 @@
 </head>
 <body>
 
-<div class="banner-container" onclick="window.open('https://indwemicrosite.vercel.app', '_blank')" role="banner" aria-label="Indwe Risk Services Sponsorship Banner">
+<div class="banner-container" onclick="window.open('https://wa.me/27609615091?text=Hi%20Indwe%2C%20I%27d%20like%20to%20chat%20about%20insurance.', '_blank')" role="banner" aria-label="Indwe Risk Services Sponsorship Banner">
 
   <!-- Slide 1: Proudly Sponsored By (pixel-perfect PNG) -->
   <div class="slide slide-sponsor">
@@ -187,14 +207,16 @@
 
   <!-- Slide 2: Campaign Copy – blue on white -->
   <div class="slide slide-copy">
-    <span class="copy-line-1">Your handicap changes.</span>
-    <span class="copy-line-2">So does your risk.</span>
+    <span class="copy-line-1">Taking risks is fun.</span>
+    <span class="copy-line-2">Let us handle the rest.</span>
   </div>
 
   <!-- Slide 3: CTA – blue on white -->
   <div class="slide slide-cta">
-    <div class="cta-text">Claim your complimentary risk review.</div>
-    <a href="https://indwemicrosite.vercel.app" target="_blank" class="cta-button" onclick="event.stopPropagation();">Takes 15 seconds</a>
+    <div class="cta-text">WhatsApp us.</div>
+    <div class="cta-sub">Only about insurance please.</div>
+    <a href="https://wa.me/27609615091?text=Hi%20Indwe%2C%20I%27d%20like%20to%20chat%20about%20insurance." target="_blank" rel="noopener" class="cta-button" onclick="event.stopPropagation();">Open WhatsApp</a>
+    <div class="cta-signoff">Indwe Risk Services.</div>
   </div>
 
 </div>
