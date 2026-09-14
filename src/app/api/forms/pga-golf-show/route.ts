@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error("PGA Golf Show sheet append failed", err);
     return NextResponse.json(
-      { error: "We couldn't record your entry. Please try again or speak to someone at the stand." },
+      { error: "We couldn't record your entry. Please try again in a moment." },
       { status: 500 },
     );
   }
