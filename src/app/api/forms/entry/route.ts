@@ -164,7 +164,9 @@ export async function POST(req: NextRequest) {
         { status: 503 },
       );
     }
-    void sendOpsAlert({
+    // Awaited: Vercel may freeze the function once the response goes out, and
+    // sendOpsAlert never throws, so this costs a sub-second Resend call.
+    await sendOpsAlert({
       subject: `[WARN] Entry Sheet mirror missed (${reference})`,
       heading: "A pending entry was recorded in Postgres but not mirrored to the Sheet",
       body:
