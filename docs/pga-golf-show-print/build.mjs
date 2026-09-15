@@ -12,6 +12,7 @@ mkdirSync(OUT, { recursive: true });
 const NAVY = "#193262", GREEN = "#418441", CREAM = "#f6f4db";
 const URL_A5 = "https://www.getluckygolf.co.za/pga-golf-show?ref=a5";
 const URL_LANYARD = "https://www.getluckygolf.co.za/pga-golf-show?ref=lanyard";
+const URL_A4 = "https://www.getluckygolf.co.za/pga-golf-show?ref=a4";
 const URL_SHOWN = "getluckygolf.co.za/pga-golf-show";
 
 const data = (path, type) => `data:${type};base64,${readFileSync(path).toString("base64")}`;
@@ -54,14 +55,20 @@ const css = `
   .bleed { position: relative; }
 `;
 
-function a5({ qr, bleed }) {
-  // Trim 148 x 210. Bleed adds 3mm each side; content stays on the trim box.
-  const b = bleed ? 3 : 0;
-  const W = 148 + 2 * b, H = 210 + 2 * b;
+function a5({ qr, bleed, trim = [148, 210] }) {
+  // Designed at A5 (148 x 210) and scaled to whatever trim is asked for —
+  // A4 is the same design at root two. Bleed adds 3mm each side at real
+  // size; content stays on the trim box. Everything inside is laid out in
+  // A5 millimetres and zoomed, so the proportions never drift between sizes.
+  const s = trim[1] / 210;
+  const realB = bleed ? 3 : 0;
+  const b = realB / s;
+  const W = trim[0] / s + 2 * b, H = 210 + 2 * b;
+  const realW = trim[0] + 2 * realB, realH = trim[1] + 2 * realB;
   return `<!doctype html><html><head><meta charset="utf-8"><style>${css}
-    @page { size: ${W}mm ${H}mm; margin: 0; }
-    html, body { width: ${W}mm; height: ${H}mm; }
-    .page { width: ${W}mm; height: ${H}mm; padding: ${b}mm; }
+    @page { size: ${realW}mm ${realH}mm; margin: 0; }
+    html, body { width: ${realW}mm; height: ${realH}mm; }
+    .page { width: ${W}mm; height: ${H}mm; padding: ${b}mm; zoom: ${s}; }
     .mast { justify-content: center; font-size: 8pt; letter-spacing: 0.22em; margin: -${b}mm -${b}mm 0; padding-top: ${b}mm; height: ${8 + b}mm; }
   </style></head><body><div class="page">
     <div class="mast"><span>18–20 September 2026</span></div>
@@ -170,14 +177,16 @@ const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromi
 const jobs = [
   ["pga-show-a5", a5, URL_A5, [148, 210], false],
   ["pga-show-a5-bleed3mm", a5, URL_A5, [154, 216], true],
+  ["pga-show-a4", a5, URL_A4, [210, 297], false, [210, 297]],
+  ["pga-show-a4-bleed3mm", a5, URL_A4, [216, 303], true, [210, 297]],
   ["pga-show-lanyard-a7", lanyard, URL_LANYARD, [74, 105], false],
   ["pga-show-lanyard-a7-bleed3mm", lanyard, URL_LANYARD, [80, 111], true],
   ["pga-show-lanyard-a7-back", lanyardBack, null, [74, 105], false],
   ["pga-show-lanyard-a7-back-bleed3mm", lanyardBack, null, [80, 111], true],
 ];
-for (const [name, build, url, [w, h], bleed] of jobs) {
+for (const [name, build, url, [w, h], bleed, trim] of jobs) {
   const qr = url ? await qrSvg(url) : "";
-  const html = build({ qr, bleed });
+  const html = build({ qr, bleed, trim });
   const page = await browser.newPage({ viewport: { width: Math.round(w * 3.7795), height: Math.round(h * 3.7795) }, deviceScaleFactor: 3 });
   await page.setContent(html, { waitUntil: "load" });
   await page.evaluate(() => document.fonts.ready);
@@ -189,7 +198,7 @@ for (const [name, build, url, [w, h], bleed] of jobs) {
 await browser.close();
 
 // Bare QR codes for anything else they want to put them on.
-for (const [name, url] of [["qr-pga-show-a5", URL_A5], ["qr-pga-show-lanyard", URL_LANYARD]]) {
+for (const [name, url] of [["qr-pga-show-a5", URL_A5], ["qr-pga-show-a4", URL_A4], ["qr-pga-show-lanyard", URL_LANYARD]]) {
   writeFileSync(`${OUT}${name}.svg`, await qrSvg(url));
   await QRCode.toFile(`${OUT}${name}.png`, url, { errorCorrectionLevel: "M", margin: 2, width: 2000, color: { dark: NAVY, light: "#ffffff" } });
   console.log("wrote", name, "svg+png");
@@ -198,7 +207,7 @@ for (const [name, url] of [["qr-pga-show-a5", URL_A5], ["qr-pga-show-lanyard", U
 // Prove the rendered codes scan: decode the QR out of each preview PNG.
 import jsQR from "jsqr";
 import { PNG } from "pngjs";
-for (const [name, want] of [["pga-show-a5", URL_A5], ["pga-show-lanyard-a7", URL_LANYARD]]) {
+for (const [name, want] of [["pga-show-a5", URL_A5], ["pga-show-a4", URL_A4], ["pga-show-lanyard-a7", URL_LANYARD]]) {
   const img = PNG.sync.read(readFileSync(`${OUT}${name}.png`));
   const hit = jsQR(new Uint8ClampedArray(img.data), img.width, img.height);
   console.log(name, hit?.data === want ? "QR decodes to the right URL" : `QR FAILED: ${hit?.data}`);
