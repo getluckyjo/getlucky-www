@@ -5,6 +5,7 @@ import { isDbConfigured, createEntry } from "@/lib/db";
 import { buildPaymentRequest, processUrl } from "@/lib/payfast";
 import { PRIZE_TIERS } from "@/lib/constants";
 import { CONSENT_FORM_VERSION } from "@/lib/whatsapp";
+import { sendOpsAlert } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -91,7 +92,8 @@ export async function POST(req: NextRequest) {
   // first and fail closed: if we can't record the pending row, don't take the
   // payment. Skipped entirely until Supabase is configured, so the Sheets-only
   // flow keeps working during rollout.
-  if (isDbConfigured()) {
+  const dbConfigured = isDbConfigured();
+  if (dbConfigured) {
     try {
       await createEntry({
         reference,
@@ -137,19 +139,46 @@ export async function POST(req: NextRequest) {
   // per entry however many times PayFast resends. /form-2 is unchanged — it has
   // no payment step, so there submission genuinely is the moment.
 
-  // Fail closed: if we can't record the pending row, don't take the payment.
-  // The env-var guard above only proves the env is set, not that Sheets is up.
+  // The Sheets mirror. Fail closed ONLY when it is the sole record, i.e. the
+  // DB is not configured. Once Postgres holds the pending row, a slow or
+  // hanging Apps Script must not stand between a golfer and PayFast.
+  //
+  // It did until 15 Sep 2026. The 8-second Apps Script timeout fired six times
+  // between June and September, each one a golfer at a tee box shown "We
+  // couldn't record your entry" after Postgres had already recorded it, and
+  // /api/payfast/notify reads Postgres, so the payment would have reconciled
+  // fine. The voucher route has been fail-soft on this write all along.
+  //
+  // A missed mirror row is still worth knowing about: the Sheet is what ops
+  // and the Indwe export read, so alert with enough to backfill by hand.
   try {
     await appendSubmission("entry", sheetRow);
   } catch (err) {
     console.error("Entry pending row failed", err);
-    return NextResponse.json(
-      {
-        error:
-          "We couldn't record your entry just now. Please try again in a moment, or ask a marshal at the tee.",
+    if (!dbConfigured) {
+      return NextResponse.json(
+        {
+          error:
+            "We couldn't record your entry just now. Please try again in a moment, or ask a marshal at the tee.",
+        },
+        { status: 503 },
+      );
+    }
+    void sendOpsAlert({
+      subject: `[WARN] Entry Sheet mirror missed (${reference})`,
+      heading: "A pending entry was recorded in Postgres but not mirrored to the Sheet",
+      body:
+        "The golfer was sent on to PayFast — the payment is not affected and the notify " +
+        "webhook reads Postgres. The entry tab in the Sheet is missing this row; add it by " +
+        "hand from /ops if the export needs it.",
+      detail: {
+        reference,
+        course: d.course,
+        tier: tier.label,
+        amount: d.entryAmount,
+        error: err instanceof Error ? err.message : String(err),
       },
-      { status: 503 },
-    );
+    });
   }
 
   let fields: Record<string, string>;
