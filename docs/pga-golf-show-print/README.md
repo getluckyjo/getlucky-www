@@ -1,11 +1,11 @@
 # PGA Golf Show print pieces
 
-The A5 poster and A7 lanyard card for the Get Lucky stand at the PGA Golf &
+The A4 and A5 posters and the A7 lanyard card for the Get Lucky stand at the PGA Golf &
 Lifestyle Show, 18–20 September 2026. Each carries a QR code to
 `/pga-golf-show` with a `ref` query so scans from the two pieces can be told
-apart in analytics (`?ref=a5`, `?ref=lanyard`); the page ignores it otherwise.
+apart in analytics (`?ref=a4`, `?ref=a5`, `?ref=lanyard`); the page ignores it otherwise.
 
-`build.mjs` renders both from HTML in Chromium, using the site's palette,
+`build.mjs` renders them all from HTML (the poster is designed at A5 and scaled by root two for A4) in Chromium, using the site's palette,
 fonts and the logos in `public/`, and then decodes the QR out of each render
 to prove it scans. It writes PDFs at trim size and with 3mm bleed, preview
 PNGs, and the bare QR codes as SVG and PNG. The previews and SVGs are checked
