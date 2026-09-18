@@ -1,18 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readSubmissions, SubmissionType } from "@/lib/sheets";
-import { isDbConfigured, listVouchers, listLeads, voucherToSheet, leadToSheet } from "@/lib/db";
+import { listVouchers, listLeads, voucherToSheet, leadToSheet } from "@/lib/db";
 
 export const runtime = "nodejs";
 
-const VALID_TYPES: SubmissionType[] = ["partner", "corporate", "voucher"];
+/** What a sponsor is allowed to ask for. */
+type SponsorType = "partner" | "corporate" | "voucher";
 
-// Source records for a sponsor-visible type. Postgres when configured
-// (Sheet-shaped via the db adapters), else the legacy Sheets read.
+const VALID_TYPES: SponsorType[] = ["partner", "corporate", "voucher"];
+
+// Source records for a sponsor-visible type. Postgres only — the Sheets read
+// that used to back this went with the Apps Script. Rows still come back
+// Sheet-shaped, via the db adapters, so every caller is unchanged.
 async function recordsForType(
-  t: SubmissionType,
+  t: SponsorType,
   since?: string,
 ): Promise<Record<string, string>[]> {
-  if (!isDbConfigured()) return readSubmissions(t, since);
   switch (t) {
     case "voucher":
       return (await listVouchers(since)).map(voucherToSheet);
@@ -20,8 +22,6 @@ async function recordsForType(
       return (await listLeads("partner", since)).map((r) => leadToSheet("partner", r));
     case "corporate":
       return (await listLeads("corporate", since)).map((r) => leadToSheet("corporate", r));
-    default:
-      return readSubmissions(t, since);
   }
 }
 
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
   }
 
   const url = new URL(req.url);
-  const typeParam = (url.searchParams.get("type") || "voucher") as SubmissionType;
+  const typeParam = (url.searchParams.get("type") || "voucher") as SponsorType;
   const since = url.searchParams.get("since") || undefined;
 
   if (!VALID_TYPES.includes(typeParam)) {

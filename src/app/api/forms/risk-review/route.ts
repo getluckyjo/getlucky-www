@@ -13,7 +13,6 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { riskReviewSchema } from "@/lib/validation";
-import { appendSubmission } from "@/lib/sheets";
 import { isDbConfigured, insertLead } from "@/lib/db";
 
 export const runtime = "nodejs";
@@ -62,7 +61,7 @@ export async function POST(req: NextRequest) {
 
   const data = parsed.data;
   const timestamp = new Date().toISOString();
-  const sheetRow = {
+  const submission = {
     Timestamp: timestamp,
     "Full Name": data.fullName,
     Email: data.email,
@@ -82,6 +81,7 @@ export async function POST(req: NextRequest) {
 
   // Postgres is the durable lead store; Sheets is the mirror. Fail-soft — the
   // microsite also writes to its own Apps Script as a backup.
+  let recordedInDb = false;
   if (isDbConfigured()) {
     try {
       await insertLead({
@@ -89,23 +89,23 @@ export async function POST(req: NextRequest) {
         full_name: data.fullName,
         email: data.email,
         mobile: data.mobile,
-        source: sheetRow.Source,
+        source: submission.Source,
         consent_communication: data.consent ?? false,
         data: {
           address: data.address || "",
           schedule_file: data.scheduleFile || "",
-          lead_stage: sheetRow["Lead Stage"],
+          lead_stage: submission["Lead Stage"],
         },
       });
+      recordedInDb = true;
     } catch (err) {
       console.error("Risk-review lead DB write failed", err);
     }
   }
 
-  try {
-    await appendSubmission("riskReview", sheetRow);
-  } catch (err) {
-    console.error("Risk-review submission failed:", err);
+  // Postgres is the only store now that the Sheets mirror is gone: if the write
+  // above did not land, the request is lost and the sender has to know.
+  if (!recordedInDb) {
     return NextResponse.json(
       { error: "We couldn't record your request. Please try again." },
       { status: 500, headers: corsHeaders(origin) },

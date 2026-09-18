@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { voucherSchema } from "@/lib/validation";
-import { appendSubmission } from "@/lib/sheets";
 import { isDbConfigured, createVoucher } from "@/lib/db";
 import { buildPaymentRequest, processUrl } from "@/lib/payfast";
 import { PRIZE_TIERS } from "@/lib/constants";
@@ -15,14 +14,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  // Guard: if storage (Sheets) is not yet configured, don't initiate payments
-  // we can't record. Better to show a friendly maintenance message than to
-  // accept money we can't reconcile.
-  if (!process.env.SHEETS_WEBAPP_URL || !process.env.SHEETS_SECRET) {
+  // Guard: don't initiate payments we can't record. Postgres is the only store
+  // now that the Sheets mirror is gone. Better a friendly maintenance message
+  // than money we cannot reconcile.
+  if (!isDbConfigured()) {
+    console.error("Voucher purchase attempted with no database configured");
     return NextResponse.json(
       {
         error:
-          "Online voucher purchases are temporarily offline while we finish migrating to our new payment system. Please email johannes@getluckygolfclub.com to buy a swing and we'll come right back to you.",
+          "Online voucher purchases are temporarily offline. Please email johannes@getluckygolfclub.com to buy a swing and we'll come right back to you.",
       },
       { status: 503 },
     );
@@ -46,31 +46,12 @@ export async function POST(req: NextRequest) {
   }
 
   const reference = makeReference();
-  const timestamp = new Date().toISOString();
 
-  const sheetRow = {
-    Timestamp: timestamp,
-    Reference: reference,
-    Status: "pending",
-    Tier: tier.label,
-    Amount: d.entryAmount,
-    Prize: tier.prize,
-    Course: d.course,
-    "Buyer Name": d.fullName,
-    "Buyer Email": d.email || "",
-    "Buyer Mobile": d.mobile,
-    For: d.purchaseFor,
-    "Recipient Name": d.recipientName || "",
-    "Recipient Email": d.recipientEmail || "",
-    "Personal Message": d.personalMessage || "",
-    "Promo Code": d.promoCode || "",
-    "PayFast PaymentID": "",
-  };
 
   // Postgres is the durable system-of-record (Sheets is now a mirror). Write it
   // first; fail-soft like the Sheets path below — the notify webhook upserts the
   // paid status by reference, so a missed pending row still reconciles.
-  if (isDbConfigured()) {
+  {
     try {
       await createVoucher({
         reference,
@@ -89,17 +70,19 @@ export async function POST(req: NextRequest) {
         promo_code: d.promoCode || null,
       });
     } catch (err) {
+      // Fails closed now the Sheets mirror is gone. It used to continue on the
+      // grounds that /api/payfast/notify would backfill by reference — but
+      // notify cannot backfill a row that was never written, and with no Sheet
+      // behind it that would mean taking money with no record anywhere.
       console.error("Voucher DB write failed", err);
-      // Continue anyway — payment can still proceed; notify backfills by reference
+      return NextResponse.json(
+        {
+          error:
+            "We couldn't record your purchase just now. Please try again in a moment.",
+        },
+        { status: 503 },
+      );
     }
-  }
-
-  // Record pending row first; payment confirmation arrives via /api/payfast/notify
-  try {
-    await appendSubmission("voucher", sheetRow);
-  } catch (err) {
-    console.error("Voucher pending row failed", err);
-    // Continue anyway — payment can still proceed; we'll backfill on notify
   }
 
   let fields: Record<string, string>;

@@ -8,9 +8,13 @@
  */
 
 import { isDbConfigured, listEntries } from "@/lib/db";
-import { readSubmissions } from "@/lib/sheets";
 
-export type DataSource = "postgres" | "sheets" | "unavailable";
+/**
+ * Where the dashboard's numbers came from. "sheets" was the Google Sheet
+ * mirror and went with the Apps Script; the value is kept out of the union so
+ * nothing can claim it again.
+ */
+export type DataSource = "postgres" | "unavailable";
 
 /** One entry attempt, normalised across Postgres and the Sheet mirror. */
 export type EntryPoint = {
@@ -100,27 +104,20 @@ export async function loadEntryMetrics(months = 6, now = new Date()): Promise<En
   let source: DataSource = "unavailable";
   let error: string | null = null;
 
-  try {
-    if (isDbConfigured()) {
+  // Postgres or nothing. The Sheet mirror that used to catch an unreachable
+  // database went with the Apps Script — and it was never much of a safety net,
+  // since the same 8s script timeout that made it unreliable for writes made it
+  // unreliable here. The page renders the error rather than stale numbers.
+  if (!isDbConfigured()) {
+    error = "SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY not set";
+  } else {
+    try {
       const { entryToSheet } = await import("@/lib/db");
       rows = (await listEntries(sinceISO)).map(entryToSheet);
       source = "postgres";
-    } else {
-      rows = await readSubmissions("entry", sinceISO);
-      source = "sheets";
-    }
-  } catch (e) {
-    error = e instanceof Error ? e.message : String(e);
-    // Postgres configured but unreachable — try the Sheet mirror before giving up.
-    if (source === "unavailable" || source === "postgres") {
-      try {
-        rows = await readSubmissions("entry", sinceISO);
-        source = "sheets";
-        error = null;
-      } catch (e2) {
-        error = e2 instanceof Error ? e2.message : String(e2);
-        source = "unavailable";
-      }
+    } catch (e) {
+      error = e instanceof Error ? e.message : String(e);
+      source = "unavailable";
     }
   }
 

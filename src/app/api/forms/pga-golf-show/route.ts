@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pgaGolfShowEntrySchema } from "@/lib/validation";
 import { PGA_GOLF_SHOW } from "@/lib/constants";
-import { appendSubmission } from "@/lib/sheets";
 import { isDbConfigured, insertLead } from "@/lib/db";
 import { notifyWhatsAppChannel } from "@/lib/whatsapp";
 
@@ -39,20 +38,11 @@ export async function POST(req: NextRequest) {
   }
 
   const d = parsed.data;
-  const timestamp = new Date().toISOString();
 
-  const sheetRow = {
-    Timestamp: timestamp,
-    Name: d.name,
-    Email: "",
-    Mobile: d.mobile,
-    Course: PGA_GOLF_SHOW.course,
-    Event: PGA_GOLF_SHOW.event,
-    Source: PGA_GOLF_SHOW.source,
-  };
 
-  // Postgres is the durable lead store; Sheets is the mirror. Fail-soft so a DB
-  // hiccup does not block the entry while Sheets still records it.
+  // Postgres is the store. The Sheets mirror that used to stand behind it is
+  // gone, so a failed write here is a lost entry and the route says so below.
+  let recordedInDb = false;
   if (isDbConfigured()) {
     try {
       await insertLead({
@@ -71,9 +61,19 @@ export async function POST(req: NextRequest) {
           consent_whatsapp: d.consentWhatsApp,
         },
       });
+      recordedInDb = true;
     } catch (err) {
       console.error("PGA Golf Show lead DB write failed", err);
     }
+  }
+
+  // Checked before the handoff, not after: there is no point messaging somebody
+  // about an entry we failed to record, and they are about to be told to retry.
+  if (!recordedInDb) {
+    return NextResponse.json(
+      { error: "We couldn't record your entry. Please try again in a moment." },
+      { status: 500 },
+    );
   }
 
   // Handed over after the entry is recorded, and never allowed to fail the
@@ -84,16 +84,6 @@ export async function POST(req: NextRequest) {
     course: PGA_GOLF_SHOW.course,
     whatsappOptIn: d.consentWhatsApp,
   });
-
-  try {
-    await appendSubmission("freeEntry", sheetRow);
-  } catch (err) {
-    console.error("PGA Golf Show sheet append failed", err);
-    return NextResponse.json(
-      { error: "We couldn't record your entry. Please try again in a moment." },
-      { status: 500 },
-    );
-  }
 
   return NextResponse.json({ ok: true });
 }

@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ROUTES } from "@/lib/constants";
 import { isDbConfigured, getEntry, entryToSheet } from "@/lib/db";
-import { readSubmissions } from "@/lib/sheets";
 
 export const metadata: Metadata = {
   title: "You're In",
@@ -33,25 +32,19 @@ export default async function FormSuccessPage({
   // counting) and an 8-second script timeout in front of it. The slowest page
   // to render was the one shown to the person who had just given us money.
   //
-  // Sheets stays as the fallback for the un-migrated case, matching what
-  // /api/payfast/notify does. Either path yields a Sheet-shaped row so the
-  // markup below is unchanged.
+  // The Sheets fallback that used to sit here went with the Apps Script. The
+  // row still arrives Sheet-shaped, via entryToSheet, so the markup below is
+  // unchanged.
   //
   // Still best-effort: if neither source answers we show the reference alone
   // rather than an error. A golfer who has paid should never see a failure
   // page because a lookup for decoration did not resolve.
   let row: Record<string, string> | null = null;
-  if (ref) {
+  if (ref && isDbConfigured()) {
     try {
-      if (isDbConfigured()) {
-        const rec = await getEntry(ref);
-        row = rec ? entryToSheet(rec) : null;
-      } else {
-        const rows = await readSubmissions("entry");
-        row = rows.find((r) => r.Reference === ref) || null;
-      }
+      row = await getEntry(ref).then((rec) => (rec ? entryToSheet(rec) : null));
     } catch {
-      // Neither source answered — render minimally.
+      // Postgres did not answer — render minimally.
     }
   }
 
