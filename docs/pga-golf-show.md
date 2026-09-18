@@ -32,9 +32,10 @@ R100.
   No underwriting questions, no booking. Change `PGA_GOLF_SHOW.course` and
   change it there too, or show entrants silently get the full nine-question
   course journey. `/form` and `/form-2` are untouched.
-- Recorded as a `free_entry` lead in Postgres and on the `freeEntry` sheet tab,
-  with `Source` = `getluckygolf.co.za /pga-golf-show`. The Indwe feed and the ops
-  scorecard pick it up without a new lead type.
+- Recorded as a `free_entry` lead in Postgres, with `Source` =
+  `getluckygolf.co.za /pga-golf-show`. The Indwe feed and the ops scorecard pick
+  it up without a new lead type. (It used to be mirrored to a `freeEntry` tab in
+  the Google Sheet; the Apps Script was removed in Sep 2026.)
 
 ## The R100 option
 
@@ -57,9 +58,9 @@ still enters for free, never walks anyone to a payment page.
 - **A paid entry is an `entry` row, not a `free_entry` lead.** `POST
   /api/forms/pga-golf-show/paid` writes a pending row with a `GLE-` reference
   (Tier `PGA Show Swing`, Amount 100, Prize `R100,000`, Course
-  `the PGA Golf Show`, Source `getluckygolf.co.za /pga-golf-show`) to Postgres
-  and the `entry` sheet tab, fails closed if either write fails, then hands the
-  signed PayFast fields back for the redirect. The `GLE-` prefix is what routes
+  `the PGA Golf Show`, Source `getluckygolf.co.za /pga-golf-show`) to Postgres,
+  fails closed if that write fails or the database is not configured, then hands
+  the signed PayFast fields back for the redirect. The `GLE-` prefix is what routes
   the notification to the entry tab in `/api/payfast/notify`, which marks it
   paid, backfills the email PayFast collected at checkout, and hands the golfer
   to the WhatsApp channel — **once the money has arrived, not on submit**.

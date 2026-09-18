@@ -17,7 +17,6 @@
 import { isDbConfigured, listVouchers, listEntries, listLeads, type DbLeadType } from "@/lib/db";
 import { isSubsDbConfigured, listIndweLeads } from "@/lib/subscriptions-db";
 import { isWhatsappDbConfigured, listWhatsappLeads } from "@/lib/whatsapp-db";
-import { readSubmissions, type SubmissionType } from "@/lib/sheets";
 import {
   LEAD_STAGE_BY_TYPE,
   TIERS_ASCENDING,
@@ -45,17 +44,20 @@ export type IndweLead = {
  * Agency leads are deliberately absent — they go to a separate internal
  * pipeline, exactly as /api/indwe/leads excludes them.
  */
-const FEED: { label: IndweLeadType; sheet: SubmissionType; db?: DbLeadType }[] = [
-  { label: "course-entry", sheet: "entry" },
-  { label: "voucher", sheet: "voucher" },
-  { label: "free-entry", sheet: "freeEntry", db: "free_entry" },
-  { label: "partner", sheet: "partner", db: "partner" },
-  { label: "corporate", sheet: "corporate", db: "corporate" },
-  { label: "charity", sheet: "charity", db: "charity" },
-  { label: "school", sheet: "school", db: "school" },
-  { label: "simulator", sheet: "simulator", db: "simulator" },
-  { label: "tour", sheet: "tour", db: "tour" },
-  { label: "risk-review", sheet: "riskReview", db: "risk_review" },
+const FEED: { label: IndweLeadType; db?: DbLeadType }[] = [
+  // Entries and vouchers have tables of their own; the rest are `leads` rows
+  // discriminated by `db`. The `sheet` field that used to sit here named a tab
+  // in the Google Sheet and went with it.
+  { label: "course-entry" },
+  { label: "voucher" },
+  { label: "free-entry", db: "free_entry" },
+  { label: "partner", db: "partner" },
+  { label: "corporate", db: "corporate" },
+  { label: "charity", db: "charity" },
+  { label: "school", db: "school" },
+  { label: "simulator", db: "simulator" },
+  { label: "tour", db: "tour" },
+  { label: "risk-review", db: "risk_review" },
 ];
 
 const s = (v: unknown): string => (v === null || v === undefined ? "" : String(v).trim());
@@ -134,10 +136,9 @@ export async function loadIndweReport(months = 6, now = new Date()): Promise<Ind
       }
       source = "postgres";
     } else {
-      for (const f of FEED) {
-        for (const r of await readSubmissions(f.sheet, sinceISO)) leads.push(toLead(f.label, r));
-      }
-      source = "sheets";
+      // No database, no report. The Sheets read that used to stand in here went
+      // with the Apps Script.
+      error = "SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY not set";
     }
   } catch (e) {
     error = e instanceof Error ? e.message : String(e);

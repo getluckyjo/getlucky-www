@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { freeEntrySchema } from "@/lib/validation";
-import { appendSubmission } from "@/lib/sheets";
 import { isDbConfigured, insertLead } from "@/lib/db";
 import { notifyWhatsAppChannel } from "@/lib/whatsapp";
 
@@ -43,7 +42,7 @@ export async function POST(req: NextRequest) {
   const d = parsed.data;
   const timestamp = new Date().toISOString();
 
-  const sheetRow = {
+  const submission = {
     Timestamp: timestamp,
     Name: d.name,
     Email: d.email || "",
@@ -53,8 +52,8 @@ export async function POST(req: NextRequest) {
     Source: "getluckygolf.co.za /form-2",
   };
 
-  // Postgres is the durable lead store; Sheets is the mirror. Fail-soft so a DB
-  // hiccup doesn't block the free-entry capture while Sheets still records it.
+  // Postgres is the store. The Sheets mirror that used to stand behind it is
+  // gone, so a failed write here is a lost entry and the route says so below.
   let recordedInDb = false;
   if (isDbConfigured()) {
     try {
@@ -63,7 +62,7 @@ export async function POST(req: NextRequest) {
         full_name: d.name,
         email: d.email || null,
         mobile: d.mobile,
-        source: sheetRow.Source,
+        source: submission.Source,
         // consent_communication is left unset rather than false. This form no
         // longer asks the general communication question, and recording a false
         // would assert the golfer declined something they were never shown.
@@ -76,6 +75,15 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Checked before the handoff, not after: there is no point messaging somebody
+  // about an entry we failed to record, and they are about to be told to retry.
+  if (!recordedInDb) {
+    return NextResponse.json(
+      { error: "We couldn't record your entry. Please try again or speak to a marshal." },
+      { status: 500 },
+    );
+  }
+
   // See the paid entry route: handed over after the entry is recorded, and never
   // allowed to fail the entry itself.
   await notifyWhatsAppChannel({
@@ -85,20 +93,6 @@ export async function POST(req: NextRequest) {
     course: d.course,
     whatsappOptIn: d.consentWhatsApp,
   });
-
-  // The Sheets mirror — same as the show form: fail closed only when Postgres
-  // did not take the row. See /api/forms/pga-golf-show for the incident.
-  try {
-    await appendSubmission("freeEntry", sheetRow);
-  } catch (err) {
-    console.error("Free entry sheet mirror failed", err);
-    if (!recordedInDb) {
-      return NextResponse.json(
-        { error: "We couldn't record your entry. Please try again or speak to a marshal." },
-        { status: 500 },
-      );
-    }
-  }
 
   return NextResponse.json({ ok: true });
 }

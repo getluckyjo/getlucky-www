@@ -8,12 +8,15 @@ Live repo: `getluckyjo/getlucky-www`.
 - **Tailwind CSS 4** (via `@tailwindcss/postcss`)
 - **Resend** — transactional / notification email
 - **PayFast** — payments (vouchers + paid entries)
-- **Google Sheets** (Apps Script Web App, called via `fetch` + shared secret) — current store for submissions & paid records
+- **Supabase (Postgres)** — the store for submissions & paid records
 - Hosted on **Vercel**
 
-> No database yet — submissions and paid records are written to Google Sheets via a
-> shared-secret Apps Script endpoint (`src/lib/sheets.ts`). See
-> `_cleanup/RECOMMENDATION-supabase.md` for the case to move paid/PII data to Supabase.
+> Supabase is the system-of-record and is **required**. The Google Sheets mirror
+> (a shared-secret Apps Script endpoint) was removed in September 2026: its 8s
+> timeout had been failing paid entries, and every read path had already moved to
+> Postgres. Routes that take money refuse rather than proceed when the database
+> is not configured. The historical Sheet still exists as a document; nothing
+> writes to it.
 
 ## Running locally
 ```bash
@@ -35,14 +38,14 @@ See `.env.example` for the full list. Summary (full matrix produced in Phase 4):
 | `OPS_ALERT_EMAIL` | Ops alerting (health canary) | server |
 | `PAYFAST_MERCHANT_ID` / `PAYFAST_MERCHANT_KEY` / `PAYFAST_PASSPHRASE` | PayFast credentials | server |
 | `PAYFAST_MODE` | `sandbox` vs `live` | server |
-| `SHEETS_WEBAPP_URL` / `SHEETS_SECRET` | Apps Script endpoint + shared secret | server |
+| `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | Postgres system-of-record (**required**) | server |
 | `INDWE_API_KEY` | Auth for Indwe leads API | server |
 | `SPONSOR_API_KEY` | Auth for sponsor entries API | server |
 
 **All secrets are server-only.** Only `NEXT_PUBLIC_*` vars are exposed to the browser.
 
 ## Key paths
-- `src/lib/sheets.ts` — Google Sheets submission/read layer
+- `src/lib/db.ts` — Supabase reads/writes, and the `*ToSheet` row adapters
 - `src/lib/payfast.ts` — PayFast signing + payment helpers
 - `src/lib/email.ts` — Resend wrappers
 - `src/app/api/payfast/notify/` — PayFast ITN (payment confirmation) handler

@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { signFields } from "@/lib/payfast";
 import { isDbConfigured, getEntryPaymentHealth } from "@/lib/db";
 import { stuckPendingCheck } from "@/lib/health";
-import { readSubmissions } from "@/lib/sheets";
 
 /**
  * Daily PayFast + backend health check.
@@ -20,6 +19,10 @@ import { readSubmissions } from "@/lib/sheets";
  * while every single PayFast ITN was being rejected and ~30 paid entries sat
  * `pending`. Reachability and a stable MD5 do not prove the money path works —
  * only "entries are being marked paid" does — see the money-path checks below.
+ *
+ * The `sheets_working` check that used to live here went with the Apps Script.
+ * Postgres is the only store now, and it has a better canary than a probe
+ * read: the money-path checks below cannot pass unless it is working.
  */
 
 /**
@@ -92,8 +95,10 @@ export async function GET() {
     "PAYFAST_PASSPHRASE",
     "PAYFAST_MODE",
     "RESEND_API_KEY",
-    "SHEETS_WEBAPP_URL",
-    "SHEETS_SECRET",
+    // The store. SHEETS_WEBAPP_URL and SHEETS_SECRET used to sit here; the
+    // Apps Script is gone and these are what an entry now depends on.
+    "SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
     "NEXT_PUBLIC_SITE_URL",
   ];
   const missing = requiredEnv.filter((k) => !process.env[k]);
@@ -121,42 +126,7 @@ export async function GET() {
     });
   }
 
-  // 3. The Sheet can actually be used, not merely reached.
-  //
-  // This was an unauthenticated HEAD passing on `status < 500`, which meant the
-  // 403 an Apps Script returns to an anonymous HEAD counted as healthy — and it
-  // read green on 31 Aug 2026 while proving nothing. It would also have read
-  // green with the wrong secret, a revoked deployment, or a script throwing on
-  // every call, because none of those change the status of a HEAD.
-  //
-  // That is the same mistake this endpoint was rewritten to stop making: the
-  // canary measured whether PayFast was reachable and whether an MD5 computed,
-  // both true throughout the three weeks every ITN was being rejected.
-  //
-  // The question worth asking is not "does the host answer" but "would an entry
-  // be written right now" — /api/forms/entry fails closed on Sheets and returns
-  // 503 to the golfer if appendSubmission throws. So this calls the real thing:
-  // real URL, real secret, redirects followed, and both a non-2xx and a
-  // script-level error thrown rather than swallowed. `since` is set to now so
-  // the script has nothing to return and the check stays cheap.
-  //
-  // An empty result is a pass. We are testing the pipe, not its contents.
-  try {
-    const rows = await readSubmissions("entry", new Date().toISOString());
-    checks.push({
-      name: "sheets_working",
-      ok: true,
-      detail: `authenticated read OK (${rows.length} rows since now)`,
-    });
-  } catch (err) {
-    checks.push({
-      name: "sheets_working",
-      ok: false,
-      detail: err instanceof Error ? err.message : String(err),
-    });
-  }
-
-  // 4. PayFast endpoint reachable
+  // 3. PayFast endpoint reachable
   try {
     const baseUrl =
       process.env.PAYFAST_MODE === "live"
@@ -179,7 +149,7 @@ export async function GET() {
     });
   }
 
-  // 5. The money path itself — are entries still being marked paid?
+  // 4. The money path itself — are entries still being marked paid?
   if (!isDbConfigured()) {
     checks.push({
       name: "entry_payments_flowing",

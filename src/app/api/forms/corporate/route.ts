@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { corporateSchema } from "@/lib/validation";
-import { appendSubmission } from "@/lib/sheets";
 import { sendSubmissionNotification } from "@/lib/email";
 import { isDbConfigured, insertLead } from "@/lib/db";
 
@@ -27,7 +26,7 @@ export async function POST(req: NextRequest) {
 
   const data = parsed.data;
   const timestamp = new Date().toISOString();
-  const sheetRow = {
+  const submission = {
     Timestamp: timestamp,
     "Full Name": data.fullName,
     Email: data.email,
@@ -40,6 +39,7 @@ export async function POST(req: NextRequest) {
   };
 
   // Postgres is the durable lead store; Sheets/email are the mirror + alert.
+  let recordedInDb = false;
   if (isDbConfigured()) {
     try {
       await insertLead({
@@ -49,30 +49,35 @@ export async function POST(req: NextRequest) {
         mobile: data.mobile,
         company: data.companyName || null,
         message: data.message || null,
-        source: sheetRow.Source,
+        source: submission.Source,
         consent_communication: data.consentCommunication,
         data: { golf_course: data.golfCourse || "", golf_day_date: data.golfDayDate || "" },
       });
+      recordedInDb = true;
     } catch (err) {
       console.error("Corporate lead DB write failed", err);
     }
   }
 
-  const tasks = await Promise.allSettled([
-    appendSubmission("corporate", sheetRow),
-    sendSubmissionNotification("corporate", sheetRow),
-  ]);
+  // The email is an alert, not a record — Postgres is the record. It fails
+  // soft on its own so a Resend hiccup cannot lose an enquiry already stored.
+  const emailed = await sendSubmissionNotification("corporate", submission).then(
+    () => true,
+    (err) => {
+      console.error("Corporate notification email failed", err);
+      return false;
+    },
+  );
 
-  const failures = tasks.filter((t) => t.status === "rejected");
-  if (failures.length === tasks.length) {
-    console.error("Corporate submission both failed", failures);
+  // Only now is the enquiry genuinely lost: nothing stored it and nobody was
+  // told. This was the same test with the Sheet in place of the DB, and the
+  // DB is the more durable of the two.
+  if (!recordedInDb && !emailed) {
+    console.error("Corporate submission not recorded and not emailed");
     return NextResponse.json(
       { error: "We couldn't record your enquiry. Please try again or email us directly." },
       { status: 500 },
     );
-  }
-  if (failures.length > 0) {
-    console.warn("Corporate submission partial failure", failures);
   }
 
   return NextResponse.json({ ok: true });

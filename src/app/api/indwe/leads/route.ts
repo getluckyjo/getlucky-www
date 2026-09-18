@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readSubmissions, SubmissionType } from "@/lib/sheets";
 import {
-  isDbConfigured,
   listVouchers,
   listEntries,
   listLeads,
@@ -73,7 +71,23 @@ type Lead = {
  */
 type RawLead = Omit<Lead, "personId">;
 
-type IndweType = Exclude<SubmissionType, "agency">;
+/**
+ * Every record kind Indwe is fed. Was Exclude<SubmissionType, "agency">, back
+ * when SubmissionType named the tabs of the Google Sheet; spelled out here now
+ * that the Sheet is gone. The names still read like tabs because the db
+ * adapters hand rows back in that shape.
+ */
+type IndweType =
+  | "voucher"
+  | "entry"
+  | "freeEntry"
+  | "partner"
+  | "corporate"
+  | "charity"
+  | "school"
+  | "simulator"
+  | "tour"
+  | "riskReview";
 const TYPES: IndweType[] = ["voucher", "entry", "freeEntry", "partner", "corporate", "charity", "school", "simulator", "tour", "riskReview"];
 
 const TYPE_LABEL: Record<IndweType, Lead["type"]> = {
@@ -93,10 +107,9 @@ const TYPE_LABEL: Record<IndweType, Lead["type"]> = {
 // lives in src/lib/indwe-tiers.ts so the ops lead-quality report tiers leads
 // exactly as this feed does. See docs/indwe/lead-tagging.md.
 
-// Source rows for a given type. Postgres when configured (Sheet-shaped via the
-// db adapters so normalize() is unchanged), else the legacy Sheets read.
+// Source rows for a given type. Postgres only — rows arrive Sheet-shaped via
+// the db adapters, so normalize() is unchanged.
 async function rowsForType(t: IndweType, since?: string): Promise<Record<string, string>[]> {
-  if (!isDbConfigured()) return readSubmissions(t, since);
   switch (t) {
     case "voucher":
       return (await listVouchers(since)).map(voucherToSheet);

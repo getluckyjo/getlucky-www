@@ -4,7 +4,6 @@ import Link from "next/link";
 import SponsorLogo from "@/components/SponsorLogo";
 import { PGA_GOLF_SHOW, ROUTES } from "@/lib/constants";
 import { isDbConfigured, getEntry, entryToSheet } from "@/lib/db";
-import { readSubmissions } from "@/lib/sheets";
 
 export const metadata: Metadata = {
   title: `You're In — ${PGA_GOLF_SHOW.name}`,
@@ -31,17 +30,12 @@ export default async function PgaGolfShowSuccessPage({
   // should never see a failure page because a lookup did not resolve, so both
   // sources are allowed to come back empty and the reference stands alone.
   let row: Record<string, string> | null = null;
-  if (ref) {
+  if (ref && isDbConfigured()) {
     try {
-      if (isDbConfigured()) {
-        const rec = await getEntry(ref);
-        row = rec ? entryToSheet(rec) : null;
-      } else {
-        const rows = await readSubmissions("entry");
-        row = rows.find((r) => r.Reference === ref) || null;
-      }
+      const rec = await getEntry(ref);
+      row = rec ? entryToSheet(rec) : null;
     } catch {
-      // Neither source answered — render minimally.
+      // Postgres did not answer — render minimally.
     }
   }
 

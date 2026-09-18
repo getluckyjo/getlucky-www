@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { updateVoucherStatus, readSubmissions, SubmissionType } from "@/lib/sheets";
 import { sendSubmissionNotification, sendVoucherConfirmation, sendOpsAlert } from "@/lib/email";
 import { verifyNotifySignature, validateNotifyServerSide, isPayfastSourceIpValid } from "@/lib/payfast";
 import { PRIZE_TIERS } from "@/lib/constants";
@@ -19,14 +18,22 @@ import { notifyWhatsAppChannel } from "@/lib/whatsapp";
 export const runtime = "nodejs";
 
 /**
+ * Which table a reference belongs to.
+ *
  * Reference prefixes:
- *   GL-...  → online voucher purchase (/buy-a-swing)  → "voucher" tab
- *   GLE-... → in-person course entry  (/form)         → "entry" tab
+ *   GL-...  → online voucher purchase (/buy-a-swing)  → vouchers
+ *   GLE-... → course or show entry (/form, /pga-golf-show) → entries
  *
  * GLG-... (memberships) NEVER hit this webhook — they go directly to the
  * membership site's own webhook at membership.getluckygolfclub.com.
+ *
+ * Called a "tab" throughout this handler because it used to name a tab in the
+ * Google Sheet. The Sheet is gone; the name stayed rather than churn every
+ * log line and alert that carries it.
  */
-function tabForReference(ref: string): SubmissionType {
+type PaidKind = "entry" | "voucher";
+
+function tabForReference(ref: string): PaidKind {
   if (ref.startsWith("GLE-")) return "entry";
   return "voucher";
 }
@@ -138,11 +145,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "validation failed" }, { status: 400 });
   }
 
-  // 3. Cross-check the row we recorded. Postgres is the read source-of-record
-  //    when configured (fast + reliable, unlike the 8s Apps Script which can
-  //    hang during a redeploy and drop a genuine paid notification); fall back
-  //    to Sheets otherwise. Either path yields a Sheet-shaped `row` so the rest
-  //    of this handler is unchanged.
+  // 3. Cross-check the row we recorded. Postgres is the only source now — the
+  //    Sheets fallback that used to sit here went with the Apps Script, whose
+  //    8s timeout could hang during a redeploy and drop a genuine paid
+  //    notification. `row` is still Sheet-shaped, via the *ToSheet adapters,
+  //    so the rest of this handler is unchanged.
   const tab = tabForReference(reference);
   let row: Record<string, string> | undefined;
   // Held alongside the Sheet-shaped view: the WhatsApp handoff needs the
@@ -164,8 +171,19 @@ export async function POST(req: NextRequest) {
       row = rec ? voucherToSheet(rec) : undefined;
     }
   } else {
-    const rows = await readSubmissions(tab).catch(() => [] as Record<string, string>[]);
-    row = rows.find((r) => r.Reference === reference);
+    // Money moved and we cannot even look the reference up. Never silent.
+    console.error("PayFast ITN with no database configured", { reference });
+    await sendOpsAlert({
+      subject: `[ALERT] PayFast ITN arrived with no database configured (${reference || "no reference"})`,
+      heading: "A payment notification could not be checked against any record",
+      body:
+        "SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY are not set, so there is nothing to " +
+        "cross-check this ITN against and nothing to mark paid. Fix the configuration " +
+        "and reconcile this reference against PayFast by hand.",
+      detail: { reference, payment_status: status, amount_gross: amountGross, pf_payment_id: pfPaymentId },
+    });
+    // 200 so PayFast stops resending; the alert is what carries this.
+    return new Response("OK", { status: 200 });
   }
 
   if (!row) {
@@ -197,40 +215,27 @@ export async function POST(req: NextRequest) {
   // 4. Status — only treat COMPLETE as paid
   if (status !== "COMPLETE") {
     const newStatus = status.toLowerCase() || "unknown";
-    await updateVoucherStatus(reference, {
-      Status: newStatus,
-      "PayFast PaymentID": pfPaymentId,
-    }).catch((err) => reportWriteFailure("Sheets status update", reference, tab, err));
-    if (isDbConfigured()) {
-      await markStatus(dbTable, reference, newStatus, pfPaymentId).catch((err) =>
-        reportWriteFailure("Postgres markStatus", reference, tab, err),
-      );
-    }
+    await markStatus(dbTable, reference, newStatus, pfPaymentId).catch((err) =>
+      reportWriteFailure("Postgres markStatus", reference, tab, err),
+    );
     return new Response("OK", { status: 200 });
   }
 
-  await updateVoucherStatus(reference, {
-    Status: "paid",
-    "PayFast PaymentID": pfPaymentId,
-    // Entry rows are written with blank Name/Email and filled in here. Voucher
-    // rows use different column names and already carry their buyer's details.
-    ...(tab === "entry" && itnName ? { Name: itnName } : {}),
-    ...(tab === "entry" && itnEmail ? { Email: itnEmail } : {}),
-  }).catch((err) => reportWriteFailure("Sheets paid update", reference, tab, err));
+  // The Sheet write that used to mirror this status is gone. The name and email
+  // PayFast collected at checkout are still captured — they land on the row in
+  // the Postgres backfill below, which is now the only place they are kept.
 
   // Idempotency gate: markPaid returns true only on the first not-paid → paid
   // transition. PayFast resends ITNs, so without this gate a resend would
-  // re-send the confirmation emails. When the DB isn't configured we keep the
-  // legacy behaviour and always send. Fail-open on DB error: a DB hiccup should
+  // re-send the confirmation emails. Fail-open on DB error: a DB hiccup should
   // not silently swallow a genuine paid customer's confirmation.
-  let firstPaidTransition = true;
-  if (isDbConfigured()) {
-    firstPaidTransition = await markPaid(dbTable, reference, pfPaymentId).catch((err) => {
-      console.error("PayFast ITN markPaid failed", { reference, err });
-      void reportWriteFailure("Postgres markPaid", reference, tab, err);
-      return true;
-    });
-  }
+  //
+  // The DB is known to be configured by here — step 3 returns early otherwise.
+  const firstPaidTransition = await markPaid(dbTable, reference, pfPaymentId).catch((err) => {
+    console.error("PayFast ITN markPaid failed", { reference, err });
+    void reportWriteFailure("Postgres markPaid", reference, tab, err);
+    return true;
+  });
   if (!firstPaidTransition) {
     return new Response("OK", { status: 200 });
   }
@@ -238,7 +243,7 @@ export async function POST(req: NextRequest) {
   // Backfill Postgres before anything downstream reads the row: the ops
   // notification, the WhatsApp handoff and the Indwe feed all want a name.
   // Only fills what is empty — a value already on the row is never clobbered.
-  if (tab === "entry" && entryRec && isDbConfigured()) {
+  if (tab === "entry" && entryRec) {
     const patch: { name?: string; email?: string } = {};
     if (!entryRec.name && itnName) patch.name = itnName;
     if (!entryRec.email && itnEmail) patch.email = itnEmail;
@@ -327,9 +332,10 @@ export async function POST(req: NextRequest) {
   // Runs alongside the emails rather than before them, so its 4s timeout does
   // not add to the ten seconds PayFast allows for this response.
   if (tab === "entry" && !entryRec) {
-    // Sheets-only fallback: the Sheet has no consent column, so we cannot know
-    // what the golfer chose and will not message them. Legacy path — Postgres
-    // is configured in production — but say so rather than going quiet.
+    // The row was found in step 3 but did not come back as an entry record —
+    // without it there is no consent tick, and nobody is messaged without one.
+    // Should not happen now the DB is the only source; say so rather than go
+    // quiet if it ever does.
     console.warn("PayFast ITN: no DB entry row, skipping WhatsApp handoff", { reference });
   }
 
