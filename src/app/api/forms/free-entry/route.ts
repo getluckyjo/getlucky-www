@@ -55,6 +55,7 @@ export async function POST(req: NextRequest) {
 
   // Postgres is the durable lead store; Sheets is the mirror. Fail-soft so a DB
   // hiccup doesn't block the free-entry capture while Sheets still records it.
+  let recordedInDb = false;
   if (isDbConfigured()) {
     try {
       await insertLead({
@@ -69,6 +70,7 @@ export async function POST(req: NextRequest) {
         // Null reads as "not asked", which is what happened.
         data: { course: d.course || "", event: d.event || "" },
       });
+      recordedInDb = true;
     } catch (err) {
       console.error("Free entry lead DB write failed", err);
     }
@@ -84,14 +86,18 @@ export async function POST(req: NextRequest) {
     whatsappOptIn: d.consentWhatsApp,
   });
 
+  // The Sheets mirror — same as the show form: fail closed only when Postgres
+  // did not take the row. See /api/forms/pga-golf-show for the incident.
   try {
     await appendSubmission("freeEntry", sheetRow);
   } catch (err) {
-    console.error("Free entry sheet append failed", err);
-    return NextResponse.json(
-      { error: "We couldn't record your entry. Please try again or speak to a marshal." },
-      { status: 500 },
-    );
+    console.error("Free entry sheet mirror failed", err);
+    if (!recordedInDb) {
+      return NextResponse.json(
+        { error: "We couldn't record your entry. Please try again or speak to a marshal." },
+        { status: 500 },
+      );
+    }
   }
 
   return NextResponse.json({ ok: true });
