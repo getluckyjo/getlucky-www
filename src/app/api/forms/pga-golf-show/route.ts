@@ -53,6 +53,7 @@ export async function POST(req: NextRequest) {
 
   // Postgres is the durable lead store; Sheets is the mirror. Fail-soft so a DB
   // hiccup does not block the entry while Sheets still records it.
+  let recordedInDb = false;
   if (isDbConfigured()) {
     try {
       await insertLead({
@@ -71,6 +72,7 @@ export async function POST(req: NextRequest) {
           consent_whatsapp: d.consentWhatsApp,
         },
       });
+      recordedInDb = true;
     } catch (err) {
       console.error("PGA Golf Show lead DB write failed", err);
     }
@@ -85,14 +87,26 @@ export async function POST(req: NextRequest) {
     whatsappOptIn: d.consentWhatsApp,
   });
 
+  // The Sheets mirror. NOT a reason to refuse an entry on its own.
+  //
+  // The Apps Script spent the morning of 18 Sep 2026 timing out and then
+  // answering 404 outright, and this route failed closed on it: golfers at the
+  // show stand were told "We couldn't record your entry" while the lead was
+  // already safe in Postgres. The paid routes were fixed earlier the same day
+  // and this one was missed — it is the busier of the two.
+  //
+  // Fail closed only when Postgres did NOT take the row, because then nothing
+  // has it and the golfer genuinely needs to try again.
   try {
     await appendSubmission("freeEntry", sheetRow);
   } catch (err) {
-    console.error("PGA Golf Show sheet append failed", err);
-    return NextResponse.json(
-      { error: "We couldn't record your entry. Please try again in a moment." },
-      { status: 500 },
-    );
+    console.error("PGA Golf Show sheet mirror failed", err);
+    if (!recordedInDb) {
+      return NextResponse.json(
+        { error: "We couldn't record your entry. Please try again in a moment." },
+        { status: 500 },
+      );
+    }
   }
 
   return NextResponse.json({ ok: true });
