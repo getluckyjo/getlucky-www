@@ -103,6 +103,8 @@ export const ROUTES = {
   terms: "/terms",
   privacy: "/privacy",
   pgaGolfShow: "/pga-golf-show",
+  pgaGolfShowSuccess: "/pga-golf-show/success",
+  pgaGolfShowCancel: "/pga-golf-show/cancel",
 } as const;
 
 /**
@@ -133,4 +135,25 @@ export const PGA_GOLF_SHOW = {
     { name: "Badi Golf", file: "badi-golf.png" },
   ],
   showLogo: { name: "PGA Golf & Lifestyle Show", file: "pga-golf-show.png" },
+  /**
+   * The paid option at the bottom of the show form: R100 for a shot at
+   * R100,000 on the same simulator, next to the free shot at R25,000.
+   *
+   * Deliberately NOT a rung on PRIZE_TIERS. The public ladder pays R60,000
+   * for R100 and R100,000 for R150, and this is a show-floor price that must
+   * not move either of them — anything added to PRIZE_TIERS shows up in the
+   * tier picker on /form and /buy-a-swing.
+   *
+   * Paid show entries are written as ordinary `GLE-` entry rows, so the
+   * PayFast notification handler, the ops scorecard and the Indwe feed treat
+   * them exactly like any other paid entry. `course` (above) is what tells
+   * the WhatsApp service they came from the show.
+   */
+  paidEntry: {
+    amount: 100,
+    entry: "R100",
+    prize: "R100,000",
+    prizeAmount: 100000,
+    label: "PGA Show Swing",
+  },
 } as const;

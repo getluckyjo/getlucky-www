@@ -227,15 +227,22 @@ export function RadioGroup({
 
 export function SubmitButton({
   pending,
+  disabled,
   children = "Submit",
 }: {
   pending?: boolean;
+  /**
+   * Locked without the spinner — for a form with a second action in flight
+   * (the R100 button on the PGA show form), where the spinner belongs to the
+   * other button and showing it here would claim this one is working.
+   */
+  disabled?: boolean;
   children?: ReactNode;
 }) {
   return (
     <button
       type="submit"
-      disabled={pending}
+      disabled={pending || disabled}
       className="w-full sm:w-auto bg-green hover:bg-green-light disabled:bg-green/50 disabled:cursor-not-allowed text-cream font-semibold text-base px-10 py-4 rounded-full transition-all hover:scale-[1.02] active:scale-[0.99] inline-flex items-center justify-center gap-2"
     >
       {pending && (

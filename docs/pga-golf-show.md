@@ -1,8 +1,9 @@
 # PGA Golf & Lifestyle Show — simulator entry
 
-`/pga-golf-show` is the free entry form for the simulator hole-in-one at the
-Get Lucky stand, 18–20 September 2026. One free shot at R25,000 for a name and
-a number. No payment.
+`/pga-golf-show` is the entry form for the simulator hole-in-one at the Get
+Lucky stand, 18–20 September 2026. One free shot at R25,000 for a name and a
+number, and — at the bottom of the same form — a paid shot at R100,000 for
+R100.
 
 ## What it does
 
@@ -34,6 +35,46 @@ a number. No payment.
 - Recorded as a `free_entry` lead in Postgres and on the `freeEntry` sheet tab,
   with `Source` = `getluckygolf.co.za /pga-golf-show`. The Indwe feed and the ops
   scorecard pick it up without a new lead type.
+
+## The R100 option
+
+At the bottom of the same form, under the free button: **R100 for a shot at
+R100,000** — 4× the free prize on the same simulator. It is a second button on
+the form rather than a tier picker or a page of its own, because the name and
+the number are already typed and the choice should cost one tap either way.
+The free shot stays first and stays the default: pressing Enter in a field
+still enters for free, never walks anyone to a payment page.
+
+- **The price and the prize live on the server**, in `PGA_GOLF_SHOW.paidEntry`.
+  The browser sends the same body as a free entry (name, mobile, the optional
+  Instagram tap, the optional WhatsApp box) and no amount at all — a client
+  that could name its own amount could buy a R100,000 shot for a rand.
+- **It is deliberately not a rung on `PRIZE_TIERS`.** The public ladder pays
+  R60,000 for R100 and charges R150 for R100,000; this is a show-floor price
+  and must not move either. Anything added to `PRIZE_TIERS` shows up in the
+  tier picker on `/form` and `/buy-a-swing`. `tests/pga-golf-show.test.ts`
+  pins this.
+- **A paid entry is an `entry` row, not a `free_entry` lead.** `POST
+  /api/forms/pga-golf-show/paid` writes a pending row with a `GLE-` reference
+  (Tier `PGA Show Swing`, Amount 100, Prize `R100,000`, Course
+  `the PGA Golf Show`, Source `getluckygolf.co.za /pga-golf-show`) to Postgres
+  and the `entry` sheet tab, fails closed if either write fails, then hands the
+  signed PayFast fields back for the redirect. The `GLE-` prefix is what routes
+  the notification to the entry tab in `/api/payfast/notify`, which marks it
+  paid, backfills the email PayFast collected at checkout, and hands the golfer
+  to the WhatsApp channel — **once the money has arrived, not on submit**.
+- **The course is still `the PGA Golf Show`**, so a paid show entrant gets the
+  same show WhatsApp journey as a free one.
+- One thing the free path records and this one does not: the **Instagram tap**.
+  The `entries` table has no JSON column to hang it on, and it is not worth a
+  migration — the tap is recorded for every free entry, which is the number the
+  stand watches.
+- `/pga-golf-show/success` and `/pga-golf-show/cancel` are the PayFast return
+  pages, in the show's colours. They exist rather than reusing `/form/success`
+  and `/form/cancel` because those are dressed in our palette and send the
+  golfer to `/form`, which asks for a course off the affiliated list. The
+  cancel page points back at the free shot: nobody should leave the stand with
+  nothing because a card did not go through.
 
 ## Branding
 
