@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { PGA_GOLF_SHOW, ROUTES, SITE } from "@/lib/constants";
@@ -32,14 +32,23 @@ import {
  * step is one tap: the button opens the profile in a new tab (the Instagram
  * app on a phone) and the tap is what gets recorded. A checkbox added nothing
  * to that, since it was only ever the golfer's word too.
+ *
+ * At the bottom sits the paid option: R100 for a shot at R100,000 on the same
+ * simulator. It is a second button on the same form rather than a tier picker
+ * or a page of its own — the name and number are already typed, so the choice
+ * is one tap either way, and the free shot stays the first thing in reach.
+ * The amount is never sent: the server reads it from PGA_GOLF_SHOW.paidEntry
+ * (see /api/forms/pga-golf-show/paid).
  */
 export default function PgaGolfShowEntryForm() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [pending, setPending] = useState(false);
+  const [paying, setPaying] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [optedIn, setOptedIn] = useState(false);
   const [topError, setTopError] = useState<string | null>(null);
   const [tappedFollow, setTappedFollow] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   function onFieldChange(e: React.ChangeEvent<HTMLFormElement>) {
     const t = e.target as unknown as { name?: string };
@@ -54,21 +63,79 @@ export default function PgaGolfShowEntryForm() {
     setTappedFollow(true);
   }
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setErrors({});
-    setTopError(null);
-    setPending(true);
-
-    const fd = new FormData(e.currentTarget);
-    const payload = {
+  /**
+   * The same body for both buttons. The free entry and the R100 entry ask the
+   * golfer for exactly the same things — what differs is which route it goes
+   * to, and the price and prize live on the server.
+   */
+  function readPayload(form: HTMLFormElement) {
+    const fd = new FormData(form);
+    return {
       name: String(fd.get("name") || ""),
       mobile: String(fd.get("mobile") || ""),
       instagramFollow: tappedFollow,
       consentWhatsApp: fd.get("consentWhatsApp") === "on",
-      // Accepted by pressing Enter; the line under the button says so.
+      // Accepted by pressing the button; the line under it says so.
       consentTerms: true,
     };
+  }
+
+  /**
+   * The R100 option. A button rather than a submit, so pressing Enter in a
+   * field still does the free entry and nobody is ever walked to a payment
+   * page they did not ask for.
+   */
+  async function onPay() {
+    const form = formRef.current;
+    if (!form || pending || paying) return;
+    setErrors({});
+    setTopError(null);
+    setPaying(true);
+
+    try {
+      const res = await fetch("/api/forms/pga-golf-show/paid", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(readPayload(form)),
+      });
+      // Parse defensively: a platform timeout (504) or proxy error returns an
+      // HTML body, and blindly calling res.json() would throw and surface a
+      // misleading "Network error".
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data) {
+        if (data?.fieldErrors) setErrors(data.fieldErrors);
+        setTopError(
+          data?.error ||
+            "We couldn't start your payment just now. Please try again in a moment, or ask someone at the stand.",
+        );
+        setPaying(false);
+        if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+      if (!data.processUrl || !data.fields) {
+        setTopError("Payment couldn't be initialised. Please try again in a moment.");
+        setPaying(false);
+        if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+      // Leaves the page for PayFast — `paying` stays true so the button cannot
+      // be pressed twice during the redirect.
+      submitToPayFast(data.processUrl, data.fields);
+    } catch {
+      // Only genuine fetch rejections (offline / DNS / TLS) land here.
+      setTopError("Network error. Please check your connection and try again.");
+      setPaying(false);
+    }
+  }
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (paying) return;
+    setErrors({});
+    setTopError(null);
+    setPending(true);
+
+    const payload = readPayload(e.currentTarget);
 
     try {
       const res = await fetch("/api/forms/pga-golf-show", {
@@ -109,9 +176,13 @@ export default function PgaGolfShowEntryForm() {
   }
 
   const instagramUrl = SITE.instagram;
+  // R100 for R100,000 is 4× the free shot's R25,000 — worth saying out loud.
+  const multiplier = Math.round(
+    PGA_GOLF_SHOW.paidEntry.prizeAmount / PGA_GOLF_SHOW.prizeAmount,
+  );
 
   return (
-    <form onSubmit={onSubmit} onChange={onFieldChange} noValidate className="space-y-5">
+    <form ref={formRef} onSubmit={onSubmit} onChange={onFieldChange} noValidate className="space-y-5">
       {topError && <FormErrorBanner message={topError} />}
 
       <Field label="Name" name="name" required error={errors.name}>
@@ -162,7 +233,7 @@ export default function PgaGolfShowEntryForm() {
       </div>
 
       <div className="pt-2">
-        <SubmitButton pending={pending}>Enter for free →</SubmitButton>
+        <SubmitButton pending={pending} disabled={paying}>Enter for free →</SubmitButton>
         <p className="text-xs text-charcoal-light/70 mt-3 leading-relaxed">
           By entering you accept the{" "}
           <Link href={ROUTES.terms} className="text-green-dark underline hover:text-gold">
@@ -178,8 +249,61 @@ export default function PgaGolfShowEntryForm() {
           No payment. One free shot at {PGA_GOLF_SHOW.prize} on the simulator.
         </p>
       </div>
+
+      {/*
+        The paid option, last on the form and after the free button on purpose:
+        the free shot is what the QR code promised, and this is the offer made
+        once they are already in. Navy rather than green so the two buttons
+        never read as the same action.
+      */}
+      <div className="rounded-2xl border-2 border-green-dark/20 bg-cream/60 p-4 sm:p-5 space-y-3">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-green-dark/60">
+          Or take the bigger shot
+        </p>
+        <p className="font-heading text-2xl sm:text-3xl uppercase tracking-wide text-green-dark leading-none">
+          Pay {PGA_GOLF_SHOW.paidEntry.entry} · Win {PGA_GOLF_SHOW.paidEntry.prize}
+        </p>
+        <p className="text-sm text-charcoal-light/75 leading-relaxed">
+          Same swing on the same simulator, {multiplier}× the prize. Your name
+          and number above come with you — nothing more to type.
+        </p>
+        <button
+          type="button"
+          onClick={onPay}
+          disabled={pending || paying}
+          className="w-full bg-green-dark hover:bg-green disabled:bg-green-dark/50 disabled:cursor-not-allowed text-cream font-semibold text-base px-6 py-4 rounded-full transition-all hover:scale-[1.02] active:scale-[0.99] inline-flex items-center justify-center gap-2"
+        >
+          {paying && (
+            <svg className="animate-spin -ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" aria-hidden>
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
+              <path d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" fill="currentColor" />
+            </svg>
+          )}
+          Pay {PGA_GOLF_SHOW.paidEntry.entry} via PayFast →
+        </button>
+        <p className="text-xs text-charcoal-light/60">
+          Secure payment by PayFast — card, EFT, SnapScan and Zapper. The terms
+          above apply to a paid entry too.
+        </p>
+      </div>
     </form>
   );
+}
+
+/** Hand the signed fields to PayFast the way the other paid forms do. */
+function submitToPayFast(processUrl: string, fields: Record<string, string>) {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = processUrl;
+  for (const [k, v] of Object.entries(fields)) {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = k;
+    input.value = String(v);
+    form.appendChild(input);
+  }
+  document.body.appendChild(form);
+  form.submit();
 }
 
 /** lucide-react dropped its brand icons, so the glyph is inlined. */

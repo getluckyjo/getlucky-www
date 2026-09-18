@@ -296,7 +296,10 @@ export async function POST(req: NextRequest) {
         }
       : {
           Reference: reference,
-          Source: "/form (course QR entry)",
+          // The row's own source when it has one — a paid entry from the PGA
+          // show stand is not a course QR entry, and the ops email should not
+          // say it is. Older rows predate the column; they are /form entries.
+          Source: row.Source || "/form (course QR entry)",
           Date: row.Date,
           Tier: row.Tier,
           Amount: row.Amount,
