@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { signFields } from "@/lib/payfast";
 import { isDbConfigured, getEntryPaymentHealth } from "@/lib/db";
+import { stuckPendingCheck } from "@/lib/health";
 import { readSubmissions } from "@/lib/sheets";
 
 /**
@@ -32,21 +33,22 @@ import { readSubmissions } from "@/lib/sheets";
  * `pending` after this long either never paid or — the dangerous case — paid
  * into an ITN we failed to record.
  *
- * STUCK_PENDING_WINDOW_HOURS: how far back the stuck count reaches. This bound
- * is the whole point of the check. An abandoned checkout stays `pending` for
- * ever, so an unbounded count only ever grows: by 31 Aug 2026 it stood at 163
- * and had been failing this endpoint every single day since the check was
- * added on 19 August. A signal that is always red is a signal nobody reads —
- * which is precisely how the July–August ITN outage ran for nineteen days.
+ * STUCK_PENDING_WINDOW_HOURS: how far back the stuck count reaches. An
+ * abandoned checkout stays `pending` for ever, so an unbounded count only ever
+ * grows: by 31 Aug 2026 it stood at 163 and had been failing this endpoint
+ * every day since the check was added on 19 August. The cumulative figure is
+ * still reported, as `pending_backlog`, but it never alarms.
  *
- * Bounded, the check answers the question actually worth waking someone for:
- * is a pile of unpaid entries building up *right now*. The cumulative figure
- * is still reported, as `pending_backlog`, but it never alarms.
+ * Bounding it was not enough. The check still alarmed on an absolute count of
+ * stuck rows, and abandonment scales with traffic, so on 18 Sep 2026 it was red
+ * again on 4 unpaid entries while 3 others in the same window had paid — a
+ * working payment path, alerting daily. What decides the alarm now is whether
+ * ANY of the cohort paid, not how many did not; see src/lib/health.ts for the
+ * reasoning and STUCK_COHORT_MIN.
  */
 const PAID_WINDOW_DAYS = 3;
 const STUCK_PENDING_HOURS = 24;
 const STUCK_PENDING_WINDOW_HOURS = 72;
-const STUCK_PENDING_ALERT_THRESHOLD = 3;
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -197,12 +199,15 @@ export async function GET() {
         ok: !(health.created > 0 && health.paid === 0),
         detail: `${health.paid} paid / ${health.created} created in the last ${PAID_WINDOW_DAYS}d`,
       });
+      // Same name as before so the ops routine and the daily aggregation across
+      // the three apps keep matching on it; only what makes it red has changed.
+      const stuck = stuckPendingCheck(health);
       checks.push({
         name: "stuck_pending_entries",
-        ok: health.stuckPending < STUCK_PENDING_ALERT_THRESHOLD,
+        ok: stuck.ok,
         detail:
-          `${health.stuckPending} entries created in the last ${STUCK_PENDING_WINDOW_HOURS}h ` +
-          `and still pending after ${STUCK_PENDING_HOURS}h`,
+          `entries created ${STUCK_PENDING_HOURS}–${STUCK_PENDING_WINDOW_HOURS}h ago: ` +
+          stuck.detail,
       });
       // Never alarms. Reported so the cumulative figure stays visible without
       // holding the endpoint permanently red — most of it is ordinary

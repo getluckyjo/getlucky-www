@@ -423,6 +423,19 @@ export type EntryPaymentHealth = {
    */
   stuckPending: number;
   /**
+   * The cohort `stuckPending` is drawn from: every entry created in that same
+   * bounded window, whatever became of it. Without the denominator the stuck
+   * count says nothing — four unpaid out of five is a broken payment path and
+   * four out of forty is a Saturday.
+   */
+  cohortCreated: number;
+  /**
+   * How many of that cohort reached `paid`. One is enough to prove the ITN
+   * path was working for entries of that age, which is what separates ordinary
+   * abandonment from a break.
+   */
+  cohortPaid: number;
+  /**
    * Every `pending` row past the stuck cutoff, with no lower bound.
    *
    * Informational only, and never alarms. An abandoned checkout stays `pending`
@@ -438,30 +451,44 @@ export async function getEntryPaymentHealth(
   stuckAfterISO: string,
 ): Promise<EntryPaymentHealth> {
   const client = db();
-  const [createdRes, paidRes, stuckRes, backlogRes] = await Promise.all([
-    client
-      .from("entries")
-      .select("reference", { count: "exact", head: true })
-      .gte("created_at", sinceISO),
-    client
-      .from("entries")
-      .select("reference", { count: "exact", head: true })
-      .gte("paid_at", sinceISO),
-    // Bounded on both sides: old enough to have paid, recent enough to matter.
-    client
-      .from("entries")
-      .select("reference", { count: "exact", head: true })
-      .eq("status", "pending")
-      .lt("created_at", stuckBeforeISO)
-      .gte("created_at", stuckAfterISO),
-    client
-      .from("entries")
-      .select("reference", { count: "exact", head: true })
-      .eq("status", "pending")
-      .lt("created_at", stuckBeforeISO),
-  ]);
+  const [createdRes, paidRes, stuckRes, backlogRes, cohortRes, cohortPaidRes] =
+    await Promise.all([
+      client
+        .from("entries")
+        .select("reference", { count: "exact", head: true })
+        .gte("created_at", sinceISO),
+      client
+        .from("entries")
+        .select("reference", { count: "exact", head: true })
+        .gte("paid_at", sinceISO),
+      // Bounded on both sides: old enough to have paid, recent enough to matter.
+      client
+        .from("entries")
+        .select("reference", { count: "exact", head: true })
+        .eq("status", "pending")
+        .lt("created_at", stuckBeforeISO)
+        .gte("created_at", stuckAfterISO),
+      client
+        .from("entries")
+        .select("reference", { count: "exact", head: true })
+        .eq("status", "pending")
+        .lt("created_at", stuckBeforeISO),
+      // The same cohort as `stuckRes`, without the status filter, and the part
+      // of it that paid — the denominator and the proof of life.
+      client
+        .from("entries")
+        .select("reference", { count: "exact", head: true })
+        .lt("created_at", stuckBeforeISO)
+        .gte("created_at", stuckAfterISO),
+      client
+        .from("entries")
+        .select("reference", { count: "exact", head: true })
+        .eq("status", "paid")
+        .lt("created_at", stuckBeforeISO)
+        .gte("created_at", stuckAfterISO),
+    ]);
 
-  for (const res of [createdRes, paidRes, stuckRes, backlogRes]) {
+  for (const res of [createdRes, paidRes, stuckRes, backlogRes, cohortRes, cohortPaidRes]) {
     if (res.error) throw new Error(`db.getEntryPaymentHealth: ${res.error.message}`);
   }
 
@@ -470,5 +497,7 @@ export async function getEntryPaymentHealth(
     paid: paidRes.count ?? 0,
     stuckPending: stuckRes.count ?? 0,
     pendingBacklog: backlogRes.count ?? 0,
+    cohortCreated: cohortRes.count ?? 0,
+    cohortPaid: cohortPaidRes.count ?? 0,
   };
 }

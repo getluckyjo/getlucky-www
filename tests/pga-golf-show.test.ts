@@ -86,7 +86,10 @@ test("the paid option is not a rung on the public ladder", () => {
   // tier picker on /form and /buy-a-swing.
   const hundred = PRIZE_TIERS.find((t) => t.entryAmount === PGA_GOLF_SHOW.paidEntry.amount);
   assert.equal(hundred?.prize, "R60,000");
-  assert.ok(!PRIZE_TIERS.some((t) => t.label === PGA_GOLF_SHOW.paidEntry.label));
+  // Widened to string: the literal types genuinely do not overlap, which is the
+  // point being asserted, but comparing them directly is a tsc error.
+  const ladderLabels: readonly string[] = PRIZE_TIERS.map((t) => t.label);
+  assert.ok(!ladderLabels.includes(PGA_GOLF_SHOW.paidEntry.label));
 });
 
 test("the paid shot is four times the free shot", () => {
