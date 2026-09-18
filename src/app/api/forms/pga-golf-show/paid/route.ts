@@ -3,6 +3,7 @@ import { pgaGolfShowEntrySchema } from "@/lib/validation";
 import { PGA_GOLF_SHOW, ROUTES } from "@/lib/constants";
 import { appendSubmission } from "@/lib/sheets";
 import { isDbConfigured, createEntry } from "@/lib/db";
+import { sendOpsAlert } from "@/lib/email";
 import { buildPaymentRequest, processUrl } from "@/lib/payfast";
 import { CONSENT_FORM_VERSION } from "@/lib/whatsapp";
 
@@ -94,7 +95,11 @@ export async function POST(req: NextRequest) {
 
   // Postgres is the durable system-of-record. Write it first and fail closed:
   // if we can't record the pending row, don't take the payment.
-  if (isDbConfigured()) {
+  //
+  // Reaching the Sheets write below with this true therefore means the entry
+  // is already recorded durably — which is what lets that one fail soft.
+  const recordedInDb = isDbConfigured();
+  if (recordedInDb) {
     try {
       await createEntry({
         reference,
@@ -126,18 +131,52 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Fail closed here too — the env-var guard above only proves the env is set.
+  // The Sheets mirror. NOT a reason to refuse a payment on its own.
+  //
+  // On 18 Sep 2026, twice, a golfer at the show stand tapped Pay R100, the
+  // Postgres row was written, the Apps Script append then hit its 8s timeout,
+  // and this returned 503 — "We couldn't record your entry". The entry WAS
+  // recorded; only the mirror was slow. /api/forms/entry did the same thing at
+  // a course the day before. Refusing the money because the copy is late loses
+  // the sale twice over: the golfer walks away, and the pending row we already
+  // wrote stays unpaid for ever and counts against the stuck-pending check.
+  //
+  // So: fail closed only when Postgres is NOT the store, because then the Sheet
+  // is the only record there is and an unrecorded payment is the worse outcome.
+  // Otherwise carry on to PayFast and shout, so the row can be mirrored by hand.
   try {
     await appendSubmission("entry", sheetRow);
   } catch (err) {
-    console.error("PGA Golf Show paid entry pending row failed", err);
-    return NextResponse.json(
-      {
-        error:
-          "We couldn't record your entry just now. Please try again in a moment, or ask someone at the stand.",
+    console.error("PGA Golf Show paid entry sheet append failed", err);
+    if (!recordedInDb) {
+      return NextResponse.json(
+        {
+          error:
+            "We couldn't record your entry just now. Please try again in a moment, or ask someone at the stand.",
+        },
+        { status: 503 },
+      );
+    }
+    // Awaited, not fired and forgotten: this function is about to redirect the
+    // golfer away, and a pending promise in a serverless invocation is not
+    // guaranteed to survive the response.
+    await sendOpsAlert({
+      subject: `[ALERT] Entry sheet mirror failed (${reference})`,
+      heading: "A paid entry was taken but not mirrored to the Sheet",
+      body:
+        "The entry is safe in Postgres and the payment was allowed to proceed — " +
+        "this is the mirror only. Add the row to the entry tab by hand, or leave " +
+        "it to the next reconciliation; the Sheet will be missing this reference.",
+      detail: {
+        reference,
+        route: "/api/forms/pga-golf-show/paid",
+        tier: paid.label,
+        amount: paid.amount,
+        course: PGA_GOLF_SHOW.course,
+        mobile: d.mobile,
+        error: err instanceof Error ? err.message : String(err),
       },
-      { status: 503 },
-    );
+    }).catch((e) => console.error("Sheet-mirror ops alert failed", e));
   }
 
   let fields: Record<string, string>;
