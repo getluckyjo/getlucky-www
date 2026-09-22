@@ -20,10 +20,10 @@ export default function BecomeAPartnerPage() {
         <section className="bg-cream">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
             <div className="text-center max-w-2xl mx-auto mb-12">
-              <span className="text-gold text-xs font-semibold uppercase tracking-widest">
+              <span className="eyebrow">
                 For Golf Courses
               </span>
-              <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-green-dark mt-4 uppercase tracking-wide">
+              <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-green mt-4 uppercase">
                 Become a Partner Course
               </h1>
               <p className="text-base sm:text-lg text-charcoal-light/80 mt-5 leading-relaxed">
@@ -35,13 +35,13 @@ export default function BecomeAPartnerPage() {
             </div>
 
             {/* Headline sponsor */}
-            <div className="mb-10 overflow-hidden rounded-3xl border border-green-dark/10 shadow-sm">
+            <div className="mb-10 overflow-hidden rounded-3xl border border-green/10 shadow-sm">
               <IndweBannerStrip src="/indwe-banner-partner/index.html" />
             </div>
 
-            <div className="bg-white rounded-3xl shadow-sm border border-green-dark/10 p-4 sm:p-6 mb-10">
+            <div className="card bg-white rounded-3xl p-4 sm:p-6 mb-10 card--hover">
               <div className="text-center mb-5">
-                <h2 className="font-heading text-2xl sm:text-3xl text-green-dark uppercase tracking-wide">
+                <h2 className="font-heading text-2xl sm:text-3xl text-green uppercase">
                   The Proposal
                 </h2>
                 <p className="text-sm text-charcoal-light/70 mt-1">
@@ -51,7 +51,7 @@ export default function BecomeAPartnerPage() {
               <ProposalFlipbook />
             </div>
 
-            <div className="bg-white rounded-3xl shadow-sm border border-green-dark/10 p-6 sm:p-10">
+            <div className="card bg-white rounded-3xl p-6 sm:p-10 card--hover">
               <PartnerForm />
             </div>
 
@@ -72,9 +72,9 @@ export default function BecomeAPartnerPage() {
               ].map((item) => (
                 <div
                   key={item.title}
-                  className="bg-white rounded-2xl border border-green-dark/10 p-6"
+                  className="card bg-white p-6 rounded-xl card--hover"
                 >
-                  <h3 className="font-heading text-lg text-green-dark uppercase tracking-wide mb-2">
+                  <h3 className="font-heading text-lg text-green uppercase mb-2">
                     {item.title}
                   </h3>
                   <p className="text-sm text-charcoal-light/80 leading-relaxed">

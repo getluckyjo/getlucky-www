@@ -48,13 +48,13 @@ export default function HowItWorks() {
     <section id="how-it-works" className="py-24 sm:py-32 bg-cream relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <span className="text-green text-xs font-semibold uppercase tracking-widest">
+          <span className="eyebrow">
             Fully Automated. Professionally Managed.
           </span>
-          <h2 className="font-heading text-3xl sm:text-5xl text-green-dark mt-3 uppercase tracking-wide">
+          <h2 className="font-heading text-3xl sm:text-5xl text-green mt-3 uppercase">
             How It Works
           </h2>
-          <p className="text-green-dark/60 mt-4 max-w-lg mx-auto">
+          <p className="text-green/60 mt-4 max-w-lg mx-auto">
             No membership required. No handicap needed. Just scan, pay, play — and
             if you sink it, you win.
           </p>
@@ -65,7 +65,7 @@ export default function HowItWorks() {
           {steps.map((item, i) => (
             <div
               key={item.step}
-              className="relative bg-white border border-green-dark/8 rounded-2xl p-6 group hover:border-green/20 hover:shadow-lg transition-all"
+              className="card relative bg-white p-6 group rounded-xl card--hover"
             >
               {/* Connector arrow (hidden on mobile and last item) */}
               {i < steps.length - 1 && (
@@ -76,19 +76,19 @@ export default function HowItWorks() {
                 </div>
               )}
 
-              <span className="text-5xl font-black text-green-dark/[0.04] select-none absolute top-4 right-4">
+              <span className="text-5xl font-heading text-green/[0.04] select-none absolute top-4 right-4">
                 {item.step}
               </span>
-              <div className="w-12 h-12 bg-green/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green/15 transition-colors">
-                <item.icon className="w-6 h-6 text-green" />
+              <div className="icon-disc w-12 h-12 mb-4">
+                <item.icon className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-green-dark mb-1">
+              <h3 className="text-lg font-bold text-green mb-1">
                 {item.title}
               </h3>
-              <p className="text-gold text-xs font-semibold uppercase tracking-wider mb-3">
+              <p className="text-green text-xs font-semibold uppercase tracking-wider mb-3">
                 {item.subtitle}
               </p>
-              <p className="text-green-dark/60 text-sm leading-relaxed">
+              <p className="text-green/60 text-sm leading-relaxed">
                 {item.description}
               </p>
             </div>

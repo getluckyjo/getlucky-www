@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import Script from "next/script";
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     siteName: "Get Lucky Golf Club",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Get Lucky Golf Club — Hole-in-One Challenge across South Africa",
@@ -72,7 +72,16 @@ export const metadata: Metadata = {
     title: "Get Lucky Golf Club | Hole-in-One Challenge South Africa",
     description:
       "Buy a swing from R50. Sink a hole-in-one. Win up to R1,000,000. 20+ premium courses across SA.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image.png"],
+  },
+  // The V2 mark, drawn for the app's icon set (getluckyjo/getluckyapp public/icons).
+  icons: {
+    icon: [
+      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/favicon-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/apple-touch-icon-180.png", sizes: "180x180", type: "image/png" }],
   },
   robots: {
     index: true,
@@ -87,6 +96,12 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#345231",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -97,7 +112,7 @@ export default function RootLayout({
     "@type": "Organization",
     name: "Get Lucky Golf Club",
     url: "https://www.getluckygolf.co.za",
-    logo: "https://www.getluckygolf.co.za/logos/logo-full.png",
+    logo: "https://www.getluckygolf.co.za/icons/icon-512.png",
     description:
       "South Africa's leading hole-in-one golf activation. Buy a swing, play the signature par-3, and win up to R1,000,000 at 20+ premium courses. Insured by Santam & Indwe Risk Services.",
     email: "johannes@getluckygolfclub.com",
@@ -158,7 +173,7 @@ export default function RootLayout({
 
   return (
     <html
-      lang="en"
+      lang="en-ZA"
       className={`${posterGothic.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">

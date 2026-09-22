@@ -194,8 +194,8 @@ export default function PgaGolfShowEntryForm() {
       </Field>
 
       {/* Instagram follow — asked for, optional. */}
-      <div className="rounded-xl border border-green-dark/15 bg-cream/60 p-4 space-y-3">
-        <p className="text-xs font-semibold uppercase tracking-widest text-green-dark/70">
+      <div className="rounded-xl border border-green/15 bg-cream/60 p-4 space-y-3">
+        <p className="eyebrow eyebrow--dark">
           Follow us on Instagram
         </p>
         <a
@@ -236,11 +236,11 @@ export default function PgaGolfShowEntryForm() {
         <SubmitButton pending={pending} disabled={paying}>Enter for free →</SubmitButton>
         <p className="text-xs text-charcoal-light/70 mt-3 leading-relaxed">
           By entering you accept the{" "}
-          <Link href={ROUTES.terms} className="text-green-dark underline hover:text-gold">
+          <Link href={ROUTES.terms} className="text-green underline hover:text-lime">
             terms &amp; conditions
           </Link>
           {" "}and confirm you are 18 or older. See our{" "}
-          <Link href={ROUTES.privacy} className="text-green-dark underline hover:text-gold">
+          <Link href={ROUTES.privacy} className="text-green underline hover:text-lime">
             privacy policy
           </Link>
           {" "}for how we look after your details.
@@ -256,11 +256,11 @@ export default function PgaGolfShowEntryForm() {
         once they are already in. Navy rather than green so the two buttons
         never read as the same action.
       */}
-      <div className="rounded-2xl border-2 border-green-dark/20 bg-cream/60 p-4 sm:p-5 space-y-3">
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-green-dark/60">
+      <div className="rounded-2xl border-2 border-green/20 bg-cream/60 p-4 sm:p-5 space-y-3">
+        <p className="eyebrow eyebrow--dark">
           Or take the bigger shot
         </p>
-        <p className="font-heading text-2xl sm:text-3xl uppercase tracking-wide text-green-dark leading-none">
+        <p className="font-heading text-2xl sm:text-3xl uppercase text-green leading-none">
           Pay {PGA_GOLF_SHOW.paidEntry.entry} · Win {PGA_GOLF_SHOW.paidEntry.prize}
         </p>
         <p className="text-sm text-charcoal-light/75 leading-relaxed">
@@ -271,7 +271,7 @@ export default function PgaGolfShowEntryForm() {
           type="button"
           onClick={onPay}
           disabled={pending || paying}
-          className="w-full bg-green-dark hover:bg-green disabled:bg-green-dark/50 disabled:cursor-not-allowed text-cream font-semibold text-base px-6 py-4 rounded-full transition-all hover:scale-[1.02] active:scale-[0.99] inline-flex items-center justify-center gap-2"
+          className="btn-lime btn-lime--dark w-full"
         >
           {paying && (
             <svg className="animate-spin -ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" aria-hidden>

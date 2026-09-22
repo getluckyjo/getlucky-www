@@ -72,22 +72,22 @@ export default function GolfSimulatorsPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-green-dark/70 via-green-dark/80 to-green-dark" />
 
           <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <span className="inline-block bg-gold/10 border border-gold/30 text-gold text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full">
+            <span className="chip-lime chip-lime--flag inline-block">
               For Golf Simulators · Anywhere in South Africa
             </span>
 
-            <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl text-cream mt-6 uppercase tracking-wide leading-[0.95]">
+            <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl text-white mt-6 uppercase leading-[0.95]">
               Add A R100,000{" "}
-              <span className="text-gold">Hole-in-One Challenge</span> To Your Sim
+              <span className="text-green">Hole-in-One Challenge</span> To Your Sim
             </h1>
 
-            <p className="text-base sm:text-xl text-cream/80 mt-6 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-xl text-white/80 mt-6 max-w-2xl mx-auto leading-relaxed">
               Players pay{" "}
-              <span className="text-gold font-bold">R149 for 3 shots</span> at a
+              <span className="text-green font-bold">R149 for 3 shots</span> at a
               hole-in-one to win{" "}
-              <span className="text-gold font-bold">R100,000 cash</span> — and your
+              <span className="text-green font-bold">R100,000 cash</span> — and your
               venue keeps{" "}
-              <span className="text-gold font-bold">10% of every swing</span>. The
+              <span className="text-green font-bold">10% of every swing</span>. The
               prize is fully underwritten by Indwe. No cost, no risk. We run it —
               you earn.
             </p>
@@ -95,24 +95,24 @@ export default function GolfSimulatorsPage() {
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
                 href="#earn"
-                className="inline-block bg-gold hover:bg-gold-light text-green-dark font-bold text-lg px-10 py-4 rounded-full transition-all hover:scale-105 w-full sm:w-auto"
+                className="btn-lime w-full sm:w-auto"
               >
                 Calculate What You&apos;ll Earn
               </a>
               <a
                 href="#enquire"
-                className="inline-block border-2 border-cream/30 hover:border-cream/60 text-cream font-medium text-lg px-10 py-4 rounded-full transition-all w-full sm:w-auto"
+                className="btn-outline w-full sm:w-auto"
               >
                 Enquire Now
               </a>
             </div>
 
             {/* Trust strip */}
-            <div className="mt-10 flex items-center justify-center gap-3 text-cream/60">
+            <div className="mt-10 flex items-center justify-center gap-3 text-white/60">
               <Shield className="w-4 h-4" />
               <p className="text-xs sm:text-sm">
                 Prize underwritten by{" "}
-                <span className="text-cream/90 font-medium">Indwe Risk Services</span>{" "}
+                <span className="text-white/90 font-medium">Indwe Risk Services</span>{" "}
                 · FSP 3425
               </p>
             </div>
@@ -126,10 +126,10 @@ export default function GolfSimulatorsPage() {
         <section id="earn" className="py-20 sm:py-28 bg-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 max-w-2xl mx-auto">
-              <span className="text-gold text-xs font-semibold uppercase tracking-widest">
+              <span className="eyebrow">
                 See What You Could Earn
               </span>
-              <h2 className="font-heading text-3xl sm:text-5xl text-green-dark mt-3 uppercase tracking-wide">
+              <h2 className="font-heading text-3xl sm:text-5xl text-green mt-3 uppercase">
                 Your Revenue At 10%
               </h2>
               <p className="text-charcoal-light/80 mt-4">
@@ -150,7 +150,7 @@ export default function GolfSimulatorsPage() {
                   key={line}
                   className="flex items-start gap-2 text-charcoal-light/80"
                 >
-                  <CheckCircle2 className="w-4 h-4 text-gold shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-lime shrink-0 mt-0.5" />
                   <span>{line}</span>
                 </div>
               ))}
@@ -162,13 +162,13 @@ export default function GolfSimulatorsPage() {
         <section className="py-20 sm:py-28 bg-green-dark">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-14 max-w-2xl mx-auto">
-              <span className="text-gold text-xs font-semibold uppercase tracking-widest">
+              <span className="eyebrow eyebrow--dark">
                 What&apos;s Included
               </span>
-              <h2 className="font-heading text-3xl sm:text-5xl text-cream mt-3 uppercase tracking-wide">
+              <h2 className="font-heading text-3xl sm:text-5xl text-white mt-3 uppercase">
                 A New Revenue Line, Switched On
               </h2>
-              <p className="text-cream/70 mt-4">
+              <p className="text-white/70 mt-4">
                 The challenge slots straight into your existing simulator. We set it
                 up, brand it, market it and handle the prize — you add a
                 show-stopping reason to play and keep 10% of every swing.
@@ -179,15 +179,15 @@ export default function GolfSimulatorsPage() {
               {INCLUDED.map((item) => (
                 <div
                   key={item.title}
-                  className="bg-cream/5 rounded-2xl border border-cream/10 p-6 hover:border-gold/40 transition-all"
+                  className="bg-white/5 rounded-2xl border border-white/10 p-6 hover:border-lime/50 transition-all"
                 >
-                  <div className="w-11 h-11 bg-gold/15 rounded-xl flex items-center justify-center mb-4">
-                    <item.icon className="w-5 h-5 text-gold" />
+                  <div className="icon-disc w-11 h-11 mb-4">
+                    <item.icon className="w-5 h-5" />
                   </div>
-                  <h3 className="font-heading text-lg text-cream uppercase tracking-wide mb-2">
+                  <h3 className="font-heading text-lg text-white uppercase mb-2">
                     {item.title}
                   </h3>
-                  <p className="text-sm text-cream/70 leading-relaxed">
+                  <p className="text-sm text-white/70 leading-relaxed">
                     {item.body}
                   </p>
                 </div>
@@ -200,13 +200,13 @@ export default function GolfSimulatorsPage() {
         <section id="enquire" className="py-20 sm:py-28 bg-green-dark">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10">
-              <span className="text-gold text-xs font-semibold uppercase tracking-widest">
+              <span className="eyebrow eyebrow--dark">
                 Lock It In
               </span>
-              <h2 className="font-heading text-3xl sm:text-5xl text-cream mt-3 uppercase tracking-wide">
+              <h2 className="font-heading text-3xl sm:text-5xl text-white mt-3 uppercase">
                 Add It To Your Sim
               </h2>
-              <p className="text-cream/70 mt-4 max-w-lg mx-auto">
+              <p className="text-white/70 mt-4 max-w-lg mx-auto">
                 Tell us about your venue. A Get Lucky specialist will be in touch
                 within 24 hours to set up the challenge on your simulator.
               </p>
@@ -217,13 +217,13 @@ export default function GolfSimulatorsPage() {
             </div>
 
             <div className="mt-8 text-center">
-              <p className="text-cream/60 text-sm">
+              <p className="text-white/60 text-sm">
                 Prefer to chat?{" "}
                 <a
                   href="https://wa.me/27609615091"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gold hover:text-gold-light font-semibold underline"
+                  className="text-lime hover:text-lime font-semibold underline"
                 >
                   WhatsApp us on +27 60 961 5091
                 </a>

@@ -102,14 +102,14 @@ export default function FreeEntryForm() {
         </Checkbox>
         <Checkbox name="consentTerms" required error={errors.consentTerms}>
           I accept the{" "}
-          <Link href={ROUTES.terms} className="text-green-dark underline hover:text-gold">
+          <Link href={ROUTES.terms} className="text-green underline hover:text-green">
             terms &amp; conditions
           </Link>
           {" "}and confirm I am 18 or older.
         </Checkbox>
         <p className="text-sm text-gray-600">
           See our{" "}
-          <Link href={ROUTES.privacy} className="text-green-dark underline hover:text-gold">
+          <Link href={ROUTES.privacy} className="text-green underline hover:text-green">
             privacy policy
           </Link>
           {" "}for how we look after your details.

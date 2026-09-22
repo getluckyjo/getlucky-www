@@ -93,7 +93,7 @@ export default function ProposalFlipbook() {
           onClick={goPrev}
           disabled={page === 1}
           aria-label="Previous page"
-          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed text-green-dark rounded-full p-2 sm:p-3 shadow-md transition"
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed text-green rounded-full p-2 sm:p-3 shadow-md transition"
         >
           <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
@@ -102,7 +102,7 @@ export default function ProposalFlipbook() {
           onClick={goNext}
           disabled={page === TOTAL_PAGES}
           aria-label="Next page"
-          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed text-green-dark rounded-full p-2 sm:p-3 shadow-md transition"
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed text-green rounded-full p-2 sm:p-3 shadow-md transition"
         >
           <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
@@ -112,7 +112,7 @@ export default function ProposalFlipbook() {
             type="button"
             onClick={() => setFullscreen(false)}
             aria-label="Close fullscreen"
-            className="absolute top-3 right-3 bg-white/90 hover:bg-white text-green-dark rounded-full p-2 shadow-md transition"
+            className="absolute top-3 right-3 bg-white/90 hover:bg-white text-green rounded-full p-2 shadow-md transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -127,7 +127,7 @@ export default function ProposalFlipbook() {
 
       <div className="flex items-center justify-between gap-3 mt-4 flex-wrap">
         <div className="flex items-center gap-2 text-sm text-charcoal-light/70">
-          <span className="font-semibold text-green-dark">{page}</span>
+          <span className="font-semibold text-green">{page}</span>
           <span>/ {TOTAL_PAGES}</span>
         </div>
 
@@ -147,7 +147,7 @@ export default function ProposalFlipbook() {
           <button
             type="button"
             onClick={() => setFullscreen(true)}
-            className="inline-flex items-center gap-1.5 text-sm text-green-dark hover:text-green border border-green-dark/20 hover:border-green-dark/40 rounded-full px-3 py-1.5 transition"
+            className="inline-flex items-center gap-1.5 text-sm text-green hover:text-green border border-green/20 hover:border-green/40 rounded-full px-3 py-1.5 transition"
             aria-label="View fullscreen"
           >
             <Maximize2 className="w-4 h-4" />
@@ -156,7 +156,7 @@ export default function ProposalFlipbook() {
           <a
             href={PDF_HREF}
             download
-            className="inline-flex items-center gap-1.5 text-sm bg-green-dark hover:bg-green text-cream rounded-full px-3 py-1.5 transition"
+            className="chip-lime inline-flex"
           >
             <Download className="w-4 h-4" />
             <span>Download PDF</span>
@@ -172,7 +172,7 @@ export default function ProposalFlipbook() {
           aria-label="Proposal fullscreen view"
         >
           <Viewer inFullscreen={true} />
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-cream/70 text-sm">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm">
             {page} / {TOTAL_PAGES}
           </div>
         </div>

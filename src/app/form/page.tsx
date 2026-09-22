@@ -57,21 +57,22 @@ export default function FormPage() {
         ))}
 
         <Image
-          src="/logos/challenge-bordered.png"
+          src="/brand/logo-lockup.svg"
           alt="Get Lucky Hole-in-One Challenge"
-          width={420}
-          height={420}
+          width={552}
+          height={588}
+          unoptimized
           className="relative h-40 sm:h-48 w-auto drop-shadow-xl"
           priority
         />
 
         <div className="casino-marquee relative mt-5">
-          <h1 className="casino-gold-text font-heading text-3xl sm:text-4xl uppercase tracking-wide">
+          <h1 className="casino-gold-text font-heading text-3xl sm:text-4xl uppercase">
             Swing it to Win it
           </h1>
         </div>
 
-        <p className="relative text-sm sm:text-base text-cream/85 mt-4 leading-relaxed drop-shadow max-w-sm">
+        <p className="relative text-sm sm:text-base text-white/85 mt-4 leading-relaxed drop-shadow max-w-sm">
           It&apos;s only a matter of time until your hole in one.
         </p>
 
@@ -80,7 +81,7 @@ export default function FormPage() {
 
       {/* Form panel */}
       <div className="max-w-md mx-auto px-4 pb-8">
-        <div className="bg-white rounded-2xl shadow-2xl border border-white/40 p-5 sm:p-7">
+        <div className="card bg-white border-white/40 p-5 sm:p-7 rounded-xl card--hover">
           <EntryForm />
         </div>
       </div>
@@ -90,7 +91,7 @@ export default function FormPage() {
           scales with its own viewport, and the 170px floor gives its three
           slides room on a narrow screen. */}
       <div className="max-w-md mx-auto px-4 pb-8 sm:pb-12">
-        <div className="rounded-xl overflow-hidden border border-white/30 shadow-2xl bg-white">
+        <div className="card rounded-xl overflow-hidden border-white/30 bg-white card--hover">
           <iframe
             src="/indwe-banner/index.html"
             title="Indwe Risk Services — Headline Sponsor"

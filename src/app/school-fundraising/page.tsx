@@ -115,46 +115,46 @@ export default function SchoolFundraisingPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-green-dark/70 via-green-dark/80 to-green-dark" />
 
           <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <span className="inline-block bg-gold/10 border border-gold/30 text-gold text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full">
+            <span className="chip-lime chip-lime--flag inline-block">
               Mobile School Fundraiser · Anywhere in South Africa
             </span>
 
-            <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl text-cream mt-6 uppercase tracking-wide leading-[0.95]">
+            <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl text-white mt-6 uppercase leading-[0.95]">
               Raise Big For Your School{" "}
-              <span className="text-gold">In One Golf Day</span>
+              <span className="text-green">In One Golf Day</span>
             </h1>
 
-            <p className="text-base sm:text-xl text-cream/80 mt-6 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-xl text-white/80 mt-6 max-w-2xl mx-auto leading-relaxed">
               Parents, old boys and girls, and local businesses buy swings to
               play the Get Lucky Hole-in-One Challenge at your golf day — and
               your school keeps{" "}
-              <span className="text-gold font-bold">50% of every swing</span>.
+              <span className="text-green font-bold">50% of every swing</span>.
               Real prizes up to{" "}
-              <span className="text-gold font-bold">R1,000,000</span>, fully
+              <span className="text-green font-bold">R1,000,000</span>, fully
               underwritten by Indwe. No cost, no risk. We run it — you raise.
             </p>
 
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
                 href="#build"
-                className="inline-block bg-gold hover:bg-gold-light text-green-dark font-bold text-lg px-10 py-4 rounded-full transition-all hover:scale-105 w-full sm:w-auto"
+                className="btn-lime w-full sm:w-auto"
               >
                 Calculate What You&apos;ll Raise
               </a>
               <a
                 href="#enquire"
-                className="inline-block border-2 border-cream/30 hover:border-cream/60 text-cream font-medium text-lg px-10 py-4 rounded-full transition-all w-full sm:w-auto"
+                className="btn-outline w-full sm:w-auto"
               >
                 Enquire Now
               </a>
             </div>
 
             {/* Trust strip */}
-            <div className="mt-10 flex items-center justify-center gap-3 text-cream/60">
+            <div className="mt-10 flex items-center justify-center gap-3 text-white/60">
               <Shield className="w-4 h-4" />
               <p className="text-xs sm:text-sm">
                 All prizes underwritten by{" "}
-                <span className="text-cream/90 font-medium">Indwe Risk Services</span>{" "}
+                <span className="text-white/90 font-medium">Indwe Risk Services</span>{" "}
                 · FSP 3425
               </p>
             </div>
@@ -168,10 +168,10 @@ export default function SchoolFundraisingPage() {
         <section id="build" className="py-20 sm:py-28 bg-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 max-w-2xl mx-auto">
-              <span className="text-gold text-xs font-semibold uppercase tracking-widest">
+              <span className="eyebrow eyebrow--dark">
                 See What You Could Raise
               </span>
-              <h2 className="font-heading text-3xl sm:text-5xl text-green-dark mt-3 uppercase tracking-wide">
+              <h2 className="font-heading text-3xl sm:text-5xl text-green mt-3 uppercase">
                 Build Your School Fundraiser
               </h2>
               <p className="text-charcoal-light/80 mt-4">
@@ -193,7 +193,7 @@ export default function SchoolFundraisingPage() {
                   key={line}
                   className="flex items-start gap-2 text-charcoal-light/80"
                 >
-                  <CheckCircle2 className="w-4 h-4 text-gold shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-lime shrink-0 mt-0.5" />
                   <span>{line}</span>
                 </div>
               ))}
@@ -205,13 +205,13 @@ export default function SchoolFundraisingPage() {
         <section className="py-20 sm:py-24 bg-green-dark">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 max-w-2xl mx-auto">
-              <span className="text-gold text-xs font-semibold uppercase tracking-widest">
+              <span className="eyebrow eyebrow--dark">
                 In Good Company
               </span>
-              <h2 className="font-heading text-3xl sm:text-5xl text-cream mt-3 uppercase tracking-wide">
+              <h2 className="font-heading text-3xl sm:text-5xl text-white mt-3 uppercase">
                 Schools We&apos;ve Worked With
               </h2>
-              <p className="text-cream/70 mt-4">
+              <p className="text-white/70 mt-4">
                 From derby days to old boys&apos; reunions, the challenge has
                 teed off with some of South Africa&apos;s proudest sporting
                 schools.
@@ -222,13 +222,13 @@ export default function SchoolFundraisingPage() {
               {SCHOOLS_WORKED_WITH.map((school) => (
                 <div
                   key={school.name}
-                  className="bg-cream/5 rounded-2xl border border-cream/10 px-4 py-6 text-center hover:border-gold/40 transition-all flex flex-col items-center justify-center"
+                  className="bg-white/5 rounded-2xl border border-white/10 px-4 py-6 text-center hover:border-lime/50 transition-all flex flex-col items-center justify-center"
                 >
-                  <GraduationCap className="w-5 h-5 text-gold mb-3" />
-                  <p className="font-heading text-base text-cream uppercase tracking-wide leading-tight">
+                  <GraduationCap className="w-5 h-5 text-lime mb-3" />
+                  <p className="font-heading text-base text-white uppercase leading-tight">
                     {school.name}
                   </p>
-                  <p className="text-[11px] text-cream/50 mt-2">
+                  <p className="text-[11px] text-white/50 mt-2">
                     {school.location}
                   </p>
                 </div>
@@ -241,10 +241,10 @@ export default function SchoolFundraisingPage() {
         <section className="py-20 sm:py-24 bg-cream-dark/30">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 max-w-2xl mx-auto">
-              <span className="text-gold text-xs font-semibold uppercase tracking-widest">
+              <span className="eyebrow eyebrow--dark">
                 One Day, Real Impact
               </span>
-              <h2 className="font-heading text-3xl sm:text-5xl text-green-dark mt-3 uppercase tracking-wide">
+              <h2 className="font-heading text-3xl sm:text-5xl text-green mt-3 uppercase">
                 What Schools Raise For
               </h2>
               <p className="text-charcoal-light/80 mt-4">
@@ -258,12 +258,12 @@ export default function SchoolFundraisingPage() {
               {FUNDING_GOALS.map((goal) => (
                 <div
                   key={goal.title}
-                  className="bg-white rounded-2xl border border-green-dark/10 p-6 hover:border-gold/40 transition-all"
+                  className="card bg-white p-6 rounded-xl card--hover"
                 >
-                  <div className="w-11 h-11 bg-gold/15 rounded-xl flex items-center justify-center mb-4">
-                    <goal.icon className="w-5 h-5 text-gold" />
+                  <div className="icon-disc w-11 h-11 mb-4">
+                    <goal.icon className="w-5 h-5" />
                   </div>
-                  <h3 className="font-heading text-lg text-green-dark uppercase tracking-wide mb-2">
+                  <h3 className="font-heading text-lg text-green uppercase mb-2">
                     {goal.title}
                   </h3>
                   <p className="text-sm text-charcoal-light/80 leading-relaxed">
@@ -279,13 +279,13 @@ export default function SchoolFundraisingPage() {
         <section className="py-20 sm:py-28 bg-green-dark">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-14 max-w-2xl mx-auto">
-              <span className="text-gold text-xs font-semibold uppercase tracking-widest">
+              <span className="eyebrow eyebrow--dark">
                 What&apos;s Included
               </span>
-              <h2 className="font-heading text-3xl sm:text-5xl text-cream mt-3 uppercase tracking-wide">
+              <h2 className="font-heading text-3xl sm:text-5xl text-white mt-3 uppercase">
                 Everything Travels With Us
               </h2>
-              <p className="text-cream/70 mt-4">
+              <p className="text-white/70 mt-4">
                 The challenge is fully mobile. We arrive at sunrise, set up the
                 full activation, run it for the day, and pack it down. You get a
                 show-stopping hole — and a cheque for your school.
@@ -296,15 +296,15 @@ export default function SchoolFundraisingPage() {
               {INCLUDED.map((item) => (
                 <div
                   key={item.title}
-                  className="bg-cream/5 rounded-2xl border border-cream/10 p-6 hover:border-gold/40 transition-all"
+                  className="bg-white/5 rounded-2xl border border-white/10 p-6 hover:border-lime/50 transition-all"
                 >
-                  <div className="w-11 h-11 bg-gold/15 rounded-xl flex items-center justify-center mb-4">
-                    <item.icon className="w-5 h-5 text-gold" />
+                  <div className="icon-disc w-11 h-11 mb-4">
+                    <item.icon className="w-5 h-5" />
                   </div>
-                  <h3 className="font-heading text-lg text-cream uppercase tracking-wide mb-2">
+                  <h3 className="font-heading text-lg text-white uppercase mb-2">
                     {item.title}
                   </h3>
-                  <p className="text-sm text-cream/70 leading-relaxed">
+                  <p className="text-sm text-white/70 leading-relaxed">
                     {item.body}
                   </p>
                 </div>
@@ -317,10 +317,10 @@ export default function SchoolFundraisingPage() {
         <section className="py-20 sm:py-24 bg-cream-dark/30">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 max-w-2xl mx-auto">
-              <span className="text-gold text-xs font-semibold uppercase tracking-widest">
+              <span className="eyebrow eyebrow--dark">
                 The Real Thing
               </span>
-              <h2 className="font-heading text-3xl sm:text-5xl text-green-dark mt-3 uppercase tracking-wide">
+              <h2 className="font-heading text-3xl sm:text-5xl text-green mt-3 uppercase">
                 Moments From The Tee
               </h2>
               <p className="text-charcoal-light/80 mt-4">
@@ -350,7 +350,7 @@ export default function SchoolFundraisingPage() {
                     alt={img.alt}
                     fill
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    className="object-cover hover:scale-105 transition-transform duration-500"
+                    className="object-cover transition-transform duration-500"
                   />
                 </div>
               ))}
@@ -362,19 +362,19 @@ export default function SchoolFundraisingPage() {
         <section className="py-20 sm:py-24 bg-green-dark">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10 max-w-2xl mx-auto">
-              <span className="text-gold text-xs font-semibold uppercase tracking-widest">
+              <span className="eyebrow">
                 See It In Action
               </span>
-              <h2 className="font-heading text-3xl sm:text-5xl text-cream mt-3 uppercase tracking-wide">
+              <h2 className="font-heading text-3xl sm:text-5xl text-white mt-3 uppercase">
                 A Day With Get Lucky
               </h2>
-              <p className="text-cream/70 mt-4">
+              <p className="text-white/70 mt-4">
                 Real moments, real reactions, real prizes — from golf days around
                 the country.
               </p>
             </div>
 
-            <div className="rounded-2xl overflow-hidden border border-cream/10 shadow-2xl">
+            <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
               <video
                 className="w-full aspect-video bg-green-dark object-cover"
                 controls
@@ -392,13 +392,13 @@ export default function SchoolFundraisingPage() {
         <section id="enquire" className="py-20 sm:py-28 bg-green-dark">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10">
-              <span className="text-gold text-xs font-semibold uppercase tracking-widest">
+              <span className="eyebrow">
                 Lock It In
               </span>
-              <h2 className="font-heading text-3xl sm:text-5xl text-cream mt-3 uppercase tracking-wide">
+              <h2 className="font-heading text-3xl sm:text-5xl text-white mt-3 uppercase">
                 Host A School Fundraiser
               </h2>
-              <p className="text-cream/70 mt-4 max-w-lg mx-auto">
+              <p className="text-white/70 mt-4 max-w-lg mx-auto">
                 Tell us about your school and what you&apos;re raising for. An
                 activation specialist will be in touch within 24 hours to set up
                 your fundraising golf day.
@@ -410,13 +410,13 @@ export default function SchoolFundraisingPage() {
             </div>
 
             <div className="mt-8 text-center">
-              <p className="text-cream/60 text-sm">
+              <p className="text-white/60 text-sm">
                 Prefer to chat?{" "}
                 <a
                   href="https://wa.me/27609615091"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gold hover:text-gold-light font-semibold underline"
+                  className="text-green hover:text-green font-semibold underline"
                 >
                   WhatsApp us on +27 60 961 5091
                 </a>

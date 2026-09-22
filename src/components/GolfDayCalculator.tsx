@@ -106,15 +106,15 @@ export default function GolfDayCalculator() {
   }
 
   return (
-    <div className="bg-white rounded-3xl shadow-sm border border-green-dark/10 overflow-hidden">
+    <div className="card bg-white rounded-3xl overflow-hidden card--hover">
       <div className="grid lg:grid-cols-[1fr_360px]">
         {/* Left: configurator */}
         <div className="p-6 sm:p-10 space-y-8">
           {/* Prize selector */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Trophy className="w-4 h-4 text-gold" />
-              <h3 className="font-heading text-lg text-green-dark uppercase tracking-wide">
+              <Trophy className="w-4 h-4 text-green" />
+              <h3 className="font-heading text-lg text-green uppercase">
                 1. Choose Your Prize
               </h3>
             </div>
@@ -128,19 +128,19 @@ export default function GolfDayCalculator() {
                     onClick={() => setPrize(opt)}
                     className={`relative text-left rounded-2xl p-4 border-2 transition-all ${
                       active
-                        ? "border-gold bg-gold/5 shadow-sm"
+                        ? "border-green bg-lime/5 shadow-sm"
                         : "border-green-dark/10 hover:border-green-dark/30"
                     }`}
                   >
                     {active && (
-                      <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-gold flex items-center justify-center">
-                        <Check className="w-3 h-3 text-green-dark" strokeWidth={3} />
+                      <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-lime flex items-center justify-center">
+                        <Check className="w-3 h-3 text-green" strokeWidth={3} />
                       </span>
                     )}
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-green-dark/50">
+                    <p className="eyebrow">
                       {opt.label}
                     </p>
-                    <p className="font-heading text-2xl text-green-dark mt-1">
+                    <p className="font-heading text-2xl text-green mt-1">
                       {opt.prize}
                     </p>
                     <p className="text-xs text-charcoal-light/70 mt-2">
@@ -155,8 +155,8 @@ export default function GolfDayCalculator() {
           {/* Golfers */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Users className="w-4 h-4 text-gold" />
-              <h3 className="font-heading text-lg text-green-dark uppercase tracking-wide">
+              <Users className="w-4 h-4 text-green" />
+              <h3 className="font-heading text-lg text-green uppercase">
                 2. Number of Golfers
               </h3>
             </div>
@@ -168,7 +168,7 @@ export default function GolfDayCalculator() {
                 step={4}
                 value={golfers}
                 onChange={(e) => setGolfers(Number(e.target.value))}
-                className="flex-1 accent-gold"
+                className="flex-1 accent-green"
                 aria-label="Number of golfers"
               />
               <div className="flex items-center gap-2">
@@ -178,7 +178,7 @@ export default function GolfDayCalculator() {
                   max={400}
                   value={golfers}
                   onChange={(e) => setGolfers(Math.max(1, Number(e.target.value) || 0))}
-                  className="w-20 text-center rounded-lg border border-green-dark/15 px-3 py-2 font-semibold text-green-dark focus:border-gold focus:outline-none"
+                  className="w-20 text-center rounded-lg border border-green/15 px-3 py-2 font-semibold text-green focus:border-green focus:outline-none"
                   aria-label="Number of golfers (exact)"
                 />
                 <span className="text-sm text-charcoal-light/70">players</span>
@@ -186,7 +186,7 @@ export default function GolfDayCalculator() {
             </div>
             <p className="text-xs text-charcoal-light/60 mt-2">
               {formatRand(prize.pricePerPlayer)} per player × {golfers} ={" "}
-              <span className="font-semibold text-green-dark">
+              <span className="font-semibold text-green">
                 {formatRand(breakdown.prizeCost)}
               </span>
             </p>
@@ -195,8 +195,8 @@ export default function GolfDayCalculator() {
           {/* Promoters */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Users className="w-4 h-4 text-gold" />
-              <h3 className="font-heading text-lg text-green-dark uppercase tracking-wide">
+              <Users className="w-4 h-4 text-green" />
+              <h3 className="font-heading text-lg text-green uppercase">
                 3. Promotional Team
               </h3>
             </div>
@@ -208,8 +208,8 @@ export default function GolfDayCalculator() {
                   onClick={() => setPromoters(n)}
                   className={`w-12 h-12 rounded-full font-bold transition-all ${
                     promoters === n
-                      ? "bg-green-dark text-cream"
-                      : "bg-cream-dark/50 text-green-dark hover:bg-cream-dark"
+                      ? "bg-green-dark text-white"
+                      : "bg-cream-dark/50 text-green hover:bg-cream-dark"
                   }`}
                   aria-label={`${n} promoters`}
                 >
@@ -220,7 +220,7 @@ export default function GolfDayCalculator() {
             <p className="text-xs text-charcoal-light/60 mt-2">
               {formatRand(PROMOTER_RATE)} per promoter per day · {promoters} ×
               R2,000 ={" "}
-              <span className="font-semibold text-green-dark">
+              <span className="font-semibold text-green">
                 {formatRand(breakdown.promoterCost)}
               </span>
             </p>
@@ -229,8 +229,8 @@ export default function GolfDayCalculator() {
           {/* Add-ons */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Tent className="w-4 h-4 text-gold" />
-              <h3 className="font-heading text-lg text-green-dark uppercase tracking-wide">
+              <Tent className="w-4 h-4 text-green" />
+              <h3 className="font-heading text-lg text-green uppercase">
                 4. On-Course Add-Ons
               </h3>
             </div>
@@ -245,28 +245,28 @@ export default function GolfDayCalculator() {
                     onClick={() => toggle(a.id)}
                     className={`relative text-left rounded-2xl p-4 border-2 transition-all ${
                       active
-                        ? "border-gold bg-gold/5"
+                        ? "border-green bg-lime/5"
                         : "border-green-dark/10 hover:border-green-dark/30"
                     }`}
                   >
                     <div className="flex items-start gap-3">
                       <div
                         className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-                          active ? "bg-gold/20" : "bg-cream-dark/40"
+                          active ? "bg-lime/20" : "bg-cream-dark/40"
                         }`}
                       >
                         <Icon
                           className={`w-4 h-4 ${
-                            active ? "text-gold" : "text-green-dark/50"
+                            active ? "text-green" : "text-green/50"
                           }`}
                         />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2">
-                          <p className="font-semibold text-green-dark text-sm">
+                          <p className="font-semibold text-green text-sm">
                             {a.title}
                           </p>
-                          <p className="font-bold text-green-dark text-sm whitespace-nowrap">
+                          <p className="font-bold text-green text-sm whitespace-nowrap">
                             {formatRand(a.amount)}
                           </p>
                         </div>
@@ -276,8 +276,8 @@ export default function GolfDayCalculator() {
                       </div>
                     </div>
                     {active && (
-                      <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-gold flex items-center justify-center">
-                        <Check className="w-3 h-3 text-green-dark" strokeWidth={3} />
+                      <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-lime flex items-center justify-center">
+                        <Check className="w-3 h-3 text-green" strokeWidth={3} />
                       </span>
                     )}
                   </button>
@@ -288,23 +288,23 @@ export default function GolfDayCalculator() {
         </div>
 
         {/* Right: summary */}
-        <div className="bg-green-dark text-cream p-6 sm:p-8 lg:p-10 lg:sticky lg:top-24 lg:self-start">
-          <p className="text-gold text-[10px] font-semibold uppercase tracking-widest">
+        <div className="bg-green-dark text-white p-6 sm:p-8 lg:p-10 lg:sticky lg:top-24 lg:self-start">
+          <p className="eyebrow eyebrow--dark">
             Your Quote
           </p>
-          <p className="font-heading text-3xl sm:text-4xl uppercase tracking-wide mt-1">
+          <p className="font-heading text-3xl sm:text-4xl uppercase mt-1">
             Activation Total
           </p>
 
           <div className="mt-6 space-y-3 text-sm">
-            <div className="flex justify-between border-b border-cream/10 pb-3">
-              <span className="text-cream/70">
+            <div className="flex justify-between border-b border-white/10 pb-3">
+              <span className="text-white/70">
                 {prize.prize} prize × {golfers} players
               </span>
               <span className="font-semibold">{formatRand(breakdown.prizeCost)}</span>
             </div>
-            <div className="flex justify-between border-b border-cream/10 pb-3">
-              <span className="text-cream/70">
+            <div className="flex justify-between border-b border-white/10 pb-3">
+              <span className="text-white/70">
                 {promoters} promoter{promoters === 1 ? "" : "s"}
               </span>
               <span className="font-semibold">{formatRand(breakdown.promoterCost)}</span>
@@ -312,16 +312,16 @@ export default function GolfDayCalculator() {
             {ADD_ONS.filter((a) => selected[a.id]).map((a) => (
               <div
                 key={a.id}
-                className="flex justify-between border-b border-cream/10 pb-3"
+                className="flex justify-between border-b border-white/10 pb-3"
               >
-                <span className="text-cream/70">{a.title}</span>
+                <span className="text-white/70">{a.title}</span>
                 <span className="font-semibold">{formatRand(a.amount)}</span>
               </div>
             ))}
           </div>
 
-          <div className="mt-6 bg-gold text-green-dark rounded-xl p-5">
-            <p className="text-[10px] font-bold uppercase tracking-widest opacity-70">
+          <div className="mt-6 bg-lime text-green rounded-xl p-5">
+            <p className="eyebrow eyebrow--dark">
               Total Investment
             </p>
             <p className="font-heading text-4xl sm:text-5xl mt-1">
@@ -329,15 +329,15 @@ export default function GolfDayCalculator() {
             </p>
           </div>
 
-          <p className="text-cream/60 text-xs mt-4 leading-relaxed">
+          <p className="text-white/60 text-xs mt-4 leading-relaxed">
             Every package includes the Get Lucky branded experience, on-site
-            management, a complimentary <span className="text-gold font-semibold">Shanky&apos;s Whip</span> for every
+            management, a complimentary <span className="text-lime font-semibold">Shanky&apos;s Whip</span> for every
             golfer, and full prize underwriting by Indwe Risk Services.
           </p>
 
           <a
             href="#enquire"
-            className="mt-6 block w-full text-center bg-cream hover:bg-white text-green-dark font-bold text-base px-6 py-4 rounded-full transition-all"
+            className="btn-lime mt-6 w-full text-center"
           >
             Lock In This Package
           </a>

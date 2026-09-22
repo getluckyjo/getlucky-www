@@ -23,14 +23,14 @@ export const metadata: Metadata = {
  */
 export default function PgaGolfShowPage() {
   return (
-    <main className="pga-theme min-h-screen bg-cream text-green-dark">
+    <main className="pga-theme min-h-screen bg-cream text-green">
       {/* Navy masthead with the show's green rule */}
       <div className="bg-green-dark border-b-4 border-green">
-        <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between gap-3 text-cream">
+        <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between gap-3 text-white">
           <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.15em] sm:tracking-[0.2em]">
             {PGA_GOLF_SHOW.name}
           </p>
-          <p className="text-[11px] sm:text-xs uppercase tracking-widest text-cream/80 whitespace-nowrap">
+          <p className="eyebrow eyebrow--dark whitespace-nowrap">
             {PGA_GOLF_SHOW.dates}
           </p>
         </div>
@@ -47,10 +47,11 @@ export default function PgaGolfShowPage() {
           />
           <div className="h-16 w-px bg-green-dark/25" aria-hidden />
           <Image
-            src="/logos/challenge-bordered.png"
+            src="/brand/logo-lockup.svg"
             alt="Get Lucky Hole-in-One Challenge"
-            width={420}
-            height={420}
+          width={552}
+          height={588}
+          unoptimized
             className="h-20 sm:h-24 w-auto flex-shrink-0"
             priority
           />
@@ -60,20 +61,20 @@ export default function PgaGolfShowPage() {
       {/* Headline */}
       <div className="max-w-md mx-auto px-4 pt-7 pb-8">
         <div className="text-center mb-6">
-          <span className="text-green text-xs font-semibold uppercase tracking-widest">
+          <span className="eyebrow">
             Simulator Hole-in-One · Free Entry
           </span>
-          <h1 className="font-heading text-4xl sm:text-5xl text-green-dark uppercase tracking-wide mt-2">
+          <h1 className="font-heading text-4xl sm:text-5xl text-green uppercase mt-2">
             One Shot at {PGA_GOLF_SHOW.prize}
           </h1>
-          <p className="text-sm sm:text-base text-green-dark/75 mt-3 leading-relaxed">
+          <p className="text-sm sm:text-base text-green/75 mt-3 leading-relaxed">
             Your name and your number, and a follow on Instagram if you have it.
           </p>
         </div>
 
         {/* Indwe — headline sponsor, kept small and above the form so it is
             seen before the golfer reads the WhatsApp offer that names it. */}
-        <div className="mb-4 rounded-xl bg-white border border-green-dark/10 px-6 py-5 sm:py-6 flex justify-center">
+        <div className="card mb-4 rounded-xl bg-white px-6 py-5 sm:py-6 flex justify-center card--hover">
           <Image
             src="/images/indwe-sponsor-banner.png"
             alt="Proudly Sponsored by Indwe Risk Services — Authorised Financial Services Provider FSP 3425"
@@ -84,13 +85,13 @@ export default function PgaGolfShowPage() {
           />
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl shadow-green-dark/10 border-t-4 border-green p-5 sm:p-7">
+        <div className="card bg-white shadow-green-dark/10 border-t-4 border-green p-5 sm:p-7 rounded-xl card--hover">
           <PgaGolfShowEntryForm />
         </div>
 
         {/* Co-sponsors */}
-        <div className="mt-6 rounded-2xl bg-white border border-green-dark/10 px-5 py-5">
-          <p className="text-center text-[11px] font-semibold uppercase tracking-widest text-green-dark/60">
+        <div className="card mt-6 bg-white px-5 py-5 rounded-xl card--hover">
+          <p className="eyebrow text-center">
             In partnership with
           </p>
           <ul className="mt-4 flex flex-wrap items-center justify-center gap-x-8 gap-y-5">
@@ -108,7 +109,7 @@ export default function PgaGolfShowPage() {
         </div>
       </div>
 
-      <footer className="max-w-md mx-auto px-4 pb-10 text-center text-[11px] text-green-dark/60 space-x-3">
+      <footer className="max-w-md mx-auto px-4 pb-10 text-center text-[11px] text-green/60 space-x-3">
         <span>&copy; {new Date().getFullYear()} Get Lucky Golf Club (Pty) Ltd</span>
         <Link href={ROUTES.terms} className="underline hover:text-green">Terms</Link>
         <Link href={ROUTES.privacy} className="underline hover:text-green">Privacy</Link>

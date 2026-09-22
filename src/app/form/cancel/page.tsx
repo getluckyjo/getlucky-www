@@ -24,18 +24,19 @@ export default function FormCancelPage() {
 
       <div className="flex justify-center pt-12 pb-2 px-4">
         <Image
-          src="/logos/challenge-bordered.png"
+          src="/brand/logo-lockup.svg"
           alt="Get Lucky Hole-in-One Challenge"
-          width={420}
-          height={420}
+          width={552}
+          height={588}
+          unoptimized
           className="h-32 sm:h-40 w-auto drop-shadow-xl"
           priority
         />
       </div>
 
       <div className="max-w-md mx-auto px-4 pb-10">
-        <div className="bg-white rounded-2xl shadow-2xl border border-white/40 p-6 sm:p-8 text-center">
-          <h1 className="font-heading text-2xl sm:text-3xl text-green-dark uppercase tracking-wide mb-3">
+        <div className="card bg-white border-white/40 p-6 sm:p-8 text-center rounded-xl card--hover">
+          <h1 className="font-heading text-2xl sm:text-3xl text-green uppercase mb-3">
             Payment Cancelled
           </h1>
           <p className="text-sm text-charcoal-light/80 leading-relaxed mb-6">
@@ -45,13 +46,13 @@ export default function FormCancelPage() {
           <div className="flex flex-col gap-3">
             <Link
               href="/form"
-              className="bg-green hover:bg-green-light text-cream font-semibold text-base px-6 py-3 rounded-full transition-all"
+              className="btn-lime btn-lime--dark"
             >
               Try Again
             </Link>
             <a
               href={`mailto:${SITE.email}`}
-              className="border border-green-dark/20 text-green-dark hover:bg-green-dark/5 font-semibold text-base px-6 py-3 rounded-full transition-all"
+              className="btn-outline"
             >
               Need Help?
             </a>

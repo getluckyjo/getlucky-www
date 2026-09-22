@@ -16,16 +16,16 @@ export default function TermsPage() {
       <main className="pt-20 sm:pt-24">
         <section className="bg-cream">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
-            <span className="text-gold text-xs font-semibold uppercase tracking-widest">
+            <span className="eyebrow">
               Legal
             </span>
-            <h1 className="font-heading text-4xl sm:text-5xl text-green-dark uppercase tracking-wide mt-4 mb-8">
+            <h1 className="font-heading text-4xl sm:text-5xl text-green uppercase mt-4 mb-8">
               Terms &amp; Conditions &amp; POPIA Privacy Notice
             </h1>
 
             <div className="prose prose-lg max-w-none text-charcoal-light/85 space-y-6">
               <section>
-                <h2 className="font-heading text-xl text-green-dark uppercase tracking-wide">
+                <h2 className="font-heading text-xl text-green uppercase">
                   1. Definitions
                 </h2>
                 <p>
@@ -51,7 +51,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="font-heading text-xl text-green-dark uppercase tracking-wide">
+                <h2 className="font-heading text-xl text-green uppercase">
                   2. Rules of Play
                 </h2>
                 <ul className="list-disc pl-6 space-y-2">
@@ -93,7 +93,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="font-heading text-xl text-green-dark uppercase tracking-wide">
+                <h2 className="font-heading text-xl text-green uppercase">
                   3. Acceptance of Terms
                 </h2>
                 <p>
@@ -105,11 +105,11 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="font-heading text-xl text-green-dark uppercase tracking-wide">
+                <h2 className="font-heading text-xl text-green uppercase">
                   4. Collection, Use and Processing of Personal Information
                 </h2>
 
-                <h3 className="font-heading text-lg text-green-dark uppercase tracking-wide mt-4">
+                <h3 className="font-heading text-lg text-green uppercase mt-4">
                   4.1 Lawful Basis
                 </h3>
                 <p>
@@ -118,7 +118,7 @@ export default function TermsPage() {
                   interests (e.g. fraud prevention, verification).
                 </p>
 
-                <h3 className="font-heading text-lg text-green-dark uppercase tracking-wide mt-4">
+                <h3 className="font-heading text-lg text-green uppercase mt-4">
                   4.2 Information Collected
                 </h3>
                 <ul className="list-disc pl-6 space-y-2">
@@ -133,7 +133,7 @@ export default function TermsPage() {
                   </li>
                 </ul>
 
-                <h3 className="font-heading text-lg text-green-dark uppercase tracking-wide mt-4">
+                <h3 className="font-heading text-lg text-green uppercase mt-4">
                   4.3 Purpose of Processing
                 </h3>
                 <p>Your Personal Information may be used for:</p>
@@ -156,7 +156,7 @@ export default function TermsPage() {
                   </li>
                 </ul>
 
-                <h3 className="font-heading text-lg text-green-dark uppercase tracking-wide mt-4">
+                <h3 className="font-heading text-lg text-green uppercase mt-4">
                   4.4 Disclosure to Third Parties
                 </h3>
                 <p>We may share your Personal Information with:</p>
@@ -174,7 +174,7 @@ export default function TermsPage() {
                   </li>
                 </ul>
 
-                <h3 className="font-heading text-lg text-green-dark uppercase tracking-wide mt-4">
+                <h3 className="font-heading text-lg text-green uppercase mt-4">
                   4.5 Retention
                 </h3>
                 <p>
@@ -183,7 +183,7 @@ export default function TermsPage() {
                   will be securely deleted or anonymised.
                 </p>
 
-                <h3 className="font-heading text-lg text-green-dark uppercase tracking-wide mt-4">
+                <h3 className="font-heading text-lg text-green uppercase mt-4">
                   4.6 Security
                 </h3>
                 <p>
@@ -194,7 +194,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="font-heading text-xl text-green-dark uppercase tracking-wide">
+                <h2 className="font-heading text-xl text-green uppercase">
                   5. Your Rights Under POPIA
                 </h2>
                 <p>You have the right to:</p>
@@ -226,7 +226,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="font-heading text-xl text-green-dark uppercase tracking-wide">
+                <h2 className="font-heading text-xl text-green uppercase">
                   6. Disclaimer, Liability &amp; Indemnity
                 </h2>
                 <ul className="list-disc pl-6 space-y-2">
@@ -246,7 +246,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="font-heading text-xl text-green-dark uppercase tracking-wide">
+                <h2 className="font-heading text-xl text-green uppercase">
                   7. Governing Law &amp; Jurisdiction
                 </h2>
                 <p>
@@ -257,7 +257,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="font-heading text-xl text-green-dark uppercase tracking-wide">
+                <h2 className="font-heading text-xl text-green uppercase">
                   8. Amendments
                 </h2>
                 <p>
@@ -268,7 +268,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="font-heading text-xl text-green-dark uppercase tracking-wide">
+                <h2 className="font-heading text-xl text-green uppercase">
                   9. Contact Us
                 </h2>
                 <p>
@@ -276,7 +276,7 @@ export default function TermsPage() {
                   complaints, contact us at:{" "}
                   <a
                     href="mailto:sales@getluckygolfclub.com"
-                    className="text-green-dark underline hover:text-gold"
+                    className="text-green underline hover:text-green"
                   >
                     sales@getluckygolfclub.com
                   </a>

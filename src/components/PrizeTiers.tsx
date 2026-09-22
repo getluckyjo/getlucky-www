@@ -2,18 +2,21 @@ import { PRIZE_TIERS, ROUTES } from "@/lib/constants";
 import Link from "next/link";
 import { Shield } from "lucide-react";
 
+/**
+ * The stake ladder on the dark panel. Prize figures are the one place gold
+ * survives in V2, and only here on green-dark. The popular rung is the lime
+ * card with the hard shadow, as the app dresses its best plan.
+ */
 export default function PrizeTiers() {
   return (
     <section id="prizes" className="py-24 sm:py-32 bg-green-dark relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <span className="text-gold text-xs font-semibold uppercase tracking-widest">
-            Choose Your Entry
-          </span>
-          <h2 className="font-heading text-3xl sm:text-5xl text-cream mt-3 uppercase tracking-wide">
+          <span className="eyebrow eyebrow--dark">Choose Your Entry</span>
+          <h2 className="font-heading text-3xl sm:text-5xl text-white mt-3">
             Pick Your Prize
           </h2>
-          <p className="text-cream/60 mt-4 max-w-lg mx-auto">
+          <p className="text-white/70 mt-4 max-w-lg mx-auto">
             One swing. The bigger the entry, the bigger the prize. Redeemable at
             any Get Lucky partner course.
           </p>
@@ -24,49 +27,43 @@ export default function PrizeTiers() {
             <Link
               key={tier.entry}
               href={ROUTES.buyVoucher}
-              className={`relative rounded-2xl p-6 text-center transition-all hover:scale-105 group ${
+              className={`relative rounded-xl p-6 text-center transition-transform hover:-translate-y-1 group ${
                 tier.popular
-                  ? "bg-gold text-green-dark shadow-xl scale-[1.02]"
-                  : "bg-green-dark border border-cream/10 hover:border-gold/30"
+                  ? "bg-lime text-green shadow-[4px_5px_0_rgba(0,0,0,0.3)]"
+                  : "bg-green text-white border-2 border-transparent hover:border-lime"
               }`}
             >
               {tier.popular && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-dark text-gold text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full whitespace-nowrap">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green text-lime text-[10px] font-bold uppercase tracking-[0.12em] px-3 py-1.5 rounded-full whitespace-nowrap">
                   Most Popular
                 </span>
               )}
 
               <p
-                className={`text-sm font-medium mb-1 ${
-                  tier.popular ? "text-green-dark/60" : "text-cream/60"
+                className={`text-[11px] font-bold uppercase tracking-[0.12em] mb-1 ${
+                  tier.popular ? "text-green/70" : "text-white/70"
                 }`}
               >
                 Entry
               </p>
-              <p
-                className={`text-2xl sm:text-3xl font-black mb-4 ${
-                  tier.popular ? "text-green-dark" : "text-cream"
-                }`}
-              >
-                {tier.entry}
-              </p>
+              <p className="font-heading text-2xl sm:text-3xl mb-4">{tier.entry}</p>
 
               <div
                 className={`h-px w-12 mx-auto mb-4 ${
-                  tier.popular ? "bg-green-dark/20" : "bg-cream/10"
+                  tier.popular ? "bg-green/20" : "bg-white/15"
                 }`}
               />
 
               <p
-                className={`text-xs font-medium mb-1 ${
-                  tier.popular ? "text-green-dark/60" : "text-cream/60"
+                className={`text-[11px] font-bold uppercase tracking-[0.12em] mb-1 ${
+                  tier.popular ? "text-green/70" : "text-white/70"
                 }`}
               >
                 Win
               </p>
               <p
-                className={`text-xl sm:text-2xl font-black ${
-                  tier.popular ? "text-green-dark" : "text-gold"
+                className={`font-heading text-xl sm:text-2xl ${
+                  tier.popular ? "text-green" : "text-gold"
                 }`}
               >
                 {tier.prize}
@@ -76,22 +73,17 @@ export default function PrizeTiers() {
         </div>
 
         {/* Insurance trust strip */}
-        <div className="mt-12 flex items-center justify-center gap-3 text-cream/60">
-          <Shield className="w-4 h-4" />
+        <div className="mt-12 flex items-center justify-center gap-3 text-white/70">
+          <Shield className="w-4 h-4 text-lime" />
           <p className="text-sm">
             All prizes fully insured by{" "}
-            <span className="text-cream/80 font-medium">
-              Indwe Risk Services
-            </span>{" "}
+            <span className="text-white font-medium">Indwe Risk Services</span>{" "}
             — FSP 3425
           </p>
         </div>
 
         <div className="mt-8 text-center">
-          <Link
-            href={ROUTES.buyVoucher}
-            className="inline-block bg-gold hover:bg-gold-light text-green-dark font-bold text-lg px-10 py-4 rounded-full transition-all hover:scale-105"
-          >
+          <Link href={ROUTES.buyVoucher} className="btn-lime btn-lime--dark">
             Buy Your Swing Now
           </Link>
         </div>

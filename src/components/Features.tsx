@@ -53,14 +53,14 @@ export default function Features() {
     <section className="py-24 sm:py-32 bg-cream-dark relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <span className="text-green text-xs font-semibold uppercase tracking-widest">
+          <span className="eyebrow">
             For Golf Clubs &amp; Course Managers
           </span>
-          <h2 className="font-heading text-3xl sm:text-5xl text-green-dark mt-3 uppercase tracking-wide">
+          <h2 className="font-heading text-3xl sm:text-5xl text-green mt-3 uppercase">
             Why Golf Clubs
-            <span className="text-gold"> Partner With Us</span>
+            <span className="text-green"> Partner With Us</span>
           </h2>
-          <p className="text-green-dark/60 mt-4 max-w-lg mx-auto">
+          <p className="text-green/60 mt-4 max-w-lg mx-auto">
             A permanent activation on your par-3 — at zero cost to your club.
             You earn revenue. We handle everything.
           </p>
@@ -70,15 +70,15 @@ export default function Features() {
           {benefits.map((benefit) => (
             <div
               key={benefit.title}
-              className="bg-white border border-green-dark/8 rounded-2xl p-8 hover:shadow-lg transition-shadow"
+              className="card bg-white p-8 rounded-xl card--hover"
             >
-              <div className="w-14 h-14 bg-green/10 rounded-xl flex items-center justify-center mb-5">
-                <benefit.icon className="w-7 h-7 text-green" />
+              <div className="icon-disc w-14 h-14 mb-5">
+                <benefit.icon className="w-7 h-7" />
               </div>
-              <h3 className="text-lg font-bold text-green-dark mb-2">
+              <h3 className="text-lg font-bold text-green mb-2">
                 {benefit.title}
               </h3>
-              <p className="text-green-dark/60 text-sm leading-relaxed">
+              <p className="text-green/60 text-sm leading-relaxed">
                 {benefit.description}
               </p>
             </div>
@@ -88,14 +88,14 @@ export default function Features() {
         <div className="mt-14 text-center flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href={ROUTES.partner}
-            className="inline-block bg-green hover:bg-green-light text-cream font-bold text-lg px-10 py-4 rounded-full transition-all hover:scale-105"
+            className="btn-lime btn-lime--dark"
           >
             Become a Partner Course
           </Link>
           <a
             href="/GLG_Golf_Course_Proposal_2026.pdf"
             download
-            className="inline-block border-2 border-green/20 hover:border-green/40 text-green-dark font-medium text-lg px-10 py-4 rounded-full transition-all"
+            className="btn-outline"
           >
             Download Course Proposal
           </a>

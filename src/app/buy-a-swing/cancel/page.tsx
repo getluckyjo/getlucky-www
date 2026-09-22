@@ -16,7 +16,7 @@ export default function VoucherCancelPage() {
       <main className="pt-20 sm:pt-24">
         <section className="bg-cream min-h-[60vh]">
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-            <h1 className="font-heading text-4xl sm:text-5xl text-green-dark uppercase tracking-wide mb-4">
+            <h1 className="font-heading text-4xl sm:text-5xl text-green uppercase mb-4">
               Payment Cancelled
             </h1>
             <p className="text-base sm:text-lg text-charcoal-light/80 leading-relaxed mb-2">
@@ -25,13 +25,13 @@ export default function VoucherCancelPage() {
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               <Link
                 href={ROUTES.buyVoucher}
-                className="bg-green hover:bg-green-light text-cream font-semibold text-base px-8 py-3.5 rounded-full transition-all hover:scale-105"
+                className="btn-lime btn-lime--dark"
               >
                 Try Again
               </Link>
               <a
                 href={`mailto:${SITE.email}`}
-                className="border border-green-dark/20 text-green-dark hover:bg-green-dark/5 font-semibold text-base px-8 py-3.5 rounded-full transition-all"
+                className="btn-outline"
               >
                 Need Help?
               </a>

@@ -25,17 +25,17 @@ export function Field({
     <div className="block">
       <label
         htmlFor={name}
-        className="block text-xs font-semibold uppercase tracking-widest text-green-dark/70 mb-2"
+        className="block text-[11px] font-bold uppercase tracking-[0.1em] text-green/70 mb-2"
       >
         {label}
-        {required && <span className="text-gold ml-1">*</span>}
+        {required && <span className="text-green ml-1">*</span>}
       </label>
       {children}
       {hint && !error && (
-        <span id={hintId} className="block mt-1.5 text-xs text-charcoal-light/70">{hint}</span>
+        <span id={hintId} className="block mt-1.5 text-xs text-green/60">{hint}</span>
       )}
       {error && (
-        <span id={errorId} className="block mt-1.5 text-xs text-red-600 font-medium" role="alert">
+        <span id={errorId} className="block mt-1.5 text-xs text-red font-semibold" role="alert">
           {error}
         </span>
       )}
@@ -43,8 +43,9 @@ export function Field({
   );
 }
 
-const inputBase =
-  "w-full bg-white border border-green-dark/15 rounded-xl px-4 py-3.5 text-base text-foreground placeholder:text-charcoal-light/40 focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/30 transition-all";
+// The app's field: white (or the surface, on a white card), a 2px transparent
+// border that turns brand green on focus, green text. See `.field` in globals.css.
+const inputBase = "field";
 
 export function Input({
   name,
@@ -167,12 +168,12 @@ export function Checkbox({
           name={name}
           type="checkbox"
           required={required}
-          className="mt-1 w-5 h-5 rounded border-green-dark/30 text-green focus:ring-gold/30 focus:ring-2 cursor-pointer flex-shrink-0"
+          className="mt-1 w-5 h-5 rounded border-bar-off accent-green cursor-pointer flex-shrink-0"
         />
-        <span className="text-sm text-charcoal-light/90 leading-relaxed">{children}</span>
+        <span className="text-sm text-green/90 leading-relaxed">{children}</span>
       </label>
       {error && (
-        <span className="block mt-1.5 ml-8 text-xs text-red-600 font-medium">{error}</span>
+        <span className="block mt-1.5 ml-8 text-xs text-red font-semibold">{error}</span>
       )}
     </div>
   );
@@ -199,7 +200,7 @@ export function RadioGroup({
         {options.map((o) => (
           <label
             key={o.value}
-            className="flex items-start gap-3 cursor-pointer p-4 rounded-xl border border-green-dark/15 bg-white hover:border-gold/50 has-[:checked]:border-gold has-[:checked]:bg-gold/5 has-[:checked]:ring-2 has-[:checked]:ring-gold/30 transition-all"
+            className="flex items-start gap-3 cursor-pointer p-4 rounded-lg border-2 border-transparent bg-white shadow-[0_2px_10px_rgba(52,82,49,0.06)] hover:border-bar-off has-[:checked]:border-green transition-colors"
           >
             <input
               type="radio"
@@ -207,19 +208,19 @@ export function RadioGroup({
               value={o.value}
               required={required}
               defaultChecked={o.value === defaultValue}
-              className="mt-1 w-5 h-5 text-green focus:ring-gold/30 focus:ring-2 cursor-pointer flex-shrink-0"
+              className="mt-1 w-5 h-5 accent-green cursor-pointer flex-shrink-0"
             />
             <div>
-              <span className="block text-sm font-semibold text-green-dark">{o.label}</span>
+              <span className="block text-sm font-semibold text-green">{o.label}</span>
               {o.sublabel && (
-                <span className="block text-xs text-charcoal-light/70 mt-0.5">{o.sublabel}</span>
+                <span className="block text-xs text-green/70 mt-0.5">{o.sublabel}</span>
               )}
             </div>
           </label>
         ))}
       </div>
       {error && (
-        <span className="block mt-1.5 text-xs text-red-600 font-medium">{error}</span>
+        <span className="block mt-1.5 text-xs text-red font-semibold">{error}</span>
       )}
     </div>
   );
@@ -243,11 +244,11 @@ export function SubmitButton({
     <button
       type="submit"
       disabled={pending || disabled}
-      className="w-full sm:w-auto bg-green hover:bg-green-light disabled:bg-green/50 disabled:cursor-not-allowed text-cream font-semibold text-base px-10 py-4 rounded-full transition-all hover:scale-[1.02] active:scale-[0.99] inline-flex items-center justify-center gap-2"
+      className="btn-lime w-full sm:w-auto"
     >
       {pending && (
         <svg
-          className="animate-spin -ml-1 h-4 w-4"
+          className="animate-spin -ml-1 h-5 w-5"
           fill="none"
           viewBox="0 0 24 24"
           aria-hidden
@@ -263,7 +264,7 @@ export function SubmitButton({
 
 export function FormErrorBanner({ message }: { message: string }) {
   return (
-    <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+    <div className="rounded-lg bg-white border-l-4 border-red px-4 py-3 text-sm text-green" role="alert">
       {message}
     </div>
   );
@@ -277,14 +278,14 @@ export function FormSuccessCard({
   body: string;
 }) {
   return (
-    <div className="rounded-2xl bg-green/5 border border-green/20 p-8 text-center">
-      <div className="w-12 h-12 rounded-full bg-green text-cream mx-auto flex items-center justify-center mb-4">
+    <div className="card--dark p-8 text-center fade-up">
+      <div className="icon-disc mx-auto mb-4">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-6 h-6">
           <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
-      <h3 className="font-heading text-2xl text-green-dark uppercase tracking-wide mb-2">{title}</h3>
-      <p className="text-sm text-charcoal-light/80 max-w-md mx-auto leading-relaxed">{body}</p>
+      <h3 className="font-heading text-2xl text-white mb-2">{title}</h3>
+      <p className="text-sm text-white/80 max-w-md mx-auto leading-relaxed">{body}</p>
     </div>
   );
 }
