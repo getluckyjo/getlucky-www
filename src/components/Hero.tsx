@@ -52,7 +52,7 @@ const PILLARS = [
 export default function Hero() {
   return (
     <>
-      <section className="relative min-h-screen flex flex-col overflow-hidden bg-green-dark">
+      <section className="relative flex flex-col overflow-hidden bg-green-dark">
         {/* Golf course background image */}
         <Image
           src="/images/hero-bg.avif"
@@ -68,7 +68,7 @@ export default function Hero() {
 
         {/* Content */}
         <div className="relative z-10 flex-1 flex items-center justify-center">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center pt-28 pb-14">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center pt-28 pb-16 sm:pt-32 sm:pb-20">
             <div className="mb-6 sm:mb-8 flex justify-center scale-in">
               <Image
                 src="/brand/logo-lockup.svg"
