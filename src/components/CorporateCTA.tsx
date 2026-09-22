@@ -1,6 +1,7 @@
 import { ROUTES } from "@/lib/constants";
 import Link from "next/link";
 import { Users, Target, Megaphone, Camera, Gift, Heart } from "lucide-react";
+import SectionTexture from "./SectionTexture";
 
 const benefits = [
   {
@@ -38,9 +39,7 @@ const benefits = [
 export default function CorporateCTA() {
   return (
     <section id="corporate" className="py-24 sm:py-32 bg-green-dark relative overflow-hidden">
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-[600px] h-[300px] bg-lime/5 rounded-full blur-[100px]" />
-      </div>
+      <SectionTexture src="/images/courses/centurion.jpg" position="center 60%" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
