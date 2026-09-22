@@ -43,13 +43,13 @@ export default async function PgaGolfShowSuccessPage({
   const name = row?.Name || "";
 
   return (
-    <main className="pga-theme min-h-screen bg-cream text-green-dark">
+    <main className="pga-theme min-h-screen bg-cream text-green">
       <div className="bg-green-dark border-b-4 border-green">
-        <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between gap-3 text-cream">
+        <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between gap-3 text-white">
           <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.15em] sm:tracking-[0.2em]">
             {PGA_GOLF_SHOW.name}
           </p>
-          <p className="text-[11px] sm:text-xs uppercase tracking-widest text-cream/80 whitespace-nowrap">
+          <p className="eyebrow eyebrow--dark whitespace-nowrap">
             {PGA_GOLF_SHOW.dates}
           </p>
         </div>
@@ -65,10 +65,11 @@ export default async function PgaGolfShowSuccessPage({
           />
           <div className="h-16 w-px bg-green-dark/25" aria-hidden />
           <Image
-            src="/logos/challenge-bordered.png"
+            src="/brand/logo-lockup.svg"
             alt="Get Lucky Hole-in-One Challenge"
-            width={420}
-            height={420}
+          width={552}
+          height={588}
+          unoptimized
             className="h-20 sm:h-24 w-auto flex-shrink-0"
             priority
           />
@@ -76,16 +77,16 @@ export default async function PgaGolfShowSuccessPage({
       </div>
 
       <div className="max-w-md mx-auto px-4 pt-7 pb-10">
-        <div className="bg-white rounded-2xl shadow-xl shadow-green-dark/10 border-t-4 border-green p-6 sm:p-8">
+        <div className="card bg-white shadow-green-dark/10 border-t-4 border-green p-6 sm:p-8 rounded-xl card--hover">
           <div className="flex justify-center mb-5">
-            <div className="w-14 h-14 rounded-full bg-green text-cream flex items-center justify-center">
+            <div className="w-14 h-14 rounded-full bg-green text-white flex items-center justify-center">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-7 h-7" aria-hidden>
                 <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
           </div>
 
-          <h1 className="text-center font-heading text-3xl sm:text-4xl text-green-dark uppercase tracking-wide">
+          <h1 className="text-center font-heading text-3xl sm:text-4xl text-green uppercase">
             You&apos;re In
           </h1>
           {name && (
@@ -102,27 +103,27 @@ export default async function PgaGolfShowSuccessPage({
             </div>
             <div className="flex items-center justify-between px-4 py-3">
               <dt className="text-charcoal-light/70 font-semibold uppercase tracking-wider text-xs">Where</dt>
-              <dd className="text-green-dark font-medium text-right">{PGA_GOLF_SHOW.name}</dd>
+              <dd className="text-green font-medium text-right">{PGA_GOLF_SHOW.name}</dd>
             </div>
           </dl>
 
           {ref && (
             <div className="mt-5 text-center">
-              <p className="text-xs uppercase tracking-widest text-charcoal-light/60 mb-1">Reference</p>
-              <p className="font-mono text-base text-green-dark font-bold tracking-wider">{ref}</p>
+              <p className="eyebrow mb-1">Reference</p>
+              <p className="font-mono text-base text-green font-bold tracking-wider">{ref}</p>
             </div>
           )}
 
           <Link
             href={ROUTES.pgaGolfShow}
-            className="mt-6 block w-full text-center bg-green hover:bg-green-light text-cream font-semibold text-sm px-6 py-3 rounded-full transition-all"
+            className="btn-lime btn-lime--dark mt-6 w-full text-center"
           >
             Enter Another Player
           </Link>
         </div>
       </div>
 
-      <footer className="max-w-md mx-auto px-4 pb-10 text-center text-[11px] text-green-dark/60 space-x-3">
+      <footer className="max-w-md mx-auto px-4 pb-10 text-center text-[11px] text-green/60 space-x-3">
         <span>&copy; {new Date().getFullYear()} Get Lucky Golf Club (Pty) Ltd</span>
         <Link href={ROUTES.terms} className="underline hover:text-green">Terms</Link>
         <Link href={ROUTES.privacy} className="underline hover:text-green">Privacy</Link>

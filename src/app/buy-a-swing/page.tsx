@@ -19,10 +19,10 @@ export default function BuyASwingPage() {
         <section className="bg-cream">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
             <div className="text-center max-w-2xl mx-auto mb-12">
-              <span className="text-gold text-xs font-semibold uppercase tracking-widest">
+              <span className="eyebrow">
                 The Challenge
               </span>
-              <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-green-dark mt-4 uppercase tracking-wide">
+              <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-green mt-4 uppercase">
                 Buy Your Swing
               </h1>
               <p className="text-base sm:text-lg text-charcoal-light/80 mt-5 leading-relaxed">
@@ -32,7 +32,7 @@ export default function BuyASwingPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-3xl shadow-sm border border-green-dark/10 p-6 sm:p-10">
+            <div className="card bg-white rounded-3xl p-6 sm:p-10 card--hover">
               <VoucherForm />
             </div>
 
@@ -40,7 +40,7 @@ export default function BuyASwingPage() {
               <Shield className="w-4 h-4" />
               <p className="text-sm">
                 All prizes fully insured by{" "}
-                <span className="text-green-dark font-medium">Indwe Risk Services</span>{" "}
+                <span className="text-green font-medium">Indwe Risk Services</span>{" "}
                 — FSP 3425. Secure payment by PayFast.
               </p>
             </div>

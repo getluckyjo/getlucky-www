@@ -34,16 +34,16 @@ export default function JackpotTicker() {
 
   return (
     <div className="casino-bezel mt-5 inline-flex flex-col items-center px-6 py-3 sm:px-8">
-      <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em] text-gold-light/80">
+      <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em] text-lime">
         Win up to
       </span>
       <span
-        className="casino-gold-text font-heading text-4xl sm:text-5xl uppercase leading-none tracking-wide tabular-nums mt-1"
+        className="casino-gold-text font-heading text-4xl sm:text-5xl uppercase leading-none tabular-nums mt-1"
         aria-live="off"
       >
         {formatRand(shown)}
       </span>
-      <span className="mt-1.5 text-[10px] sm:text-xs text-cream/70">
+      <span className="mt-1.5 text-[10px] sm:text-xs text-white/70">
         One swing. Fully insured by Indwe Risk Services.
       </span>
     </div>

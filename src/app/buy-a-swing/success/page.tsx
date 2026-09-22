@@ -23,7 +23,7 @@ export default async function VoucherSuccessPage({
       <main className="pt-20 sm:pt-24">
         <section className="bg-cream min-h-[60vh]">
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-            <div className="w-16 h-16 rounded-full bg-green text-cream mx-auto flex items-center justify-center mb-6">
+            <div className="w-16 h-16 rounded-full bg-green text-white mx-auto flex items-center justify-center mb-6">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -35,7 +35,7 @@ export default async function VoucherSuccessPage({
                 <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <h1 className="font-heading text-4xl sm:text-5xl text-green-dark uppercase tracking-wide mb-4">
+            <h1 className="font-heading text-4xl sm:text-5xl text-green uppercase mb-4">
               Payment Received
             </h1>
             <p className="text-base sm:text-lg text-charcoal-light/80 leading-relaxed mb-2">
@@ -45,19 +45,19 @@ export default async function VoucherSuccessPage({
             {ref && (
               <p className="text-sm text-charcoal-light/60 mt-4">
                 Reference:{" "}
-                <span className="font-mono text-green-dark font-semibold">{ref}</span>
+                <span className="font-mono text-green font-semibold">{ref}</span>
               </p>
             )}
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               <Link
                 href={ROUTES.home}
-                className="bg-green hover:bg-green-light text-cream font-semibold text-base px-8 py-3.5 rounded-full transition-all hover:scale-105"
+                className="btn-lime"
               >
                 Back to Home
               </Link>
               <Link
                 href={ROUTES.buyVoucher}
-                className="border border-green-dark/20 text-green-dark hover:bg-green-dark/5 font-semibold text-base px-8 py-3.5 rounded-full transition-all"
+                className="btn-outline"
               >
                 Buy Another
               </Link>
@@ -65,7 +65,7 @@ export default async function VoucherSuccessPage({
 
             {/* Indwe sponsor banner */}
             <div className="mt-12 sm:mt-16">
-              <div className="rounded-xl overflow-hidden border border-green-dark/10 shadow-sm bg-white">
+              <div className="card rounded-xl overflow-hidden bg-white card--hover">
                 <iframe
                   src="/indwe-banner/index.html"
                   title="Indwe Risk Services — Headline Sponsor"

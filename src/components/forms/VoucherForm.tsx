@@ -142,7 +142,7 @@ export default function VoucherForm() {
       </Field>
 
       {purchaseFor === "someone-else" && (
-        <div className="space-y-5 p-5 rounded-xl border border-gold/30 bg-gold/5">
+        <div className="space-y-5 p-5 rounded-xl border border-green/15 bg-green/5">
           <div className="grid sm:grid-cols-2 gap-5">
             <Field label="Recipient Name" name="recipientName" required error={errors.recipientName}>
               <Input name="recipientName" />
@@ -172,7 +172,7 @@ export default function VoucherForm() {
         </Checkbox>
         <Checkbox name="consentTerms" required error={errors.consentTerms}>
           I accept the{" "}
-          <Link href={ROUTES.terms} className="text-green-dark underline hover:text-gold">
+          <Link href={ROUTES.terms} className="text-green underline hover:text-green">
             terms &amp; conditions
           </Link>
           .

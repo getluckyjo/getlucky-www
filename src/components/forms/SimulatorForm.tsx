@@ -130,7 +130,7 @@ export default function SimulatorForm() {
         </Checkbox>
         <Checkbox name="consentTerms" required error={errors.consentTerms}>
           I accept the{" "}
-          <Link href={ROUTES.terms} className="text-green-dark underline hover:text-gold">
+          <Link href={ROUTES.terms} className="text-green underline hover:text-green">
             terms &amp; conditions
           </Link>
           .

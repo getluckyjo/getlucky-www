@@ -128,11 +128,11 @@ export default function EntryForm() {
             never be merged with anything required (src/lib/whatsapp.ts). */}
         <p className="text-xs text-charcoal-light/70 mt-3 leading-relaxed">
           By paying you accept the{" "}
-          <Link href={ROUTES.terms} className="text-green-dark underline hover:text-gold">
+          <Link href={ROUTES.terms} className="text-green underline hover:text-green">
             terms &amp; conditions
           </Link>
           {" "}and confirm you are 18 or older. See our{" "}
-          <Link href={ROUTES.privacy} className="text-green-dark underline hover:text-gold">
+          <Link href={ROUTES.privacy} className="text-green underline hover:text-green">
             privacy policy
           </Link>
           {" "}for how we look after your details.

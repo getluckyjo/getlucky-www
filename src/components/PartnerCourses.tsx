@@ -28,12 +28,12 @@ const MEMBERSHIP_BASE = "https://membership.getluckygolfclub.com/join";
 export default function PartnerCourses() {
   return (
     <section id="courses" className="py-24 sm:py-32 bg-green-dark relative overflow-hidden">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gold/5 rounded-full blur-[120px]" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-lime/5 rounded-full blur-[120px]" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="font-heading text-3xl sm:text-5xl text-cream uppercase tracking-wide">
-            Get Lucky <span className="text-gold">Partner Courses</span>
+          <h2 className="font-heading text-3xl sm:text-5xl text-white uppercase">
+            Get Lucky <span className="text-lime">Partner Courses</span>
           </h2>
         </div>
 
@@ -49,7 +49,7 @@ export default function PartnerCourses() {
                   src={club.image}
                   alt={club.name}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="object-cover group- transition-transform duration-500"
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 />
               ) : (
@@ -57,7 +57,7 @@ export default function PartnerCourses() {
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-3">
-                <p className="text-white text-sm font-bold leading-tight group-hover:text-gold transition-colors">
+                <p className="text-white text-sm font-bold leading-tight group-hover:text-lime transition-colors">
                   {club.name}
                 </p>
                 <p className="text-white/60 text-xs flex items-center gap-1 mt-0.5">
@@ -71,12 +71,12 @@ export default function PartnerCourses() {
           {/* Mobile Unit CTA card */}
           <a
             href="/#corporate"
-            className="relative rounded-xl overflow-hidden group aspect-[4/3] bg-gold/10 border-2 border-dashed border-gold/30 hover:border-gold/60 transition-all flex flex-col items-center justify-center text-center p-4"
+            className="icon-disc relative"
           >
-            <div className="w-12 h-12 bg-gold/15 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-              <Flag className="w-6 h-6 text-gold" />
+            <div className="icon-disc w-12 h-12 mb-3">
+              <Flag className="w-6 h-6" />
             </div>
-            <p className="text-cream text-sm font-bold leading-tight group-hover:text-gold transition-colors">
+            <p className="text-white text-sm font-bold leading-tight group-hover:text-lime transition-colors">
               Book Get Lucky for your golf day
             </p>
           </a>

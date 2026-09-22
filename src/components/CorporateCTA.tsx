@@ -39,19 +39,19 @@ export default function CorporateCTA() {
   return (
     <section id="corporate" className="py-24 sm:py-32 bg-green-dark relative overflow-hidden">
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-[600px] h-[300px] bg-gold/5 rounded-full blur-[100px]" />
+        <div className="w-[600px] h-[300px] bg-lime/5 rounded-full blur-[100px]" />
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
-          <span className="text-gold text-xs font-semibold uppercase tracking-widest">
+          <span className="eyebrow eyebrow--dark">
             Premium Golf Activations
           </span>
-          <h2 className="font-heading text-3xl sm:text-5xl text-cream mt-3 uppercase tracking-wide">
+          <h2 className="font-heading text-3xl sm:text-5xl text-white mt-3 uppercase">
             Make Your Golf Day
-            <span className="text-gold"> Unforgettable</span>
+            <span className="text-lime"> Unforgettable</span>
           </h2>
-          <p className="text-cream/70 mt-4 max-w-lg mx-auto">
+          <p className="text-white/70 mt-4 max-w-lg mx-auto">
             Add the Get Lucky Hole-in-One Challenge to your next corporate golf
             day. We invest. Your event benefits. Prizes up to R1,000,000.
           </p>
@@ -59,7 +59,7 @@ export default function CorporateCTA() {
 
         {/* Video */}
         <div className="mb-12 max-w-4xl mx-auto">
-          <div className="rounded-2xl overflow-hidden border border-cream/10 shadow-2xl">
+          <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
             <video
               className="w-full aspect-video"
               controls
@@ -76,15 +76,15 @@ export default function CorporateCTA() {
           {benefits.map((item) => (
             <div
               key={item.title}
-              className="bg-cream/5 border border-cream/10 rounded-xl p-6 hover:border-gold/20 transition-colors"
+              className="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-lime/50 transition-colors"
             >
-              <div className="w-10 h-10 bg-gold/10 rounded-lg flex items-center justify-center mb-4">
-                <item.icon className="w-5 h-5 text-gold" />
+              <div className="icon-disc w-10 h-10 mb-4">
+                <item.icon className="w-5 h-5" />
               </div>
-              <h3 className="text-cream text-sm font-bold mb-1">
+              <h3 className="text-white text-sm font-bold mb-1">
                 {item.title}
               </h3>
-              <p className="text-cream/60 text-xs leading-relaxed">
+              <p className="text-white/60 text-xs leading-relaxed">
                 {item.text}
               </p>
             </div>
@@ -94,7 +94,7 @@ export default function CorporateCTA() {
         <div className="text-center flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href={ROUTES.corporate}
-            className="inline-block bg-gold hover:bg-gold-light text-green-dark font-bold text-lg px-10 py-4 rounded-full transition-all hover:scale-105"
+            className="btn-lime btn-lime--dark"
           >
             Book a Corporate Golf Day
           </Link>
@@ -102,7 +102,7 @@ export default function CorporateCTA() {
             href="https://wa.me/27609615091"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block border-2 border-cream/20 hover:border-cream/40 text-cream font-medium text-lg px-10 py-4 rounded-full transition-all"
+            className="btn-outline btn-outline--dark"
           >
             WhatsApp Us Now
           </a>

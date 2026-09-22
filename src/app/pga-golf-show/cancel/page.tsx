@@ -15,21 +15,21 @@ export const metadata: Metadata = {
  */
 export default function PgaGolfShowCancelPage() {
   return (
-    <main className="pga-theme min-h-screen bg-cream text-green-dark">
+    <main className="pga-theme min-h-screen bg-cream text-green">
       <div className="bg-green-dark border-b-4 border-green">
-        <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between gap-3 text-cream">
+        <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between gap-3 text-white">
           <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.15em] sm:tracking-[0.2em]">
             {PGA_GOLF_SHOW.name}
           </p>
-          <p className="text-[11px] sm:text-xs uppercase tracking-widest text-cream/80 whitespace-nowrap">
+          <p className="eyebrow eyebrow--dark whitespace-nowrap">
             {PGA_GOLF_SHOW.dates}
           </p>
         </div>
       </div>
 
       <div className="max-w-md mx-auto px-4 pt-10 pb-10">
-        <div className="bg-white rounded-2xl shadow-xl shadow-green-dark/10 border-t-4 border-green p-6 sm:p-8 text-center">
-          <h1 className="font-heading text-2xl sm:text-3xl text-green-dark uppercase tracking-wide mb-3">
+        <div className="card bg-white shadow-green-dark/10 border-t-4 border-green p-6 sm:p-8 text-center rounded-xl card--hover">
+          <h1 className="font-heading text-2xl sm:text-3xl text-green uppercase mb-3">
             Payment Cancelled
           </h1>
           <p className="text-sm text-charcoal-light/80 leading-relaxed mb-6">
@@ -40,13 +40,13 @@ export default function PgaGolfShowCancelPage() {
           <div className="flex flex-col gap-3">
             <Link
               href={ROUTES.pgaGolfShow}
-              className="bg-green hover:bg-green-light text-cream font-semibold text-base px-6 py-3 rounded-full transition-all"
+              className="btn-lime btn-lime--dark"
             >
               Back to the Entry Form
             </Link>
             <a
               href={`mailto:${SITE.email}`}
-              className="border border-green-dark/20 text-green-dark hover:bg-green-dark/5 font-semibold text-base px-6 py-3 rounded-full transition-all"
+              className="btn-outline"
             >
               Need Help?
             </a>
@@ -54,7 +54,7 @@ export default function PgaGolfShowCancelPage() {
         </div>
       </div>
 
-      <footer className="max-w-md mx-auto px-4 pb-10 text-center text-[11px] text-green-dark/60 space-x-3">
+      <footer className="max-w-md mx-auto px-4 pb-10 text-center text-[11px] text-green/60 space-x-3">
         <span>&copy; {new Date().getFullYear()} Get Lucky Golf Club (Pty) Ltd</span>
         <Link href={ROUTES.terms} className="underline hover:text-green">Terms</Link>
         <Link href={ROUTES.privacy} className="underline hover:text-green">Privacy</Link>

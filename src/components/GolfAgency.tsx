@@ -158,18 +158,18 @@ export default function GolfAgency({ variant = "section" }: Props) {
       )}
 
       {/* Subtle accent glow */}
-      <div className="absolute top-0 right-0 w-[600px] h-[400px] bg-gold/5 rounded-full blur-[150px]" />
+      <div className="absolute top-0 right-0 w-[600px] h-[400px] bg-lime/5 rounded-full blur-[150px]" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[300px] bg-green/5 rounded-full blur-[120px]" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-20">
-          <span className="text-gold text-xs font-semibold uppercase tracking-widest">
+          <span className="eyebrow eyebrow--dark">
             For Brands &amp; Sponsors
           </span>
-          <h2 className="font-heading text-3xl sm:text-5xl text-white mt-3 uppercase tracking-wide">
+          <h2 className="font-heading text-3xl sm:text-5xl text-white mt-3 uppercase">
             The Get Lucky
-            <span className="text-gold"> Golf Agency</span>
+            <span className="text-lime"> Golf Agency</span>
           </h2>
           <p className="text-white/70 mt-4 max-w-2xl mx-auto">
             South Africa&apos;s only integrated golf marketing platform. Five
@@ -186,8 +186,8 @@ export default function GolfAgency({ variant = "section" }: Props) {
               key={stat.label}
               className="bg-white/5 border border-white/8 rounded-xl p-4 text-center"
             >
-              <stat.icon className="w-5 h-5 text-gold/60 mx-auto mb-2" />
-              <p className="text-2xl sm:text-3xl font-black text-gold">
+              <stat.icon className="w-5 h-5 text-lime/60 mx-auto mb-2" />
+              <p className="text-2xl sm:text-3xl font-heading text-lime">
                 {stat.value}
               </p>
               <p className="text-white/60 text-xs mt-1 leading-tight">
@@ -210,19 +210,19 @@ export default function GolfAgency({ variant = "section" }: Props) {
             {platforms.map((platform, idx) => (
               <div
                 key={platform.name}
-                className={`bg-white/5 border border-white/8 rounded-2xl p-8 hover:border-gold/20 transition-colors group ${
+                className={`bg-white/5 border border-white/8 rounded-2xl p-8 hover:border-lime/20 transition-colors group ${
                   idx === platforms.length - 1 ? "lg:col-span-2" : ""
                 }`}
               >
                 <div className="flex items-start gap-5">
-                  <div className="w-14 h-14 bg-gold/10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-gold/15 transition-colors">
-                    <platform.icon className="w-7 h-7 text-gold" />
+                  <div className="icon-disc w-14 h-14 flex-shrink-0">
+                    <platform.icon className="w-7 h-7" />
                   </div>
                   <div className="min-w-0">
                     <h4 className="text-white text-lg font-bold">
                       {platform.name}
                     </h4>
-                    <p className="text-gold/60 text-xs font-semibold uppercase tracking-wider mt-0.5">
+                    <p className="text-lime/60 text-xs font-semibold uppercase tracking-wider mt-0.5">
                       {platform.type}
                     </p>
                   </div>
@@ -234,7 +234,7 @@ export default function GolfAgency({ variant = "section" }: Props) {
                   {platform.highlights.map((h) => (
                     <span
                       key={h}
-                      className="text-[11px] font-medium text-gold/70 bg-gold/8 border border-gold/15 rounded-full px-3 py-1"
+                      className="chip-lime"
                     >
                       {h}
                     </span>
@@ -276,10 +276,10 @@ export default function GolfAgency({ variant = "section" }: Props) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-10">
             {brandBenefits.map((benefit) => (
               <div key={benefit.title} className="flex gap-5">
-                <div className="w-12 h-12 rounded-xl bg-gold/10 border border-gold/15 flex items-center justify-center flex-shrink-0">
-                  <benefit.icon className="w-6 h-6 text-gold" strokeWidth={1.75} />
+                <div className="icon-disc w-12 h-12 flex-shrink-0">
+                  <benefit.icon className="w-6 h-6" strokeWidth={1.75} />
                 </div>
-                <div className="min-w-0 border-l border-gold/20 pl-5">
+                <div className="min-w-0 border-l border-white/10 pl-5">
                   <h4 className="text-white font-bold text-sm mb-2">
                     {benefit.title}
                   </h4>
@@ -322,7 +322,7 @@ export default function GolfAgency({ variant = "section" }: Props) {
                     <h4 className="text-white text-xl font-bold">
                       {member.name}
                     </h4>
-                    <p className="text-gold/70 text-xs font-semibold uppercase tracking-wider">
+                    <p className="text-lime/70 text-xs font-semibold uppercase tracking-wider">
                       {member.role}
                     </p>
                   </div>
@@ -347,7 +347,7 @@ export default function GolfAgency({ variant = "section" }: Props) {
                   ? "#enquire"
                   : `mailto:${SITE.partnershipsEmail}?subject=Golf%20Agency%20Partnership%20Enquiry`
               }
-              className="inline-block bg-gold hover:bg-gold-light text-charcoal font-bold text-lg px-10 py-4 rounded-full transition-all hover:scale-105"
+              className="btn-lime btn-lime--dark"
             >
               Partner With the Agency
             </a>
@@ -357,7 +357,7 @@ export default function GolfAgency({ variant = "section" }: Props) {
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block border-2 border-white/15 hover:border-white/30 text-white font-medium text-lg px-10 py-4 rounded-full transition-all"
+              className="btn-outline btn-outline--dark"
             >
               WhatsApp the Founder
             </a>

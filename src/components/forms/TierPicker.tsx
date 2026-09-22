@@ -109,10 +109,10 @@ export default function TierPicker({
           onClick={askTheGods}
           disabled={spinning}
           aria-live="polite"
-          className="gods-button group w-full flex items-center justify-center gap-2.5 rounded-xl border-2 border-gold bg-gradient-to-br from-gold-light via-gold to-gold px-4 py-3 text-green-dark shadow-md transition-all hover:from-gold-light hover:via-gold-light hover:to-gold active:scale-[0.99] disabled:cursor-wait"
+          className="gods-button btn-lime w-full disabled:cursor-wait"
         >
           <Dices className={`w-5 h-5 flex-shrink-0 ${spinning ? "animate-spin" : "group-hover:rotate-12 transition-transform"}`} />
-          <span className="font-heading text-base sm:text-lg uppercase tracking-wide whitespace-nowrap">
+          <span className="font-heading text-base sm:text-lg uppercase whitespace-nowrap">
             {spinning ? "Consulting the gods…" : "What do the golf gods say?"}
           </span>
         </button>
@@ -128,15 +128,15 @@ export default function TierPicker({
       {verdict && (
         <p
           key={verdict.burst}
-          className="tier-rise flex items-start gap-2 rounded-xl border border-gold/50 bg-gold/10 px-4 py-3 text-sm text-green-dark"
+          className="tier-rise flex items-start gap-2 rounded-xl border border-green/15 bg-green/10 px-4 py-3 text-sm text-green"
           role="status"
         >
-          <Sparkles className="w-4 h-4 mt-0.5 flex-shrink-0 text-gold" />
+          <Sparkles className="w-4 h-4 mt-0.5 flex-shrink-0 text-green" />
           <span>
             <span className="font-bold">The golf gods say {verdict.tier.label}.</span>{" "}
             {verdict.line}{" "}
-            <span className="font-heading text-base uppercase tracking-wide text-gold">{verdict.tier.prize}</span>
-            <span className="text-green-dark/70"> for {verdict.tier.entry}.</span>
+            <span className="font-heading text-base uppercase text-green">{verdict.tier.prize}</span>
+            <span className="text-green/70"> for {verdict.tier.entry}.</span>
           </span>
         </p>
       )}
@@ -147,18 +147,18 @@ export default function TierPicker({
         <button
           type="button"
           onClick={() => pick(upsell.next.entryAmount)}
-          className="group w-full flex items-center justify-between gap-3 rounded-xl border border-dashed border-gold/60 bg-gold/5 hover:bg-gold/15 active:scale-[0.99] px-4 py-3 text-left transition-all"
+          className="group w-full flex items-center justify-between gap-3 rounded-xl border border-dashed border-green/15 bg-green/5 hover:bg-green/15 active:scale-[0.99] px-4 py-3 text-left transition-all"
         >
-          <span className="text-sm text-green-dark">
+          <span className="text-sm text-green">
             <span className="font-bold">Add {formatRand(upsell.extra)}</span>
-            <span className="text-green-dark/70"> and play for </span>
-            <span className="font-heading text-lg uppercase tracking-wide text-gold">{upsell.prize}</span>
+            <span className="text-green/70"> and play for </span>
+            <span className="font-heading text-lg uppercase text-green">{upsell.prize}</span>
           </span>
-          <ArrowRight className="w-4 h-4 text-gold flex-shrink-0 transition-transform group-hover:translate-x-1" />
+          <ArrowRight className="w-4 h-4 text-green flex-shrink-0 transition-transform group-hover:translate-x-1" />
         </button>
       ) : (
-        <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-widest text-green-dark/70 py-2">
-          <Crown className="w-4 h-4 text-gold" />
+        <p className="eyebrow flex items-center gap-2">
+          <Crown className="w-4 h-4 text-green" />
           Top of the ladder. Sink it and it&apos;s yours.
         </p>
       )}
@@ -186,7 +186,7 @@ const CONFETTI: React.CSSProperties[] = Array.from({ length: 18 }, (_, i) => {
     "--dy": `${Math.sin(angle) * dist - 40}px`,
     "--rot": `${(i * 47) % 360}deg`,
     animationDelay: `${(i % 4) * 30}ms`,
-    background: i % 3 === 0 ? "var(--gold-light)" : i % 3 === 1 ? "var(--gold)" : "var(--cream)",
+    background: i % 3 === 0 ? "var(--lime)" : i % 3 === 1 ? "var(--gold)" : "#ffffff",
   } as React.CSSProperties;
 });
 
@@ -212,11 +212,11 @@ function TierCard({
 
   const shell = jackpot
     ? checked
-      ? "border-gold bg-gradient-to-br from-green-dark via-green to-green-dark text-cream tier-selected"
-      : "border-gold/50 bg-gradient-to-br from-green-dark via-green-dark to-green text-cream hover:border-gold"
+      ? "border-lime bg-green-dark text-white tier-selected"
+      : "border-white/10 bg-green-dark text-white hover:border-lime/60"
     : checked
-      ? "border-gold bg-gradient-to-br from-gold-light/50 via-white to-gold/20 text-green-dark tier-selected"
-      : "border-green-dark/15 bg-white text-green-dark hover:border-gold/60 hover:-translate-y-0.5 hover:shadow-md";
+      ? "border-green bg-white text-green tier-selected"
+      : "border-transparent bg-white text-green shadow-[0_2px_10px_rgba(52,82,49,0.06)] hover:border-bar-off hover:-translate-y-0.5";
 
   return (
     <label
@@ -234,43 +234,43 @@ function TierCard({
       />
 
       {tier.popular && (
-        <span className="absolute top-0 left-0 rounded-br-lg bg-green-dark px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-gold whitespace-nowrap">
+        <span className="absolute top-0 left-0 rounded-br-lg bg-green-dark px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-lime whitespace-nowrap">
           Most popular
         </span>
       )}
       {jackpot && (
-        <span className="absolute top-0 left-0 flex items-center gap-1 rounded-br-lg bg-gold px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-green-dark whitespace-nowrap">
+        <span className="absolute top-0 left-0 flex items-center gap-1 rounded-br-lg bg-lime px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-green whitespace-nowrap">
           <Sparkles className="w-2.5 h-2.5" /> Jackpot
         </span>
       )}
 
       <span
         aria-hidden
-        className={`absolute top-1.5 right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-gold text-green-dark transition-all duration-200 ${
+        className={`absolute top-1.5 right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-lime text-green transition-all duration-200 ${
           checked ? "scale-100 opacity-100" : "scale-50 opacity-0"
         }`}
       >
         <Check className="w-3 h-3" strokeWidth={3} />
       </span>
 
-      <p className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${jackpot ? "text-cream/60" : "text-charcoal-light/50"}`}>
+      <p className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${jackpot ? "text-white/60" : "text-green/60"}`}>
         Win
       </p>
       <p
         className={`font-heading uppercase tracking-wide leading-none mt-0.5 whitespace-nowrap text-[clamp(1rem,15cqw,1.6rem)] ${
-          jackpot ? "text-gold-light" : "text-gold"
+          jackpot ? "text-gold" : "text-green"
         }`}
       >
         {tier.prize}
       </p>
-      <p className={`mt-1 text-[clamp(9px,8.5cqw,11px)] font-bold tabular-nums whitespace-nowrap ${jackpot ? "text-cream/80" : "text-green-dark/70"}`}>
+      <p className={`mt-1 text-[clamp(9px,8.5cqw,11px)] font-bold tabular-nums whitespace-nowrap ${jackpot ? "text-white/80" : "text-green/70"}`}>
         {mult.toLocaleString("en-US")}× your entry
       </p>
 
-      <div className={`mx-auto my-2 h-px w-8 ${jackpot ? "bg-cream/20" : "bg-green-dark/10"}`} />
+      <div className={`mx-auto my-2 h-px w-8 ${jackpot ? "bg-white/15" : "bg-green/10"}`} />
 
-      <p className={`text-[clamp(10px,9.5cqw,12px)] whitespace-nowrap ${jackpot ? "text-cream/70" : "text-charcoal-light/60"}`}>
-        <span className={`font-bold ${jackpot ? "text-cream" : "text-green-dark"}`}>{tier.entry}</span> · {rung}
+      <p className={`text-[clamp(10px,9.5cqw,12px)] whitespace-nowrap ${jackpot ? "text-white/70" : "text-green/70"}`}>
+        <span className={`font-bold ${jackpot ? "text-white" : "text-green"}`}>{tier.entry}</span> · {rung}
       </p>
     </label>
   );
@@ -316,20 +316,20 @@ function PayoutStrip({ tier }: { tier: PrizeTier }) {
   return (
     <div
       key={tier.entryAmount}
-      className="tier-rise flex items-center gap-3 rounded-xl bg-green-dark px-4 py-3 text-cream shadow-lg"
+      className="tier-rise flex items-center gap-3 rounded-xl bg-green-dark px-4 py-3 text-white shadow-lg"
       aria-live="polite"
     >
-      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gold/15 text-gold">
+      <div className="icon-disc h-10 w-10 flex-shrink-0">
         <Trophy className="w-5 h-5" />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-cream/60">You could win</p>
-        <p className="font-heading text-3xl uppercase leading-none tracking-wide text-gold tabular-nums">
+        <p className="eyebrow eyebrow--dark">You could win</p>
+        <p className="font-heading text-3xl uppercase leading-none text-gold tabular-nums">
           {formatRand(shown)}
         </p>
-        <p className="mt-1 text-xs text-cream/70">
-          for a <span className="font-bold text-cream">{tier.entry}</span> swing ·{" "}
-          <span className="font-bold text-gold-light tabular-nums whitespace-nowrap">{mult.toLocaleString("en-US")}× your entry</span>
+        <p className="mt-1 text-xs text-white/70">
+          for a <span className="font-bold text-white">{tier.entry}</span> swing ·{" "}
+          <span className="font-bold text-lime tabular-nums whitespace-nowrap">{mult.toLocaleString("en-US")}× your entry</span>
         </p>
       </div>
     </div>

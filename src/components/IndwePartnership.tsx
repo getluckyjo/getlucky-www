@@ -13,22 +13,22 @@ export default function IndwePartnership() {
         {/* Partnership header */}
         <div className="flex items-center justify-center gap-3 mb-8">
           <div className="h-px flex-1 max-w-16 bg-green-dark/15" />
-          <p className="text-green-dark/40 text-xs font-semibold uppercase tracking-[0.2em]">
+          <p className="eyebrow">
             Headline Sponsor
           </p>
           <div className="h-px flex-1 max-w-16 bg-green-dark/15" />
         </div>
 
-        <h3 className="text-center font-heading text-xl sm:text-2xl text-green-dark uppercase tracking-wide mb-8">
+        <h3 className="text-center font-heading text-xl sm:text-2xl text-green uppercase mb-8">
           Get Lucky Golf{" "}
-          <span className="text-green-dark/30">×</span>{" "}
+          <span className="text-green/30">×</span>{" "}
           Indwe Risk Services
         </h3>
 
         {/* Quote */}
         <div className="relative max-w-3xl mx-auto mb-10">
-          <Quote className="w-8 h-8 text-gold/30 absolute -top-2 -left-2 sm:-left-6" />
-          <blockquote className="text-green-dark/70 text-sm sm:text-base leading-relaxed text-center italic pl-4 sm:pl-0">
+          <Quote className="w-8 h-8 text-green/30 absolute -top-2 -left-2 sm:-left-6" />
+          <blockquote className="text-green/70 text-sm sm:text-base leading-relaxed text-center italic pl-4 sm:pl-0">
             We&apos;re proud to welcome Indwe Risk Services as our headline
             sponsor. Indwe&apos;s focus on confidence, expertise, and protecting
             life&apos;s defining moments aligns seamlessly with our mission to
@@ -36,10 +36,10 @@ export default function IndwePartnership() {
             players across South Africa.
           </blockquote>
           <p className="text-center mt-4">
-            <span className="text-green-dark font-semibold text-sm">
+            <span className="text-green font-semibold text-sm">
               Andrew Davenport
             </span>
-            <span className="text-green-dark/40 text-sm">
+            <span className="text-green/40 text-sm">
               {" "}— Founder, Get Lucky Golf
             </span>
           </p>
@@ -51,10 +51,10 @@ export default function IndwePartnership() {
             <div key={stat.label} className="flex items-center gap-6 sm:gap-12">
               <div className="text-center">
                 <stat.icon className="w-5 h-5 text-[#0072B8] mx-auto mb-1.5" />
-                <p className="text-lg sm:text-2xl font-black text-green-dark">
+                <p className="text-lg sm:text-2xl font-heading text-green">
                   {stat.value}
                 </p>
-                <p className="text-green-dark/40 text-[11px] sm:text-xs mt-0.5">
+                <p className="text-green/40 text-[11px] sm:text-xs mt-0.5">
                   {stat.label}
                 </p>
               </div>

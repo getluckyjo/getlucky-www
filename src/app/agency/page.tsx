@@ -45,10 +45,10 @@ export default function AgencyPage() {
         <section id="enquire" className="bg-cream py-20 sm:py-28">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10">
-              <span className="text-gold text-xs font-semibold uppercase tracking-widest">
+              <span className="eyebrow">
                 Partner Enquiry
               </span>
-              <h2 className="font-heading text-3xl sm:text-5xl text-green-dark mt-3 uppercase tracking-wide">
+              <h2 className="font-heading text-3xl sm:text-5xl text-green mt-3 uppercase">
                 Reach the Golfer Audience
               </h2>
               <p className="text-base sm:text-lg text-charcoal-light/80 mt-5 leading-relaxed">
@@ -58,7 +58,7 @@ export default function AgencyPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-3xl shadow-sm border border-green-dark/10 p-6 sm:p-10">
+            <div className="card bg-white rounded-3xl p-6 sm:p-10 card--hover">
               <AgencyForm />
             </div>
           </div>

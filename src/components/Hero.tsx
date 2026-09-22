@@ -7,6 +7,7 @@ import {
   MapPin,
   ArrowRight,
 } from "lucide-react";
+import { ROUTES } from "@/lib/constants";
 
 /**
  * Landing-page pillars — one per product we offer. Each explains the offering
@@ -42,6 +43,12 @@ const PILLARS = [
   },
 ];
 
+/**
+ * Homepage hero in the app's V2 language: the course photo under the app's
+ * scrim, the vector Hole-in-1 Challenge lockup, one Poster Gothic line, one
+ * lime button, and the four product pillars as white cards. The Indwe strip
+ * stays along the bottom, as on the app's landing screen.
+ */
 export default function Hero() {
   return (
     <>
@@ -55,34 +62,47 @@ export default function Hero() {
           priority
         />
 
-        {/* Gradient overlay for text legibility */}
-        <div className="absolute inset-0 bg-gradient-to-t from-green-dark/90 via-green-dark/50 to-green-dark/30" />
+        {/* The app's photo scrim, deepening to forest green under the pillars */}
+        <div className="absolute inset-0 photo-scrim" />
+        <div className="absolute inset-0 bg-gradient-to-t from-green-dark/85 via-transparent to-transparent" />
 
         {/* Content */}
         <div className="relative z-10 flex-1 flex items-center justify-center">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center pt-24 pb-12">
-            <div className="mb-5 sm:mb-6 flex justify-center">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center pt-28 pb-14">
+            <div className="mb-6 sm:mb-8 flex justify-center scale-in">
               <Image
-                src="/logos/challenge-full.png"
-                alt="Get Lucky Hole-in-1 Challenge logo"
-                width={400}
-                height={435}
-                className="h-28 sm:h-36 md:h-44 w-auto drop-shadow-2xl"
+                src="/brand/logo-lockup.svg"
+                alt="Get Lucky Hole-in-1 Challenge"
+                width={552}
+                height={588}
+                unoptimized
                 priority
+                className="h-40 sm:h-52 md:h-64 w-auto drop-shadow-[0_14px_30px_rgba(0,0,0,0.28)]"
               />
             </div>
 
-            <h1 className="mb-9 sm:mb-12 font-heading uppercase tracking-wide text-cream whitespace-nowrap text-[clamp(1.1rem,5.4vw,3.75rem)] leading-none drop-shadow-lg">
-              Win A Million For A Hole-in-1
+            <h1 className="fade-up-1 font-heading text-white text-[clamp(1.6rem,6.2vw,4.25rem)] leading-[1.05] drop-shadow-[0_2px_24px_rgba(0,0,0,0.35)]">
+              Win a Million for a Hole-in-1
               <span className="sr-only">
                 {" "}— Get Lucky Golf Club, South Africa&apos;s leading
                 hole-in-one golf activation
               </span>
             </h1>
 
+            <p className="fade-up-2 mt-4 sm:mt-5 text-white text-lg sm:text-2xl leading-snug drop-shadow-[0_1px_12px_rgba(0,0,0,0.3)]">
+              Choose a par 3. Back yourself.{" "}
+              <strong className="font-bold">Win up to R1 Million.</strong>
+            </p>
+
+            <div className="fade-up-3 mt-7 sm:mt-9 mb-10 sm:mb-14 flex justify-center">
+              <Link href={ROUTES.buyVoucher} className="btn-lime btn-lime--dark">
+                Buy a Swing
+              </Link>
+            </div>
+
             {/* Product pillars — one CTA per offering */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-md sm:max-w-2xl lg:max-w-5xl mx-auto">
-              {PILLARS.map((pillar) => {
+              {PILLARS.map((pillar, i) => {
                 const Icon = pillar.icon;
                 const isExternal = pillar.href.startsWith("http");
                 return (
@@ -92,18 +112,18 @@ export default function Hero() {
                     {...(isExternal
                       ? { target: "_blank", rel: "noopener noreferrer" }
                       : {})}
-                    className="group flex flex-col items-center text-center gap-2 rounded-2xl border border-cream/15 bg-green-dark/40 backdrop-blur-sm px-4 py-5 transition-all hover:border-gold/60 hover:bg-green-dark/70 last:odd:col-span-2 last:odd:max-w-[calc(50%-0.375rem)] last:odd:mx-auto lg:last:odd:col-span-1 lg:last:odd:max-w-none"
+                    className={`fade-up-${Math.min(i + 1, 4)} group card--glass flex flex-col items-center text-center gap-2 px-4 py-5 transition-transform hover:-translate-y-0.5 last:odd:col-span-2 last:odd:max-w-[calc(50%-0.375rem)] last:odd:mx-auto lg:last:odd:col-span-1 lg:last:odd:max-w-none`}
                   >
-                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-gold/15 text-gold transition-colors group-hover:bg-gold/25">
-                      <Icon className="h-5 w-5" strokeWidth={2} />
+                    <span className="icon-disc">
+                      <Icon className="h-5 w-5" strokeWidth={2.25} />
                     </span>
-                    <span className="font-bold text-cream text-sm sm:text-base leading-tight">
+                    <span className="font-heading text-lg leading-tight text-green">
                       {pillar.title}
                     </span>
-                    <span className="text-cream/70 text-xs leading-snug">
+                    <span className="text-green/80 text-xs leading-snug">
                       {pillar.blurb}
                     </span>
-                    <span className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-gold opacity-0 transition-opacity group-hover:opacity-100">
+                    <span className="mt-1 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-green opacity-0 transition-opacity group-hover:opacity-100">
                       Learn more <ArrowRight className="h-3 w-3" />
                     </span>
                   </Link>

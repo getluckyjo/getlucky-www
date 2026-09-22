@@ -30,10 +30,11 @@ export default function Form2Page() {
       {/* Challenge lockup hero */}
       <div className="flex justify-center pt-8 sm:pt-12 pb-2 px-4">
         <Image
-          src="/logos/challenge-bordered.png"
+          src="/brand/logo-lockup.svg"
           alt="Get Lucky Hole-in-One Challenge"
-          width={420}
-          height={420}
+          width={552}
+          height={588}
+          unoptimized
           className="h-40 sm:h-48 w-auto drop-shadow-xl"
           priority
         />
@@ -42,18 +43,18 @@ export default function Form2Page() {
       {/* Form panel */}
       <div className="max-w-md mx-auto px-4 pb-8">
         <div className="text-center mb-6">
-          <span className="text-gold text-xs font-semibold uppercase tracking-widest drop-shadow">
+          <span className="eyebrow">
             Sponsored Entry
           </span>
-          <h1 className="font-heading text-2xl sm:text-3xl text-cream uppercase tracking-wide mt-2 drop-shadow-md">
+          <h1 className="font-heading text-2xl sm:text-3xl text-white uppercase mt-2 drop-shadow-md">
             Enter the Challenge
           </h1>
-          <p className="text-sm text-cream/85 mt-2 leading-relaxed drop-shadow">
+          <p className="text-sm text-white/85 mt-2 leading-relaxed drop-shadow">
             Your entry is sponsored. Drop your details and you&apos;re in.
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-2xl border border-white/40 p-5 sm:p-7">
+        <div className="card bg-white border-white/40 p-5 sm:p-7 rounded-xl card--hover">
           <FreeEntryForm />
         </div>
       </div>
@@ -63,7 +64,7 @@ export default function Form2Page() {
           scales with its own viewport, and the 170px floor gives its three
           slides room on a narrow screen. */}
       <div className="max-w-md mx-auto px-4 pb-8 sm:pb-12">
-        <div className="rounded-xl overflow-hidden border border-white/30 shadow-2xl bg-white">
+        <div className="card rounded-xl overflow-hidden border-white/30 bg-white card--hover">
           <iframe
             src="/indwe-banner/index.html"
             title="Indwe Risk Services — Headline Sponsor"

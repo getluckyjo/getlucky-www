@@ -7,7 +7,7 @@
  * clear 3:1 on the cream surface, so the label does the work and the colour
  * reinforces it.
  *
- * Validated with the dataviz palette checker against surface #f5f0e1:
+ * Validated with the dataviz palette checker against surface #ebedea:
  * lightness band, chroma floor, CVD separation (worst adjacent ΔE 20.0 deutan)
  * and normal-vision floor all pass.
  */
@@ -24,8 +24,8 @@ export const STATUS = {
 export type StatusKey = keyof typeof STATUS;
 
 /** Single-series bar fill. One measure per chart, so no categorical palette. */
-const SERIES = "#335231";
-const AXIS = "#c9c3ae";
+const SERIES = "#345231";
+const AXIS = "#bfc6bb";
 const INK_MUTED = "#6a6455";
 
 export function fmtZAR(n: number): string {
@@ -267,7 +267,7 @@ export function StackedBars({
           role="img"
           aria-label={caption}
         >
-          <line x1="0" y1={H - padB} x2={W} y2={H - padB} stroke="#c9c3ae" strokeWidth="1" />
+          <line x1="0" y1={H - padB} x2={W} y2={H - padB} stroke="#bfc6bb" strokeWidth="1" />
           {data.map((d, i) => {
             const x = i * slot + gap;
             let cursor = H - padB;
@@ -345,7 +345,7 @@ export function Funnel({
             <div className="mt-1 h-6 w-full overflow-hidden rounded-[3px] bg-cream-dark">
               <div
                 className="h-full rounded-[3px]"
-                style={{ width: `${Math.max((s.value / max) * 100, 0.6)}%`, background: "#335231" }}
+                style={{ width: `${Math.max((s.value / max) * 100, 0.6)}%`, background: "#345231" }}
                 role="img"
                 aria-label={`${s.value} ${s.label}`}
               />

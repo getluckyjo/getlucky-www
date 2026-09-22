@@ -16,16 +16,16 @@ export default function PrivacyPage() {
       <main className="pt-20 sm:pt-24">
         <section className="bg-cream">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
-            <span className="text-gold text-xs font-semibold uppercase tracking-widest">
+            <span className="eyebrow">
               Legal
             </span>
-            <h1 className="font-heading text-4xl sm:text-5xl text-green-dark uppercase tracking-wide mt-4 mb-8">
+            <h1 className="font-heading text-4xl sm:text-5xl text-green uppercase mt-4 mb-8">
               Privacy Policy
             </h1>
 
             <div className="prose prose-lg max-w-none text-charcoal-light/85 space-y-6">
               <section>
-                <h2 className="font-heading text-xl text-green-dark uppercase tracking-wide">
+                <h2 className="font-heading text-xl text-green uppercase">
                   Information We Collect
                 </h2>
                 <p>
@@ -36,7 +36,7 @@ export default function PrivacyPage() {
               </section>
 
               <section>
-                <h2 className="font-heading text-xl text-green-dark uppercase tracking-wide">
+                <h2 className="font-heading text-xl text-green uppercase">
                   How We Use It
                 </h2>
                 <p>
@@ -47,7 +47,7 @@ export default function PrivacyPage() {
               </section>
 
               <section>
-                <h2 className="font-heading text-xl text-green-dark uppercase tracking-wide">
+                <h2 className="font-heading text-xl text-green uppercase">
                   Who We Share It With
                 </h2>
                 <p>
@@ -60,7 +60,7 @@ export default function PrivacyPage() {
               </section>
 
               <section>
-                <h2 className="font-heading text-xl text-green-dark uppercase tracking-wide">
+                <h2 className="font-heading text-xl text-green uppercase">
                   Your Rights Under POPIA
                 </h2>
                 <p>
@@ -68,7 +68,7 @@ export default function PrivacyPage() {
                   personal information at any time by emailing{" "}
                   <a
                     href="mailto:johannes@getluckygolfclub.com"
-                    className="text-green-dark underline hover:text-gold"
+                    className="text-green underline hover:text-green"
                   >
                     johannes@getluckygolfclub.com
                   </a>
@@ -76,7 +76,7 @@ export default function PrivacyPage() {
                 </p>
               </section>
 
-              <p className="text-sm text-charcoal-light/60 pt-8 border-t border-green-dark/10">
+              <p className="text-sm text-charcoal-light/60 pt-8 border-t border-green/10">
                 This is a placeholder privacy policy pending final legal review.
               </p>
             </div>
