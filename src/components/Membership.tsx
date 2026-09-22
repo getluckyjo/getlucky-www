@@ -19,10 +19,8 @@ export default function Membership() {
         {/* Header */}
         <div className="text-center mb-16">
           <div className="chip-lime inline-flex mb-6">
-            <Crown className="w-3.5 h-3.5 text-lime" />
-            <span className="eyebrow eyebrow--dark">
-              Membership
-            </span>
+            <Crown className="w-3.5 h-3.5" />
+            <span>Membership</span>
           </div>
           <h2 className="font-heading text-3xl sm:text-5xl text-white mt-1 uppercase">
             Unlimited Swings at R100,000.

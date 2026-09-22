@@ -21,10 +21,8 @@ export default function IndweOffer() {
         {/* Eyebrow */}
         <div className="flex justify-center mb-5">
           <div className="chip-lime chip-lime--flag inline-flex">
-            <Gift className="w-3.5 h-3.5 text-green" />
-            <span className="eyebrow">
-              Exclusive Sponsor Offer
-            </span>
+            <Gift className="w-3.5 h-3.5" />
+            <span>Exclusive Sponsor Offer</span>
           </div>
         </div>
 

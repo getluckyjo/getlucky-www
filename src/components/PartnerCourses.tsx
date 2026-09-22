@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { MapPin, Flag } from "lucide-react";
 
 const memberClubs = [
@@ -69,17 +70,17 @@ export default function PartnerCourses() {
           ))}
 
           {/* Mobile Unit CTA card */}
-          <a
+          <Link
             href="/#corporate"
-            className="icon-disc relative"
+            className="relative rounded-xl overflow-hidden group aspect-[4/3] bg-white/5 border-2 border-dashed border-white/25 hover:border-lime transition-colors flex flex-col items-center justify-center text-center p-4"
           >
-            <div className="icon-disc w-12 h-12 mb-3">
+            <div className="icon-disc w-12 h-12 mb-3 group-hover:scale-110 transition-transform">
               <Flag className="w-6 h-6" />
             </div>
             <p className="text-white text-sm font-bold leading-tight group-hover:text-lime transition-colors">
               Book Get Lucky for your golf day
             </p>
-          </a>
+          </Link>
         </div>
       </div>
     </section>
