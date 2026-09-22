@@ -8,7 +8,7 @@ const stats = [
 
 export default function IndwePartnership() {
   return (
-    <section className="py-16 sm:py-20 bg-cream">
+    <section className="py-16 sm:py-20 bg-white">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Partnership header */}
         <div className="flex items-center justify-center gap-3 mb-8">

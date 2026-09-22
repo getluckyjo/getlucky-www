@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SectionTexture from "@/components/SectionTexture";
 import SchoolForm from "@/components/forms/SchoolForm";
 import CharityFundraisingCalculator from "@/components/CharityFundraisingCalculator";
 import IndweBannerStrip from "@/components/IndweBannerStrip";
@@ -389,8 +390,9 @@ export default function SchoolFundraisingPage() {
         </section>
 
         {/* ENQUIRY FORM */}
-        <section id="enquire" className="py-20 sm:py-28 bg-green-dark">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="enquire" className="py-20 sm:py-28 bg-green-dark relative overflow-hidden">
+          <SectionTexture src="/images/courses/paarl.jpg" />
+          <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10">
               <span className="eyebrow eyebrow--dark">
                 Lock It In

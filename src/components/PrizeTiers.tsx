@@ -1,5 +1,6 @@
 import { PRIZE_TIERS } from "@/lib/constants";
 import { Shield } from "lucide-react";
+import SectionTexture from "./SectionTexture";
 
 /**
  * The stake ladder on the dark panel. Prize figures are the one place gold
@@ -10,8 +11,9 @@ import { Shield } from "lucide-react";
  */
 export default function PrizeTiers() {
   return (
-    <section id="prizes" className="py-24 sm:py-32 bg-green-dark relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="prizes" className="py-24 sm:py-32 bg-green-dark relative overflow-hidden">
+      <SectionTexture src="/images/courses/st-francis-links.jpg" position="center 40%" />
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <span className="eyebrow eyebrow--dark">Choose Your Entry</span>
           <h2 className="font-heading text-3xl sm:text-5xl text-white mt-3">

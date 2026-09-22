@@ -11,7 +11,7 @@ const benefits = [
 
 export default function Membership() {
   return (
-    <section id="membership" className="py-24 sm:py-32 bg-green-dark relative overflow-hidden">
+    <section id="membership" className="py-24 sm:py-32 bg-green relative overflow-hidden">
       {/* Subtle glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-lime/5 rounded-full blur-[120px]" />
 
@@ -36,7 +36,7 @@ export default function Membership() {
         {/* Two-column: Benefits + Pricing */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
           {/* Benefits */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-8">
+          <div className="bg-green-dark/60 border border-white/10 rounded-xl p-8">
             <h3 className="text-white text-lg font-bold mb-6">
               What you get
             </h3>
@@ -51,7 +51,7 @@ export default function Membership() {
           </div>
 
           {/* Pricing card */}
-          <div className="bg-green border-2 border-lime rounded-xl p-8 flex flex-col justify-between">
+          <div className="bg-green-dark border-2 border-lime rounded-xl p-8 flex flex-col justify-between">
             <div>
               <p className="eyebrow eyebrow--dark mb-2">
                 Monthly Membership
