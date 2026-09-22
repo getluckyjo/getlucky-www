@@ -72,22 +72,22 @@ export default function GolfSimulatorsPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-green-dark/70 via-green-dark/80 to-green-dark" />
 
           <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <span className="chip-lime chip-lime--flag inline-block">
+            <span className="chip-lime inline-block">
               For Golf Simulators · Anywhere in South Africa
             </span>
 
             <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl text-white mt-6 uppercase leading-[0.95]">
               Add A R100,000{" "}
-              <span className="text-green">Hole-in-One Challenge</span> To Your Sim
+              <span className="text-lime">Hole-in-One Challenge</span> To Your Sim
             </h1>
 
             <p className="text-base sm:text-xl text-white/80 mt-6 max-w-2xl mx-auto leading-relaxed">
               Players pay{" "}
-              <span className="text-green font-bold">R149 for 3 shots</span> at a
+              <span className="text-lime font-bold">R149 for 3 shots</span> at a
               hole-in-one to win{" "}
-              <span className="text-green font-bold">R100,000 cash</span> — and your
+              <span className="text-lime font-bold">R100,000 cash</span> — and your
               venue keeps{" "}
-              <span className="text-green font-bold">10% of every swing</span>. The
+              <span className="text-lime font-bold">10% of every swing</span>. The
               prize is fully underwritten by Indwe. No cost, no risk. We run it —
               you earn.
             </p>
@@ -101,7 +101,7 @@ export default function GolfSimulatorsPage() {
               </a>
               <a
                 href="#enquire"
-                className="btn-outline w-full sm:w-auto"
+                className="btn-outline btn-outline--dark w-full sm:w-auto"
               >
                 Enquire Now
               </a>
@@ -150,7 +150,7 @@ export default function GolfSimulatorsPage() {
                   key={line}
                   className="flex items-start gap-2 text-charcoal-light/80"
                 >
-                  <CheckCircle2 className="w-4 h-4 text-lime shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-green shrink-0 mt-0.5" />
                   <span>{line}</span>
                 </div>
               ))}

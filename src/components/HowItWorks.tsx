@@ -76,7 +76,7 @@ export default function HowItWorks() {
                 </div>
               )}
 
-              <span className="text-5xl font-heading text-green/[0.04] select-none absolute top-4 right-4">
+              <span className="text-5xl font-heading text-green/[0.08] select-none absolute top-4 right-4">
                 {item.step}
               </span>
               <div className="icon-disc w-12 h-12 mb-4">

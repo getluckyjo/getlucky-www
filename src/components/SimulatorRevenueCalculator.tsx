@@ -128,7 +128,7 @@ export default function SimulatorRevenueCalculator() {
           </p>
 
           <div className="mt-6 bg-lime text-green rounded-xl p-5">
-            <p className="eyebrow eyebrow--dark">
+            <p className="eyebrow">
               Per Month
             </p>
             <p className="font-heading text-4xl sm:text-5xl mt-1">

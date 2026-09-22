@@ -40,7 +40,7 @@ export default function PgaGolfShowCancelPage() {
           <div className="flex flex-col gap-3">
             <Link
               href={ROUTES.pgaGolfShow}
-              className="btn-lime btn-lime--dark"
+              className="btn-lime"
             >
               Back to the Entry Form
             </Link>

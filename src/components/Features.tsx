@@ -88,7 +88,7 @@ export default function Features() {
         <div className="mt-14 text-center flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href={ROUTES.partner}
-            className="btn-lime btn-lime--dark"
+            className="btn-lime"
           >
             Become a Partner Course
           </Link>

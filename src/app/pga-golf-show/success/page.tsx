@@ -116,7 +116,7 @@ export default async function PgaGolfShowSuccessPage({
 
           <Link
             href={ROUTES.pgaGolfShow}
-            className="btn-lime btn-lime--dark mt-6 w-full text-center"
+            className="btn-lime mt-6 w-full text-center"
           >
             Enter Another Player
           </Link>

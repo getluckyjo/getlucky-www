@@ -107,7 +107,7 @@ export default function Hero() {
                     {...(isExternal
                       ? { target: "_blank", rel: "noopener noreferrer" }
                       : {})}
-                    className={`fade-up-${Math.min(i + 1, 4)} group card--glass flex flex-col items-center text-center gap-2 px-4 py-5 transition-transform hover:-translate-y-0.5 last:odd:col-span-2 last:odd:max-w-[calc(50%-0.375rem)] last:odd:mx-auto lg:last:odd:col-span-1 lg:last:odd:max-w-none`}
+                    className={`fade-up-${Math.min(i + 1, 4)} group card--glass flex flex-col items-center justify-start text-center gap-2 px-4 py-5 transition-transform hover:-translate-y-0.5 last:odd:col-span-2 last:odd:max-w-[calc(50%-0.375rem)] last:odd:mx-auto lg:last:odd:col-span-1 lg:last:odd:max-w-none`}
                   >
                     <span className="icon-disc">
                       <Icon className="h-5 w-5" strokeWidth={2.25} />
@@ -118,7 +118,7 @@ export default function Hero() {
                     <span className="text-green/80 text-xs leading-snug">
                       {pillar.blurb}
                     </span>
-                    <span className="mt-1 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-green opacity-0 transition-opacity group-hover:opacity-100">
+                    <span className="mt-auto pt-2 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-green/70 transition-colors group-hover:text-green">
                       Learn more <ArrowRight className="h-3 w-3" />
                     </span>
                   </Link>
