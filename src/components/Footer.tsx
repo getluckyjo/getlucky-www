@@ -7,7 +7,6 @@ const challengeLinks = [
   { href: "/#prizes", label: "Prizes" },
   { href: "/#membership", label: "Membership — R149/mo" },
   { href: "/#courses", label: "Find a Course" },
-  { href: ROUTES.buyVoucher, label: "Buy a Swing" },
 ];
 
 const partnerLinks = [

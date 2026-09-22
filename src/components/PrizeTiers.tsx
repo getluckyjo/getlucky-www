@@ -1,11 +1,12 @@
-import { PRIZE_TIERS, ROUTES } from "@/lib/constants";
-import Link from "next/link";
+import { PRIZE_TIERS } from "@/lib/constants";
 import { Shield } from "lucide-react";
 
 /**
  * The stake ladder on the dark panel. Prize figures are the one place gold
  * survives in V2, and only here on green-dark. The popular rung is the lime
- * card with the hard shadow, as the app dresses its best plan.
+ * card with the hard shadow, as the app dresses its best plan. Swings are
+ * bought at the tee box (the QR form), so the ladder is a display, not a
+ * shop.
  */
 export default function PrizeTiers() {
   return (
@@ -17,20 +18,19 @@ export default function PrizeTiers() {
             Pick Your Prize
           </h2>
           <p className="text-white/70 mt-4 max-w-lg mx-auto">
-            One swing. The bigger the entry, the bigger the prize. Redeemable at
-            any Get Lucky partner course.
+            One swing. The bigger the entry, the bigger the prize. Scan the QR
+            code at the tee box of any Get Lucky partner course to play.
           </p>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-6">
           {PRIZE_TIERS.map((tier) => (
-            <Link
+            <div
               key={tier.entry}
-              href={ROUTES.buyVoucher}
-              className={`relative rounded-xl p-6 text-center transition-transform hover:-translate-y-1 group ${
+              className={`relative rounded-xl p-6 text-center ${
                 tier.popular
                   ? "bg-lime text-green shadow-[4px_5px_0_rgba(0,0,0,0.3)]"
-                  : "bg-green text-white border-2 border-transparent hover:border-lime"
+                  : "bg-green text-white"
               }`}
             >
               {tier.popular && (
@@ -68,7 +68,7 @@ export default function PrizeTiers() {
               >
                 {tier.prize}
               </p>
-            </Link>
+            </div>
           ))}
         </div>
 
@@ -80,12 +80,6 @@ export default function PrizeTiers() {
             <span className="text-white font-medium">Indwe Risk Services</span>{" "}
             — FSP 3425
           </p>
-        </div>
-
-        <div className="mt-8 text-center">
-          <Link href={ROUTES.buyVoucher} className="btn-lime btn-lime--dark">
-            Buy Your Swing Now
-          </Link>
         </div>
       </div>
     </section>

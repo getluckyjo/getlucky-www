@@ -7,7 +7,6 @@ import {
   MapPin,
   ArrowRight,
 } from "lucide-react";
-import { ROUTES } from "@/lib/constants";
 
 /**
  * Landing-page pillars — one per product we offer. Each explains the offering
@@ -45,8 +44,9 @@ const PILLARS = [
 
 /**
  * Homepage hero in the app's V2 language: the course photo under the app's
- * scrim, the vector Hole-in-1 Challenge lockup, one Poster Gothic line, one
- * lime button, and the four product pillars as white cards. The Indwe strip
+ * scrim, the vector Hole-in-1 Challenge lockup, one Poster Gothic line, and
+ * the four product pillars as white cards. Swings are bought at the tee box
+ * through the QR form, so there is no buy button here. The Indwe strip
  * stays along the bottom, as on the app's landing screen.
  */
 export default function Hero() {
@@ -89,16 +89,11 @@ export default function Hero() {
               </span>
             </h1>
 
-            <p className="fade-up-2 mt-4 sm:mt-5 text-white text-lg sm:text-2xl leading-snug drop-shadow-[0_1px_12px_rgba(0,0,0,0.3)]">
+            <p className="fade-up-2 mt-4 sm:mt-5 mb-10 sm:mb-14 text-white text-lg sm:text-2xl leading-snug drop-shadow-[0_1px_12px_rgba(0,0,0,0.3)]">
               Choose a par 3. Back yourself.{" "}
               <strong className="font-bold">Win up to R1 Million.</strong>
             </p>
 
-            <div className="fade-up-3 mt-7 sm:mt-9 mb-10 sm:mb-14 flex justify-center">
-              <Link href={ROUTES.buyVoucher} className="btn-lime btn-lime--dark">
-                Buy a Swing
-              </Link>
-            </div>
 
             {/* Product pillars — one CTA per offering */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-md sm:max-w-2xl lg:max-w-5xl mx-auto">
