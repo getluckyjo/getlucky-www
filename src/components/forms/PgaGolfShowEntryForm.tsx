@@ -195,7 +195,7 @@ export default function PgaGolfShowEntryForm() {
 
       {/* Instagram follow — asked for, optional. */}
       <div className="rounded-xl border border-green/15 bg-cream/60 p-4 space-y-3">
-        <p className="eyebrow eyebrow--dark">
+        <p className="eyebrow">
           Follow us on Instagram
         </p>
         <a
@@ -236,11 +236,11 @@ export default function PgaGolfShowEntryForm() {
         <SubmitButton pending={pending} disabled={paying}>Enter for free →</SubmitButton>
         <p className="text-xs text-charcoal-light/70 mt-3 leading-relaxed">
           By entering you accept the{" "}
-          <Link href={ROUTES.terms} className="text-green underline hover:text-lime">
+          <Link href={ROUTES.terms} className="text-green underline hover:text-green">
             terms &amp; conditions
           </Link>
           {" "}and confirm you are 18 or older. See our{" "}
-          <Link href={ROUTES.privacy} className="text-green underline hover:text-lime">
+          <Link href={ROUTES.privacy} className="text-green underline hover:text-green">
             privacy policy
           </Link>
           {" "}for how we look after your details.
@@ -257,7 +257,7 @@ export default function PgaGolfShowEntryForm() {
         never read as the same action.
       */}
       <div className="rounded-2xl border-2 border-green/20 bg-cream/60 p-4 sm:p-5 space-y-3">
-        <p className="eyebrow eyebrow--dark">
+        <p className="eyebrow">
           Or take the bigger shot
         </p>
         <p className="font-heading text-2xl sm:text-3xl uppercase text-green leading-none">
@@ -271,7 +271,7 @@ export default function PgaGolfShowEntryForm() {
           type="button"
           onClick={onPay}
           disabled={pending || paying}
-          className="btn-lime btn-lime--dark w-full"
+          className="btn-lime w-full"
         >
           {paying && (
             <svg className="animate-spin -ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" aria-hidden>

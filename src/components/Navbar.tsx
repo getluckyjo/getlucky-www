@@ -15,7 +15,6 @@ const primary = [
   { href: "/#how-it-works", label: "How It Works" },
   { href: "/#prizes", label: "Prizes" },
   { href: "/#membership", label: "Membership" },
-  { href: ROUTES.buyVoucher, label: "Buy a Swing" },
 ];
 
 /** Everything we do for partners: the quieter Inter list. */
@@ -29,7 +28,7 @@ const secondary = [
   { href: ROUTES.agency, label: "Agency" },
 ];
 
-const desktopLinks = [...primary.slice(0, 3), ...secondary];
+const desktopLinks = [...primary, ...secondary];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -86,12 +85,6 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <Link
-              href={ROUTES.buyVoucher}
-              className={`btn-lime btn-lime--sm ${onDarkHero ? "btn-lime--dark" : ""}`}
-            >
-              Buy a Swing
-            </Link>
           </div>
 
           {/* Mobile: hamburger */}
@@ -176,16 +169,6 @@ export default function Navbar() {
                   </Link>
                 );
               })}
-            </div>
-
-            <div className="mt-auto pt-8">
-              <Link
-                href={ROUTES.buyVoucher}
-                onClick={() => setOpen(false)}
-                className="btn-lime btn-lime--dark w-full"
-              >
-                Buy a Swing
-              </Link>
             </div>
           </div>
         </div>

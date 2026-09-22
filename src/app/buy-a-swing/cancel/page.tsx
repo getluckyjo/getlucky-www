@@ -25,7 +25,7 @@ export default function VoucherCancelPage() {
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               <Link
                 href={ROUTES.buyVoucher}
-                className="btn-lime btn-lime--dark"
+                className="btn-lime"
               >
                 Try Again
               </Link>

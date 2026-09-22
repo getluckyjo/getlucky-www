@@ -156,7 +156,7 @@ export default function ProposalFlipbook() {
           <a
             href={PDF_HREF}
             download
-            className="chip-lime inline-flex"
+            className="chip-lime chip-lime--flag inline-flex"
           >
             <Download className="w-4 h-4" />
             <span>Download PDF</span>

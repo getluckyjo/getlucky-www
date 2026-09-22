@@ -8,7 +8,6 @@ import IndweOffer from "@/components/IndweOffer";
 import Membership from "@/components/Membership";
 import Features from "@/components/Features";
 import CorporateCTA from "@/components/CorporateCTA";
-import GolfAgency from "@/components/GolfAgency";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -25,7 +24,6 @@ export default function Home() {
         <Membership />
         <Features />
         <CorporateCTA />
-        <GolfAgency />
       </main>
       <Footer />
     </>

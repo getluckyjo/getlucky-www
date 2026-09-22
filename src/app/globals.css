@@ -136,6 +136,12 @@ html {
     letter-spacing: 0.005em;
     text-transform: uppercase;
   }
+  /* Headings wrap evenly instead of leaving one word on the last line. */
+  h1.font-heading,
+  h2.font-heading,
+  h3.font-heading {
+    text-wrap: balance;
+  }
 }
 
 /* ── V2 SHARED COMPONENTS ──

@@ -115,22 +115,22 @@ export default function SchoolFundraisingPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-green-dark/70 via-green-dark/80 to-green-dark" />
 
           <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <span className="chip-lime chip-lime--flag inline-block">
+            <span className="chip-lime inline-block">
               Mobile School Fundraiser · Anywhere in South Africa
             </span>
 
             <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl text-white mt-6 uppercase leading-[0.95]">
               Raise Big For Your School{" "}
-              <span className="text-green">In One Golf Day</span>
+              <span className="text-lime">In One Golf Day</span>
             </h1>
 
             <p className="text-base sm:text-xl text-white/80 mt-6 max-w-2xl mx-auto leading-relaxed">
               Parents, old boys and girls, and local businesses buy swings to
               play the Get Lucky Hole-in-One Challenge at your golf day — and
               your school keeps{" "}
-              <span className="text-green font-bold">50% of every swing</span>.
+              <span className="text-lime font-bold">50% of every swing</span>.
               Real prizes up to{" "}
-              <span className="text-green font-bold">R1,000,000</span>, fully
+              <span className="text-lime font-bold">R1,000,000</span>, fully
               underwritten by Indwe. No cost, no risk. We run it — you raise.
             </p>
 
@@ -143,7 +143,7 @@ export default function SchoolFundraisingPage() {
               </a>
               <a
                 href="#enquire"
-                className="btn-outline w-full sm:w-auto"
+                className="btn-outline btn-outline--dark w-full sm:w-auto"
               >
                 Enquire Now
               </a>
@@ -168,7 +168,7 @@ export default function SchoolFundraisingPage() {
         <section id="build" className="py-20 sm:py-28 bg-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 max-w-2xl mx-auto">
-              <span className="eyebrow eyebrow--dark">
+              <span className="eyebrow">
                 See What You Could Raise
               </span>
               <h2 className="font-heading text-3xl sm:text-5xl text-green mt-3 uppercase">
@@ -193,7 +193,7 @@ export default function SchoolFundraisingPage() {
                   key={line}
                   className="flex items-start gap-2 text-charcoal-light/80"
                 >
-                  <CheckCircle2 className="w-4 h-4 text-lime shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-green shrink-0 mt-0.5" />
                   <span>{line}</span>
                 </div>
               ))}
@@ -241,7 +241,7 @@ export default function SchoolFundraisingPage() {
         <section className="py-20 sm:py-24 bg-cream-dark/30">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 max-w-2xl mx-auto">
-              <span className="eyebrow eyebrow--dark">
+              <span className="eyebrow">
                 One Day, Real Impact
               </span>
               <h2 className="font-heading text-3xl sm:text-5xl text-green mt-3 uppercase">
@@ -317,7 +317,7 @@ export default function SchoolFundraisingPage() {
         <section className="py-20 sm:py-24 bg-cream-dark/30">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 max-w-2xl mx-auto">
-              <span className="eyebrow eyebrow--dark">
+              <span className="eyebrow">
                 The Real Thing
               </span>
               <h2 className="font-heading text-3xl sm:text-5xl text-green mt-3 uppercase">
@@ -362,7 +362,7 @@ export default function SchoolFundraisingPage() {
         <section className="py-20 sm:py-24 bg-green-dark">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10 max-w-2xl mx-auto">
-              <span className="eyebrow">
+              <span className="eyebrow eyebrow--dark">
                 See It In Action
               </span>
               <h2 className="font-heading text-3xl sm:text-5xl text-white mt-3 uppercase">
@@ -392,7 +392,7 @@ export default function SchoolFundraisingPage() {
         <section id="enquire" className="py-20 sm:py-28 bg-green-dark">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10">
-              <span className="eyebrow">
+              <span className="eyebrow eyebrow--dark">
                 Lock It In
               </span>
               <h2 className="font-heading text-3xl sm:text-5xl text-white mt-3 uppercase">
@@ -416,7 +416,7 @@ export default function SchoolFundraisingPage() {
                   href="https://wa.me/27609615091"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-green hover:text-green font-semibold underline"
+                  className="text-lime hover:text-lime font-semibold underline"
                 >
                   WhatsApp us on +27 60 961 5091
                 </a>

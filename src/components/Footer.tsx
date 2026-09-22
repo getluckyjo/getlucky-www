@@ -7,7 +7,6 @@ const challengeLinks = [
   { href: "/#prizes", label: "Prizes" },
   { href: "/#membership", label: "Membership — R149/mo" },
   { href: "/#courses", label: "Find a Course" },
-  { href: ROUTES.buyVoucher, label: "Buy a Swing" },
 ];
 
 const partnerLinks = [
@@ -18,8 +17,6 @@ const partnerLinks = [
   { href: ROUTES.tours, label: "Golf Tour Operators", external: false },
   { href: ROUTES.partner, label: "Become a Partner Course", external: false },
   { href: SITE.simulator, label: "Golf Simulator", external: true },
-  { href: "https://golfdaypro.co.za", label: "Golf Day Pro", external: true },
-  { href: "https://golfsitepro.co.za", label: "Golf Site Pro", external: true },
 ];
 
 const linkClass = "text-white/75 hover:text-lime text-sm transition-colors";

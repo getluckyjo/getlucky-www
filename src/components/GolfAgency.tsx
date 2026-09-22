@@ -3,8 +3,6 @@ import { SITE } from "@/lib/constants";
 import {
   Target,
   Tv,
-  Globe,
-  CalendarCheck,
   Sparkles,
   Users,
   Clock,
@@ -43,22 +41,6 @@ const platforms = [
     description:
       "A high-energy YouTube series where top SA celebrities take 100 shots to ace a hole-in-one for charity. Hosted by Nick Hamman. Sponsor integration across signage, apparel, digital overlays, and natural host callouts.",
     highlights: ["Celebrity-driven reach", "Multi-platform distribution", "Charity brand alignment"],
-  },
-  {
-    icon: Globe,
-    name: "Golf Site Pro",
-    type: "Golf Club Digital Platform",
-    description:
-      "AI-powered websites for SA golf clubs — free, mobile-optimised, and live within 24 hours. Gives brands a digital presence across SA's golf club network with banner placements, sponsored content, and integrated promotions.",
-    highlights: ["420+ club network", "Digital ad placements", "Golfer audience data"],
-  },
-  {
-    icon: CalendarCheck,
-    name: "Golf Day Pro",
-    type: "Event & Booking Platform",
-    description:
-      "The cloud-based platform powering golf day bookings across South Africa. From corporate days to charity events — sponsors reach golfers at the point of booking with branded confirmations, event partnerships, and pre-round promotions.",
-    highlights: ["Event sponsor integration", "Corporate golf day reach", "Booking-level targeting"],
   },
   {
     icon: Sparkles,
@@ -114,19 +96,20 @@ const brandBenefits = [
   {
     icon: Network,
     title: "Multi-Touchpoint Campaigns",
-    text: "Brand recall compounds when your message lands across the round, the booking, and the content. One plan, consolidated reporting — no agency-of-record juggling.",
+    text: "Brand recall compounds when your message lands across the round, the content, and the campaign. One plan, consolidated reporting — no agency-of-record juggling.",
   },
   {
     icon: Trophy,
     title: "SA's Only Integrated Golf Agency",
-    text: "No other agency in South Africa packages on-course activations, digital content, club technology, and event management into a single offering. We own the infrastructure.",
+    text: "No other agency in South Africa packages on-course activations, digital content, and bespoke campaigns into a single offering. We own the infrastructure.",
   },
 ];
 
 type Props = {
   /**
-   * "section" (default) — renders the existing mailto CTA block. Used when
-   * GolfAgency is embedded on the homepage as a scroll-to section.
+   * "section" (default) — renders the mailto CTA block, for embedding the
+   * agency pitch inside another page. Not used on the homepage any more;
+   * the agency lives on its own page.
    * "page" — replaces the mailto CTA with anchor links to "#enquire" so the
    * dedicated /agency page can scroll to its inline form instead of opening
    * the visitor's mail client (much higher conversion for paid traffic).
@@ -172,10 +155,10 @@ export default function GolfAgency({ variant = "section" }: Props) {
             <span className="text-lime"> Golf Agency</span>
           </h2>
           <p className="text-white/70 mt-4 max-w-2xl mx-auto">
-            South Africa&apos;s only integrated golf marketing platform. Five
+            South Africa&apos;s only integrated golf marketing platform. Three
             channels. One premium audience. Reach the golfers that matter — on
-            the course, on screen, at booking, across club websites, and
-            through bespoke campaigns built end-to-end.
+            the course, on screen, and through bespoke campaigns built
+            end-to-end.
           </p>
         </div>
 
@@ -199,11 +182,11 @@ export default function GolfAgency({ variant = "section" }: Props) {
 
         {/* Platforms */}
         <div className="mb-20">
-          <h3 className="text-white text-lg font-bold text-center mb-3 uppercase tracking-wider">
+          <h3 className="font-heading text-2xl sm:text-3xl text-white text-center mb-3">
             Our Platforms
           </h3>
           <p className="text-white/60 text-sm text-center mb-10 max-w-lg mx-auto">
-            Five channels. One golfer journey.
+            Three channels. One golfer journey.
           </p>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -247,7 +230,7 @@ export default function GolfAgency({ variant = "section" }: Props) {
 
         {/* Brands we've worked with */}
         <div className="mb-20">
-          <h3 className="text-white text-lg font-bold text-center mb-3 uppercase tracking-wider">
+          <h3 className="font-heading text-2xl sm:text-3xl text-white text-center mb-3">
             Brands We&apos;ve Worked With
           </h3>
           <p className="text-white/60 text-sm text-center mb-10 max-w-lg mx-auto">
@@ -265,7 +248,7 @@ export default function GolfAgency({ variant = "section" }: Props) {
 
         {/* Why brands choose golf */}
         <div className="mb-16">
-          <h3 className="text-white text-lg font-bold text-center mb-3 uppercase tracking-wider">
+          <h3 className="font-heading text-2xl sm:text-3xl text-white text-center mb-3">
             Why Brands Choose Golf
           </h3>
           <p className="text-white/60 text-sm text-center mb-10 max-w-lg mx-auto">
@@ -294,7 +277,7 @@ export default function GolfAgency({ variant = "section" }: Props) {
 
         {/* Leadership */}
         <div className="mb-20">
-          <h3 className="text-white text-lg font-bold text-center mb-3 uppercase tracking-wider">
+          <h3 className="font-heading text-2xl sm:text-3xl text-white text-center mb-3">
             Meet the Team
           </h3>
           <p className="text-white/60 text-sm text-center mb-10 max-w-lg mx-auto">

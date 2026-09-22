@@ -7,7 +7,6 @@ import {
   MapPin,
   ArrowRight,
 } from "lucide-react";
-import { ROUTES } from "@/lib/constants";
 
 /**
  * Landing-page pillars — one per product we offer. Each explains the offering
@@ -45,8 +44,9 @@ const PILLARS = [
 
 /**
  * Homepage hero in the app's V2 language: the course photo under the app's
- * scrim, the vector Hole-in-1 Challenge lockup, one Poster Gothic line, one
- * lime button, and the four product pillars as white cards. The Indwe strip
+ * scrim, the vector Hole-in-1 Challenge lockup, one Poster Gothic line, and
+ * the four product pillars as white cards. Swings are bought at the tee box
+ * through the QR form, so there is no buy button here. The Indwe strip
  * stays along the bottom, as on the app's landing screen.
  */
 export default function Hero() {
@@ -89,16 +89,11 @@ export default function Hero() {
               </span>
             </h1>
 
-            <p className="fade-up-2 mt-4 sm:mt-5 text-white text-lg sm:text-2xl leading-snug drop-shadow-[0_1px_12px_rgba(0,0,0,0.3)]">
+            <p className="fade-up-2 mt-4 sm:mt-5 mb-10 sm:mb-14 text-white text-lg sm:text-2xl leading-snug drop-shadow-[0_1px_12px_rgba(0,0,0,0.3)]">
               Choose a par 3. Back yourself.{" "}
               <strong className="font-bold">Win up to R1 Million.</strong>
             </p>
 
-            <div className="fade-up-3 mt-7 sm:mt-9 mb-10 sm:mb-14 flex justify-center">
-              <Link href={ROUTES.buyVoucher} className="btn-lime btn-lime--dark">
-                Buy a Swing
-              </Link>
-            </div>
 
             {/* Product pillars — one CTA per offering */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-md sm:max-w-2xl lg:max-w-5xl mx-auto">
@@ -112,7 +107,7 @@ export default function Hero() {
                     {...(isExternal
                       ? { target: "_blank", rel: "noopener noreferrer" }
                       : {})}
-                    className={`fade-up-${Math.min(i + 1, 4)} group card--glass flex flex-col items-center text-center gap-2 px-4 py-5 transition-transform hover:-translate-y-0.5 last:odd:col-span-2 last:odd:max-w-[calc(50%-0.375rem)] last:odd:mx-auto lg:last:odd:col-span-1 lg:last:odd:max-w-none`}
+                    className={`fade-up-${Math.min(i + 1, 4)} group card--glass flex flex-col items-center justify-start text-center gap-2 px-4 py-5 transition-transform hover:-translate-y-0.5 last:odd:col-span-2 last:odd:max-w-[calc(50%-0.375rem)] last:odd:mx-auto lg:last:odd:col-span-1 lg:last:odd:max-w-none`}
                   >
                     <span className="icon-disc">
                       <Icon className="h-5 w-5" strokeWidth={2.25} />
@@ -123,7 +118,7 @@ export default function Hero() {
                     <span className="text-green/80 text-xs leading-snug">
                       {pillar.blurb}
                     </span>
-                    <span className="mt-1 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-green opacity-0 transition-opacity group-hover:opacity-100">
+                    <span className="mt-auto pt-2 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-green/70 transition-colors group-hover:text-green">
                       Learn more <ArrowRight className="h-3 w-3" />
                     </span>
                   </Link>

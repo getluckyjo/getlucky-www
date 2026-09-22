@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   description:
     "Buy a swing voucher from R50, play the signature par-3 at any of our partner courses, and walk away with up to R1,000,000 if you sink a hole-in-one. Insured by Indwe Risk Services.",
   alternates: { canonical: "/buy-a-swing" },
+  // Swings are sold at the tee box through the QR form; this page is no
+  // longer linked from the site and stays only for old links and the
+  // /buyswingvoucher redirect.
+  robots: { index: false, follow: false },
 };
 
 export default function BuyASwingPage() {
