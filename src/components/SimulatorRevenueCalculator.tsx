@@ -49,11 +49,11 @@ export default function SimulatorRevenueCalculator() {
             <div className="rounded-2xl border-2 border-green bg-green/5 p-5">
               <p className="font-heading text-2xl text-green">
                 R{SIMULATOR_ENTRY}{" "}
-                <span className="text-sm font-sans text-charcoal-light/70">
+                <span className="text-sm font-sans text-muted">
                   for 3 shots
                 </span>
               </p>
-              <p className="text-sm text-charcoal-light/70 mt-1">
+              <p className="text-sm text-muted mt-1">
                 Players pay R{SIMULATOR_ENTRY} for 3 attempts at a{" "}
                 {SIMULATOR_PRIZE} hole-in-one — and you keep 10% of every swing.
               </p>
@@ -91,10 +91,10 @@ export default function SimulatorRevenueCalculator() {
                   className="w-20 text-center rounded-lg border border-green/15 px-3 py-2 font-semibold text-green focus:border-green focus:outline-none"
                   aria-label="Estimated swings per month (exact)"
                 />
-                <span className="text-sm text-charcoal-light/70">/ month</span>
+                <span className="text-sm text-muted">/ month</span>
               </div>
             </div>
-            <p className="text-xs text-charcoal-light/60 mt-2">
+            <p className="text-xs text-muted mt-2">
               {formatRand(SIMULATOR_ENTRY)} per swing × {swings} ={" "}
               <span className="font-semibold text-green">
                 {formatRand(breakdown.totalRevenue)}

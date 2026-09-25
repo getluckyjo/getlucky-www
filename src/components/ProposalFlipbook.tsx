@@ -93,7 +93,7 @@ export default function ProposalFlipbook() {
           onClick={goPrev}
           disabled={page === 1}
           aria-label="Previous page"
-          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed text-green rounded-full p-2 sm:p-3 shadow-md transition"
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed text-green rounded-full p-3 shadow-md transition"
         >
           <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
@@ -102,7 +102,7 @@ export default function ProposalFlipbook() {
           onClick={goNext}
           disabled={page === TOTAL_PAGES}
           aria-label="Next page"
-          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed text-green rounded-full p-2 sm:p-3 shadow-md transition"
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed text-green rounded-full p-3 shadow-md transition"
         >
           <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>

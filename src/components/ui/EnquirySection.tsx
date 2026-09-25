@@ -26,7 +26,7 @@ export default function EnquirySection({
   children: ReactNode;
 }) {
   return (
-    <section id={id} className="section bg-paper scroll-mt-24">
+    <section id={id} className="section bg-paper">
       <div className="wrap grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-12 lg:gap-16 items-start">
         <div className="reveal lg:sticky lg:top-28">
           <span className="kicker">{kicker}</span>

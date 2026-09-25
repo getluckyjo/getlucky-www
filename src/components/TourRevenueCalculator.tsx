@@ -50,7 +50,7 @@ export default function TourRevenueCalculator() {
                 1. Entries Sold Per Tour
               </h3>
             </div>
-            <p className="text-xs text-charcoal-light/60 mb-4">
+            <p className="text-xs text-muted mb-4">
               Entries are R100 each for a shot at {PRIZE_LABEL}. Most golfers
               take two or three across a tour — 20 golfers easily means 40–60
               entries.
@@ -78,10 +78,10 @@ export default function TourRevenueCalculator() {
                   className="w-20 text-center rounded-lg border border-green/15 px-3 py-2 font-semibold text-green focus:border-green focus:outline-none"
                   aria-label="Entries sold per tour (exact)"
                 />
-                <span className="text-sm text-charcoal-light/70">entries</span>
+                <span className="text-sm text-muted">entries</span>
               </div>
             </div>
-            <p className="text-xs text-charcoal-light/60 mt-2">
+            <p className="text-xs text-muted mt-2">
               R100 per entry × {entries} ={" "}
               <span className="font-semibold text-green">
                 {formatRand(breakdown.revenuePerTour)}
@@ -121,7 +121,7 @@ export default function TourRevenueCalculator() {
                   className="w-20 text-center rounded-lg border border-green/15 px-3 py-2 font-semibold text-green focus:border-green focus:outline-none"
                   aria-label="Tours per year (exact)"
                 />
-                <span className="text-sm text-charcoal-light/70">tours</span>
+                <span className="text-sm text-muted">tours</span>
               </div>
             </div>
           </div>

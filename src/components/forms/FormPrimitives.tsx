@@ -25,14 +25,14 @@ export function Field({
     <div className="block">
       <label
         htmlFor={name}
-        className="block text-[11px] font-bold uppercase tracking-[0.1em] text-green/70 mb-2"
+        className="block text-[11px] font-bold uppercase tracking-[0.1em] text-green mb-2"
       >
         {label}
         {required && <span className="text-green ml-1">*</span>}
       </label>
       {children}
       {hint && !error && (
-        <span id={hintId} className="block mt-1.5 text-xs text-green/60">{hint}</span>
+        <span id={hintId} className="block mt-1.5 text-xs text-muted">{hint}</span>
       )}
       {error && (
         <span id={errorId} className="block mt-1.5 text-xs text-red font-semibold" role="alert">
@@ -213,7 +213,7 @@ export function RadioGroup({
             <div>
               <span className="block text-sm font-semibold text-green">{o.label}</span>
               {o.sublabel && (
-                <span className="block text-xs text-green/70 mt-0.5">{o.sublabel}</span>
+                <span className="block text-xs text-muted mt-0.5">{o.sublabel}</span>
               )}
             </div>
           </label>

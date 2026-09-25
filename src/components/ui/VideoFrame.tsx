@@ -17,7 +17,7 @@ function clock(seconds: number): string {
  */
 export default function VideoFrame({
   src = "/images/golf-day-video.mp4",
-  poster = "/images/golf-day/video-poster.png",
+  poster = "/images/golf-day/video-poster.webp",
   label = "A day with Get Lucky",
 }: {
   src?: string;

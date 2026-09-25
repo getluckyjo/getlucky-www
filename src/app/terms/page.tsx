@@ -14,7 +14,7 @@ const H2 = "text-[19px] sm:text-[21px] font-semibold tracking-[-0.015em] text-in
 const H3 = "mt-8 text-[15px] font-semibold text-ink";
 const P = "mt-4 text-[15px] leading-relaxed text-muted";
 const UL = "mt-4 space-y-2.5 pl-5 list-disc marker:text-green/50 text-[15px] leading-relaxed text-muted";
-const SECTION = "py-10 first:pt-0 last:pb-0 scroll-mt-28";
+const SECTION = "py-10 first:pt-0 last:pb-0";
 
 const TOC = [
   { id: "definitions", n: "1", label: "Definitions" },

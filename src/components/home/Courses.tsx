@@ -47,7 +47,7 @@ export default function Courses() {
   );
 
   return (
-    <section id="courses" className="section bg-paper scroll-mt-20">
+    <section id="courses" className="section bg-paper">
       <div className="wrap">
         <SectionHeader
           kicker="Partner courses"
@@ -68,7 +68,7 @@ export default function Courses() {
                 type="button"
                 aria-pressed={on}
                 onClick={() => setRegion(r)}
-                className={`shrink-0 rounded-full px-4 py-2 text-[13px] font-semibold transition-colors ${
+                className={`shrink-0 min-h-11 rounded-full px-4 py-2 text-[13px] font-semibold transition-colors ${
                   on
                     ? "bg-ink text-white"
                     : "bg-white text-ink/70 border border-line hover:border-line-strong hover:text-ink"
@@ -95,14 +95,16 @@ export default function Courses() {
                   sizes="(max-width: 640px) 75vw, (max-width: 1024px) 33vw, 25vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-night/85 via-night/15 to-transparent" />
-                <ArrowUpRight className="absolute top-3 right-3 w-8 h-8 p-2 rounded-full bg-white/90 text-ink opacity-0 -translate-y-1 transition-all group-hover:opacity-100 group-hover:translate-y-0" />
+                <ArrowUpRight className="absolute top-3 right-3 w-8 h-8 p-2 rounded-full bg-white/90 text-ink transition-all sm:opacity-0 sm:-translate-y-1 sm:group-hover:opacity-100 sm:group-hover:translate-y-0" />
                 <div className="absolute inset-x-0 bottom-0 p-4">
                   <p className="text-white text-[15px] font-semibold leading-tight">
                     {club.name}
                   </p>
-                  <p className="text-white/65 text-[12px] flex items-center gap-1 mt-1">
+                  <p className="text-white/70 text-[12px] flex items-center gap-1 mt-1">
                     <MapPin className="w-3 h-3" />
                     {club.region}
+                    <span className="text-white/45">·</span>
+                    <span className="text-lime">Join · R149/mo</span>
                   </p>
                 </div>
               </a>

@@ -117,7 +117,7 @@ export default function GolfToursPage() {
             { value: "R100K", label: "Prize on every tour" },
             { value: "R100", label: "Per entry" },
             { value: "20%", label: "Commission to you" },
-            { value: "150m+", label: "Any SA par-3 qualifies" },
+            { value: "150", label: "Metres or longer: any SA par-3 qualifies" },
           ]}
         />
 

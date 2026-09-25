@@ -11,7 +11,7 @@ const challengeLinks = [
   { href: "/#courses", label: "Find a course" },
 ];
 
-const linkClass = "text-white/60 hover:text-white text-[14px] transition-colors";
+const linkClass = "inline-block py-1.5 text-white/60 hover:text-white text-[14px] transition-colors";
 
 /**
  * The footer on the night panel: the brand and ways to reach us, then the
@@ -37,7 +37,7 @@ export default function Footer() {
               {SITE.description}
             </p>
             <div className="mt-7 flex flex-wrap gap-2">
-              <a href={`mailto:${SITE.email}`} className="chip chip--dark hover:bg-white/15">
+              <a href={`mailto:${SITE.email}`} className="chip chip--dark min-h-11 hover:bg-white/15">
                 <Mail className="w-3.5 h-3.5" />
                 Email us
               </a>
@@ -45,7 +45,7 @@ export default function Footer() {
                 href={SITE.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="chip chip--dark hover:bg-white/15"
+                className="chip chip--dark min-h-11 hover:bg-white/15"
               >
                 <MessageCircle className="w-3.5 h-3.5" />
                 WhatsApp
@@ -54,7 +54,7 @@ export default function Footer() {
                 href={SITE.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="chip chip--dark hover:bg-white/15"
+                className="chip chip--dark min-h-11 hover:bg-white/15"
               >
                 @getluckygolfclub
               </a>
@@ -63,10 +63,10 @@ export default function Footer() {
 
           {/* Challenge */}
           <div className="lg:col-span-2">
-            <h4 className="text-[12px] font-semibold uppercase tracking-[0.14em] text-white/40">
+            <h4 className="text-[12px] font-semibold uppercase tracking-[0.14em] text-white/60">
               The challenge
             </h4>
-            <ul className="mt-5 space-y-3">
+            <ul className="mt-4 space-y-1">
               {challengeLinks.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className={linkClass}>
@@ -79,10 +79,10 @@ export default function Footer() {
 
           {/* Solutions */}
           <div className="lg:col-span-3">
-            <h4 className="text-[12px] font-semibold uppercase tracking-[0.14em] text-white/40">
+            <h4 className="text-[12px] font-semibold uppercase tracking-[0.14em] text-white/60">
               Solutions
             </h4>
-            <ul className="mt-5 space-y-3">
+            <ul className="mt-4 space-y-1">
               {SOLUTIONS.map((s) => (
                 <li key={s.href}>
                   <Link href={s.href} className={linkClass}>
@@ -95,10 +95,10 @@ export default function Footer() {
 
           {/* Contact */}
           <div className="col-span-2 lg:col-span-3">
-            <h4 className="text-[12px] font-semibold uppercase tracking-[0.14em] text-white/40">
+            <h4 className="text-[12px] font-semibold uppercase tracking-[0.14em] text-white/60">
               Contact
             </h4>
-            <ul className="mt-5 space-y-3">
+            <ul className="mt-4 space-y-1">
               <li>
                 <a href={`mailto:${SITE.email}`} className={`${linkClass} break-all`}>
                   {SITE.email}
@@ -110,7 +110,7 @@ export default function Footer() {
                 </a>
               </li>
             </ul>
-            <p className="mt-6 text-[13px] text-white/45 leading-relaxed max-w-xs">
+            <p className="mt-6 text-[13px] text-white/55 leading-relaxed max-w-xs">
               All prizes underwritten by Indwe Risk Services, an Authorised
               Financial Services Provider (FSP 3425).
             </p>
@@ -118,7 +118,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-white/45 text-[13px]">
+          <p className="text-white/55 text-[13px]">
             &copy; {new Date().getFullYear()} Get Lucky Golf Club (Pty) Ltd. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
@@ -131,7 +131,7 @@ export default function Footer() {
                 key={link.href}
                 href={link.href}
                 {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                className="text-white/45 hover:text-white text-[13px] transition-colors"
+                className="text-white/55 hover:text-white text-[13px] transition-colors"
               >
                 {link.label}
               </a>

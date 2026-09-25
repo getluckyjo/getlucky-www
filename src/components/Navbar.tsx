@@ -35,6 +35,10 @@ export default function Navbar() {
   const [solutionsOpen, setSolutionsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const solutionsButton = useRef<HTMLButtonElement>(null);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const sheet = useRef<HTMLDivElement>(null);
+  const wasOpen = useRef(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   // When hover has just opened the menu, the click that follows must not
   // toggle it shut again.
@@ -59,12 +63,49 @@ export default function Navbar() {
     };
   }, [open]);
 
-  // Escape closes whichever menu is open; a click outside closes Solutions.
+  // The phone sheet is modal: focus moves into it on open, Tab cycles
+  // inside it, and focus returns to the menu button when it closes.
+  useEffect(() => {
+    if (open) {
+      wasOpen.current = true;
+      sheet.current?.querySelector<HTMLElement>("button, a")?.focus();
+      const trap = (e: KeyboardEvent) => {
+        if (e.key !== "Tab" || !sheet.current) return;
+        const items = Array.from(
+          sheet.current.querySelectorAll<HTMLElement>("a[href], button:not([disabled])"),
+        );
+        if (items.length === 0) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      };
+      document.addEventListener("keydown", trap);
+      return () => document.removeEventListener("keydown", trap);
+    }
+    if (wasOpen.current) {
+      wasOpen.current = false;
+      menuButton.current?.focus();
+    }
+  }, [open]);
+
+  // Escape closes whichever menu is open (and hands focus back to the
+  // Solutions button if focus was inside it); a click outside closes it.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setOpen(false);
-        setSolutionsOpen(false);
+        setSolutionsOpen((wasSolutionsOpen) => {
+          if (wasSolutionsOpen && menuRef.current?.contains(document.activeElement)) {
+            solutionsButton.current?.focus();
+          }
+          return false;
+        });
       }
     };
     const onClick = (e: MouseEvent) => {
@@ -108,7 +149,9 @@ export default function Navbar() {
     <header className="fixed inset-x-0 top-0 z-50 px-3 sm:px-5 pt-3">
       <nav
         aria-label="Main navigation"
-        className={`mx-auto max-w-[1200px] h-[60px] rounded-full border backdrop-blur-xl backdrop-saturate-150 transition-colors duration-300 ${bar}`}
+        className={`mx-auto max-w-[1200px] h-[60px] rounded-full border backdrop-blur-xl backdrop-saturate-150 transition-colors duration-300 ${bar} ${
+          dark ? "on-dark" : ""
+        }`}
       >
         <div className="h-full flex items-center justify-between pl-3 pr-2 sm:pl-4">
           <Link href="/" className="flex items-center shrink-0" aria-label="Get Lucky Golf Club home">
@@ -142,8 +185,15 @@ export default function Navbar() {
               className="relative"
               onMouseEnter={openSolutions}
               onMouseLeave={closeSolutionsSoon}
+              onBlur={(e) => {
+                // Tabbing out of the menu closes it.
+                if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+                  setSolutionsOpen(false);
+                }
+              }}
             >
               <button
+                ref={solutionsButton}
                 type="button"
                 onClick={toggleSolutions}
                 aria-expanded={solutionsOpen}
@@ -213,10 +263,11 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Link href={ROUTES.corporate} className="btn-lime btn-lime--sm hidden sm:inline-flex">
+            <Link href={ROUTES.corporate} className="btn-lime btn-lime--sm hidden sm:inline-flex whitespace-nowrap">
               Book a golf day
             </Link>
             <button
+              ref={menuButton}
               type="button"
               onClick={() => setOpen(true)}
               className={`lg:hidden w-11 h-11 rounded-full flex items-center justify-center transition-colors ${
@@ -242,6 +293,7 @@ export default function Navbar() {
             onClick={() => setOpen(false)}
           />
           <div
+            ref={sheet}
             id="site-menu"
             className="nav-sheet absolute inset-x-2 top-2 bottom-2 rounded-[28px] bg-paper text-ink flex flex-col overflow-hidden shadow-2xl"
           >
@@ -301,6 +353,23 @@ export default function Navbar() {
                   </li>
                 ))}
               </ul>
+              <a
+                href={INDWE_QUOTE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 flex items-center gap-3 rounded-2xl bg-white border border-line p-4"
+              >
+                <span className="icon-disc w-10 h-10 rounded-xl">
+                  <ShieldCheck className="w-[18px] h-[18px]" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[15px] font-semibold">Get an insurance quote</span>
+                  <span className="block text-[13px] text-muted leading-snug">
+                    An Indwe quote unlocks 12 months&apos; membership free.
+                  </span>
+                </span>
+                <ArrowUpRight className="w-4 h-4 text-ink/40 shrink-0" />
+              </a>
             </div>
 
             <div className="shrink-0 border-t border-line p-4 grid grid-cols-2 gap-2 bg-white">

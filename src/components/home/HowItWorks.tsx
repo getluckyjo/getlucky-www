@@ -45,7 +45,7 @@ const steps = [
  */
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="section bg-white scroll-mt-20">
+    <section id="how-it-works" className="section bg-white">
       <div className="wrap">
         <SectionHeader
           kicker="How it works"

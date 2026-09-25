@@ -35,7 +35,7 @@ const freePerks = [
  */
 export default function Membership() {
   return (
-    <section id="membership" className="section bg-white scroll-mt-20">
+    <section id="membership" className="section bg-white">
       <div className="wrap">
         <SectionHeader
           kicker="Membership"
@@ -80,19 +80,19 @@ export default function Membership() {
               ))}
             </ul>
 
-            <dl className="relative mt-10 lg:mt-auto flex flex-wrap gap-x-6 gap-y-4 border-t border-white/10 pt-6">
+            <dl className="relative mt-10 lg:mt-auto grid grid-cols-3 border-t border-white/10 pt-6">
               {[
                 { v: "∞", l: "Swings a month" },
-                { v: "R100K", l: "Per hole-in-one" },
+                { v: "R100K", l: "Per hole\u2011in\u2011one" },
                 { v: "None", l: "Lock-in contract" },
               ].map((s, i) => (
                 <div
                   key={s.l}
-                  className={`flex flex-col-reverse justify-end ${i > 0 ? "pl-6 border-l border-white/10" : ""}`}
+                  className={`flex flex-col-reverse justify-end min-w-0 ${i > 0 ? "pl-3 sm:pl-5 border-l border-white/10" : "pr-3"}`}
                 >
-                  <dt className="mt-1.5 text-[12px] text-white/55 whitespace-nowrap">{s.l}</dt>
+                  <dt className="mt-1.5 text-[12px] leading-snug text-white/60">{s.l}</dt>
                   <dd
-                    className={`font-heading text-[clamp(1.5rem,6vw,1.875rem)] leading-none ${
+                    className={`font-heading text-[clamp(1.25rem,5.5vw,1.875rem)] leading-none ${
                       s.v === "R100K" ? "text-gold" : "text-white"
                     }`}
                   >
@@ -114,7 +114,7 @@ export default function Membership() {
           {/* Sponsor offer */}
           <div
             id="quote"
-            className="reveal relative rounded-3xl border border-line bg-paper p-7 sm:p-10 flex flex-col scroll-mt-24"
+            className="reveal relative rounded-3xl border border-line bg-paper p-7 sm:p-10 flex flex-col"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <span className="chip-lime chip-lime--flag">

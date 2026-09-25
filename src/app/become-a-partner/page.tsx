@@ -76,7 +76,7 @@ export default function BecomeAPartnerPage() {
         {/* The proposal */}
         <section
           id="proposal"
-          className="section bg-white scroll-mt-24"
+          className="section bg-white"
           aria-labelledby="proposal-title"
         >
           <div className="wrap grid lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] gap-10 lg:gap-16 items-center">

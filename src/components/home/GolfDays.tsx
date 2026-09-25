@@ -43,7 +43,7 @@ const benefits = [
  */
 export default function GolfDays() {
   return (
-    <section id="corporate" className="section bg-white scroll-mt-20">
+    <section id="corporate" className="section bg-white">
       <div className="wrap">
         <SectionHeader
           kicker="Premium golf activations"
