@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArrowRight, Check } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import IndweBannerStrip from "@/components/IndweBannerStrip";
 import { ROUTES } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -20,63 +22,39 @@ export default async function VoucherSuccessPage({
   return (
     <>
       <Navbar />
-      <main className="pt-20 sm:pt-24">
-        <section className="bg-cream min-h-[60vh]">
-          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-            <div className="w-16 h-16 rounded-full bg-green text-white mx-auto flex items-center justify-center mb-6">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="3"
-                className="w-8 h-8"
-                aria-hidden
-              >
-                <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-            <h1 className="font-heading text-4xl sm:text-5xl text-green uppercase mb-4">
-              Payment Received
-            </h1>
-            <p className="text-base sm:text-lg text-charcoal-light/80 leading-relaxed mb-2">
-              Your swing voucher is on its way. Look out for a confirmation email
-              within the next few minutes.
-            </p>
-            {ref && (
-              <p className="text-sm text-charcoal-light/60 mt-4">
-                Reference:{" "}
-                <span className="font-mono text-green font-semibold">{ref}</span>
+      <main>
+        <section className="bg-paper pt-32 sm:pt-40 pb-20 sm:pb-28">
+          <div className="wrap">
+            <div className="card max-w-xl mx-auto px-6 py-10 sm:p-12 text-center">
+              <span className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-green text-white ring-8 ring-green/10">
+                <Check className="w-7 h-7" strokeWidth={3} aria-hidden />
+              </span>
+              <h1 className="display-md text-ink mt-7">Payment received</h1>
+              <p className="mt-4 text-[16px] leading-relaxed text-muted">
+                Your swing voucher is on its way. Look out for a confirmation email
+                within the next few minutes.
               </p>
-            )}
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-              <Link
-                href={ROUTES.home}
-                className="btn-lime"
-              >
-                Back to Home
-              </Link>
-              <Link
-                href={ROUTES.buyVoucher}
-                className="btn-outline"
-              >
-                Buy Another
-              </Link>
-            </div>
-
-            {/* Indwe sponsor banner */}
-            <div className="mt-12 sm:mt-16">
-              <div className="card rounded-xl overflow-hidden bg-white card--hover">
-                <iframe
-                  src="/indwe-banner/index.html"
-                  title="Indwe Risk Services — Headline Sponsor"
-                  loading="lazy"
-                  className="w-full block border-0"
-                  style={{ aspectRatio: "1600 / 333", minHeight: "170px" }}
-                />
+              {ref && (
+                <p className="mt-6 inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-full bg-paper border border-line px-4 py-2 text-[13px] text-muted">
+                  Reference:
+                  <span className="font-mono text-green font-semibold break-all">{ref}</span>
+                </p>
+              )}
+              <div className="mt-9 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
+                <Link href={ROUTES.home} className="btn-lime">
+                  Back to home
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link href={ROUTES.buyVoucher} className="btn-outline">
+                  Buy another
+                </Link>
               </div>
             </div>
           </div>
         </section>
+
+        {/* Indwe sponsor banner */}
+        <IndweBannerStrip src="/indwe-banner/index.html" />
       </main>
       <Footer />
     </>

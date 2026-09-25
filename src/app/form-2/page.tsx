@@ -43,7 +43,7 @@ export default function Form2Page() {
       {/* Form panel */}
       <div className="max-w-md mx-auto px-4 pb-8">
         <div className="text-center mb-6">
-          <span className="eyebrow">
+          <span className="eyebrow eyebrow--dark">
             Sponsored Entry
           </span>
           <h1 className="font-heading text-2xl sm:text-3xl text-white uppercase mt-2 drop-shadow-md">

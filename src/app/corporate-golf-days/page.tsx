@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import SectionTexture from "@/components/SectionTexture";
 import CorporateForm from "@/components/forms/CorporateForm";
 import GolfDayCalculator from "@/components/GolfDayCalculator";
 import IndweBannerStrip from "@/components/IndweBannerStrip";
+import PageHero from "@/components/ui/PageHero";
+import EnquirySection from "@/components/ui/EnquirySection";
+import {
+  CalculatorSection,
+  IncludedSection,
+  ShowcaseSection,
+} from "@/components/ui/ServiceSections";
+import { GOLF_DAY_PHOTOS } from "@/lib/golfDayPhotos";
 import {
   Trophy,
   Camera,
@@ -13,8 +19,6 @@ import {
   Megaphone,
   Sparkles,
   Wine,
-  Shield,
-  CheckCircle2,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -32,22 +36,22 @@ const INCLUDED = [
   },
   {
     icon: Camera,
-    title: "4G Solar Cameras",
+    title: "4G solar cameras",
     body: "Two solar-powered 4G cameras on the par-3 capture every swing. Instant verification of a hole-in-one, plus shareable highlights for your team and sponsors.",
   },
   {
     icon: Aperture,
-    title: "Photography & Video",
+    title: "Photography & video",
     body: "Optional pro photographer and videographer covering the activation and the field — a polished highlight reel and a library of shareable shots after the day.",
   },
   {
     icon: Megaphone,
-    title: "Promotional Team",
+    title: "Promotional team",
     body: "Branded Get Lucky promoters on the tee — hyping golfers, explaining the challenge, driving participation and creating energy on the hole.",
   },
   {
     icon: Sparkles,
-    title: "Merch & Co-Branding",
+    title: "Merch & co-branding",
     body: "Get Lucky merchandise on the activation, plus full co-branding with your sponsor — flags, banners, signage and digital assets that travel after the day.",
   },
   {
@@ -62,250 +66,70 @@ export default function CorporateGolfDaysPage() {
     <>
       <Navbar />
       <main>
-        {/* HERO */}
-        <section className="relative bg-green-dark overflow-hidden pt-28 sm:pt-32 pb-20 sm:pb-28">
-          <Image
-            src="/images/golf-day/IMG_4460.jpg"
-            alt="Golfer mid-swing at the Get Lucky Hole-in-One Challenge activation"
-            fill
-            className="object-cover object-center opacity-40"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-green-dark/70 via-green-dark/80 to-green-dark" />
-
-          <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <span className="chip-lime inline-block">
-              Mobile Corporate Activation · Anywhere in South Africa
-            </span>
-
-            <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl text-white mt-6 uppercase leading-[0.95]">
-              Make Your Golf Day{" "}
-              <span className="text-lime">The One They Talk About For Years</span>
-            </h1>
-
-            <p className="text-base sm:text-xl text-white/80 mt-6 max-w-2xl mx-auto leading-relaxed">
+        <PageHero
+          kicker="Mobile corporate activation · Anywhere in South Africa"
+          title={
+            <>
+              Make your golf day{" "}
+              <span className="text-lime">the one they talk about for years</span>
+            </>
+          }
+          lede={
+            <>
               The Get Lucky Hole-in-One Challenge is a fully-mobile activation
               that drops onto the signature par-3 of any corporate golf day in
               South Africa. Real prizes up to{" "}
-              <span className="text-gold font-bold">R1,000,000</span>. Fully
-              insured. We run the whole thing — you play golf.
-            </p>
+              <span className="text-white font-semibold">R1,000,000</span>.
+              Fully insured. We run the whole thing — you play golf.
+            </>
+          }
+          image="/images/golf-day/IMG_4460.jpg"
+          imageAlt="Golfer mid-swing at the Get Lucky Hole-in-One Challenge activation"
+          primary={{ href: "#build", label: "Build your activation" }}
+          secondary={{ href: "#enquire", label: "Get a quote" }}
+          stats={[
+            { value: "R1M", label: "Headline prize, up to" },
+            { value: "2", label: "Solar 4G cameras on the par-3" },
+            { value: "24h", label: "From enquiry to package options" },
+            { value: "100%", label: "Setup, running & pack-down by us" },
+          ]}
+        />
 
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <a
-                href="#build"
-                className="btn-lime btn-lime--dark w-full sm:w-auto"
-              >
-                Build Your Activation
-              </a>
-              <a
-                href="#enquire"
-                className="btn-outline btn-outline--dark w-full sm:w-auto"
-              >
-                Get a Quote
-              </a>
-            </div>
-
-            {/* Trust strip */}
-            <div className="mt-10 flex items-center justify-center gap-3 text-white/60">
-              <Shield className="w-4 h-4" />
-              <p className="text-xs sm:text-sm">
-                All prizes underwritten by{" "}
-                <span className="text-white/90 font-medium">Indwe Risk Services</span>{" "}
-                · FSP 3425
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* HEADLINE SPONSOR */}
         <IndweBannerStrip src="/indwe-banner-corporate/index.html" />
 
-        {/* CALCULATOR */}
-        <section id="build" className="py-20 sm:py-28 bg-cream">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12 max-w-2xl mx-auto">
-              <span className="eyebrow">
-                Build Your Package
-              </span>
-              <h2 className="font-heading text-3xl sm:text-5xl text-green mt-3 uppercase">
-                Build Your Golf Day Activation
-              </h2>
-              <p className="text-charcoal-light/80 mt-4">
-                Pick your prize, your team, and your extras. Your live quote
-                updates as you go — no calls, no back-and-forth.
-              </p>
-            </div>
+        <CalculatorSection
+          kicker="Build your package"
+          title="Build your golf day activation"
+          lede="Pick your prize, your team, and your extras. Your live quote updates as you go — no calls, no back-and-forth."
+          checks={[
+            "Setup, teardown & on-site management included",
+            "Full Indwe prize underwriting",
+            "Custom co-branding with your sponsor",
+          ]}
+        >
+          <GolfDayCalculator />
+        </CalculatorSection>
 
-            <GolfDayCalculator />
+        <IncludedSection
+          title="Everything travels with us"
+          lede="The challenge is fully mobile. We arrive at sunrise, set up the full activation, run it for the day, and pack it down. You get the moment — and the story."
+          items={INCLUDED}
+        />
 
-            <div className="mt-8 grid sm:grid-cols-3 gap-4 text-sm">
-              {[
-                "Setup, teardown & on-site management included",
-                "Full Indwe prize underwriting",
-                "Custom co-branding with your sponsor",
-              ].map((line) => (
-                <div
-                  key={line}
-                  className="flex items-start gap-2 text-charcoal-light/80"
-                >
-                  <CheckCircle2 className="w-4 h-4 text-green shrink-0 mt-0.5" />
-                  <span>{line}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <ShowcaseSection
+          kicker="The real thing"
+          title="Moments from the tee"
+          lede="Real corporate golfers, real activations, real reactions — from corporate golf days around the country. This is what your day looks like."
+          photos={GOLF_DAY_PHOTOS}
+        />
 
-        {/* WHAT YOU GET */}
-        <section className="py-20 sm:py-28 bg-green-dark">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-14 max-w-2xl mx-auto">
-              <span className="eyebrow eyebrow--dark">
-                What&apos;s Included
-              </span>
-              <h2 className="font-heading text-3xl sm:text-5xl text-white mt-3 uppercase">
-                Everything Travels With Us
-              </h2>
-              <p className="text-white/70 mt-4">
-                The challenge is fully mobile. We arrive at sunrise, set up the
-                full activation, run it for the day, and pack it down. You get
-                the moment — and the story.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {INCLUDED.map((item) => (
-                <div
-                  key={item.title}
-                  className="bg-white/5 rounded-2xl border border-white/10 p-6 hover:border-lime/50 transition-all"
-                >
-                  <div className="icon-disc w-11 h-11 mb-4">
-                    <item.icon className="w-5 h-5" />
-                  </div>
-                  <h3 className="font-heading text-lg text-white uppercase mb-2">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm text-white/70 leading-relaxed">
-                    {item.body}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* GALLERY */}
-        <section className="py-20 sm:py-24 bg-cream-dark/30">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12 max-w-2xl mx-auto">
-              <span className="eyebrow">
-                The Real Thing
-              </span>
-              <h2 className="font-heading text-3xl sm:text-5xl text-green mt-3 uppercase">
-                Moments From The Tee
-              </h2>
-              <p className="text-charcoal-light/80 mt-4">
-                Real corporate golfers, real activations, real reactions. This
-                is what your day looks like.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-              {[
-                { src: "IMG_4634.jpg", alt: "Golfer mid-swing with Cape Town Stadium and Get Lucky gazebo", span: "lg:col-span-2 lg:row-span-2 aspect-[3/4] lg:aspect-auto" },
-                { src: "IMG_4505.jpg", alt: "Three corporate golfers with beers at the Get Lucky activation", span: "aspect-square" },
-                { src: "IMG_4432.jpg", alt: "Golfers with Get Lucky branded promoters", span: "aspect-square" },
-                { src: "IMG_4419.jpg", alt: "Golfer scanning the Get Lucky Hole-in-One Challenge signage", span: "aspect-square" },
-                { src: "IMG_4654.jpg", alt: "Golfer celebrating a shot at the activation", span: "aspect-square" },
-                { src: "IMG_4521.jpg", alt: "Golfer using a rangefinder at the par-3 challenge", span: "aspect-square" },
-                { src: "IMG_4572.jpg", alt: "Golfer on the green with the flag", span: "aspect-square" },
-                { src: "IMG_4527.jpg", alt: "Golfer mid-swing in front of the Swing It To Win It backdrop", span: "aspect-square" },
-                { src: "IMG_4274.jpg", alt: "Corporate golfers arriving at the course", span: "aspect-square" },
-              ].map((img) => (
-                <div
-                  key={img.src}
-                  className={`relative overflow-hidden rounded-xl sm:rounded-2xl bg-green-dark/5 ${img.span}`}
-                >
-                  <Image
-                    src={`/images/golf-day/${img.src}`}
-                    alt={img.alt}
-                    fill
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    className="object-cover transition-transform duration-500"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* VIDEO */}
-        <section className="py-20 sm:py-24 bg-green-dark">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-10 max-w-2xl mx-auto">
-              <span className="eyebrow eyebrow--dark">
-                See It In Action
-              </span>
-              <h2 className="font-heading text-3xl sm:text-5xl text-white mt-3 uppercase">
-                A Day With Get Lucky
-              </h2>
-              <p className="text-white/70 mt-4">
-                Real moments, real reactions, real prizes — from corporate golf
-                days around the country.
-              </p>
-            </div>
-
-            <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-              <video
-                className="w-full aspect-video bg-green-dark object-cover"
-                controls
-                preload="metadata"
-                playsInline
-                poster="/images/golf-day/video-poster.png"
-              >
-                <source src="/images/golf-day-video.mp4" type="video/mp4" />
-              </video>
-            </div>
-          </div>
-        </section>
-
-        {/* ENQUIRY FORM */}
-        <section id="enquire" className="py-20 sm:py-28 bg-green-dark relative overflow-hidden">
-          <SectionTexture src="/images/courses/clovelly.jpg" />
-          <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-10">
-              <span className="eyebrow eyebrow--dark">
-                Lock It In
-              </span>
-              <h2 className="font-heading text-3xl sm:text-5xl text-white mt-3 uppercase">
-                Request Your Activation
-              </h2>
-              <p className="text-white/70 mt-4 max-w-lg mx-auto">
-                Tell us about your day. An activation specialist will be in
-                touch within 24 hours with package options and availability.
-              </p>
-            </div>
-
-            <div className="bg-cream rounded-3xl shadow-xl p-6 sm:p-10">
-              <CorporateForm />
-            </div>
-
-            <div className="mt-8 text-center">
-              <p className="text-white/60 text-sm">
-                Prefer to chat?{" "}
-                <a
-                  href="https://wa.me/27609615091"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-lime hover:text-lime font-semibold underline"
-                >
-                  WhatsApp us on +27 60 961 5091
-                </a>
-              </p>
-            </div>
-          </div>
-        </section>
+        <EnquirySection
+          kicker="Lock it in"
+          title="Request your activation"
+          lede="Tell us about your day. An activation specialist will be in touch within 24 hours with package options and availability."
+        >
+          <CorporateForm />
+        </EnquirySection>
       </main>
       <Footer />
     </>

@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import GolfAgency from "@/components/GolfAgency";
 import AgencyForm from "@/components/forms/AgencyForm";
+import EnquirySection from "@/components/ui/EnquirySection";
 
 export const metadata: Metadata = {
   title: "The Get Lucky Golf Agency",
@@ -42,27 +43,22 @@ export default function AgencyPage() {
       <main>
         <GolfAgency variant="page" />
 
-        <section id="enquire" className="bg-cream py-20 sm:py-28">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-10">
-              <span className="eyebrow">
-                Partner Enquiry
-              </span>
-              <h2 className="font-heading text-3xl sm:text-5xl text-green mt-3 uppercase">
-                Reach the Golfer Audience
-              </h2>
-              <p className="text-base sm:text-lg text-charcoal-light/80 mt-5 leading-relaxed">
-                Tell us about your brand and what you&apos;re trying to achieve.
-                We&apos;ll send a media kit, audience data, and the right entry
-                point across our platforms and bespoke campaigns.
-              </p>
-            </div>
-
-            <div className="card bg-white rounded-3xl p-6 sm:p-10 card--hover">
-              <AgencyForm />
-            </div>
-          </div>
-        </section>
+        <EnquirySection
+          id="enquire"
+          kicker="Partner enquiry"
+          title="Reach the golfer audience"
+          lede={
+            <>
+              Tell us about your brand and what you&apos;re trying to achieve.
+              We&apos;ll send a media kit, audience data, and the right entry
+              point across our platforms and bespoke campaigns.
+            </>
+          }
+          response="An agency partner replies within 1 business day."
+          trust={false}
+        >
+          <AgencyForm />
+        </EnquirySection>
       </main>
       <Footer />
     </>
