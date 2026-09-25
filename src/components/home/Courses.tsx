@@ -12,7 +12,8 @@ const memberClubs = [
   { name: "Metropolitan Golf Club", slug: "metropolitan", region: "Cape Town", image: "/images/courses/metropolitan.jpg" },
   { name: "Clovelly Golf Club", slug: "clovelly", region: "Cape Town", image: "/images/courses/clovelly.jpg" },
   { name: "Paarl Golf Club", slug: "paarl", region: "Cape Winelands", image: "/images/courses/paarl.jpg" },
-  { name: "Boschenmeer Golf Estate", slug: "boschenmeer", region: "Cape Winelands", image: "/images/courses/boschenmeer.jpg" },
+  // The membership site has no /join/boschenmeer page yet, so this tile joins the club-wide plan.
+  { name: "Boschenmeer Golf Estate", slug: "boschenmeer", join: "get-lucky", region: "Cape Winelands", image: "/images/courses/boschenmeer.jpg" },
   { name: "Atlantic Beach Golf Estate", slug: "atlantic-beach", region: "Cape Town", image: "/images/courses/atlantic-beach.jpg" },
   { name: "Bellville Golf Club", slug: "bellville", region: "Cape Town", image: "/images/courses/bellville.jpg" },
   { name: "Durbanville Golf Club", slug: "durbanville", region: "Cape Town", image: "/images/courses/durbanville.jpg" },
@@ -46,12 +47,12 @@ export default function Courses() {
   );
 
   return (
-    <section id="courses" className="section bg-paper scroll-mt-20">
+    <section id="courses" className="section bg-paper">
       <div className="wrap">
         <SectionHeader
           kicker="Partner courses"
           title="Get Lucky partner courses"
-          lede="The challenge is live on the signature par 3 of premium courses nationwide. Pick yours and join its club."
+          lede="Every course below has the challenge live on its signature par 3. Turn up, scan the QR on the tee and swing — or tap your club to join for R149/month and swing unlimited."
         />
 
         <div
@@ -67,7 +68,7 @@ export default function Courses() {
                 type="button"
                 aria-pressed={on}
                 onClick={() => setRegion(r)}
-                className={`shrink-0 rounded-full px-4 py-2 text-[13px] font-semibold transition-colors ${
+                className={`shrink-0 min-h-11 rounded-full px-4 py-2 text-[13px] font-semibold transition-colors ${
                   on
                     ? "bg-ink text-white"
                     : "bg-white text-ink/70 border border-line hover:border-line-strong hover:text-ink"
@@ -83,7 +84,7 @@ export default function Courses() {
           {clubs.map((club) => (
             <li key={club.slug}>
               <a
-                href={`${MEMBERSHIP_JOIN_URL}/${club.slug}`}
+                href={`${MEMBERSHIP_JOIN_URL}/${"join" in club && club.join ? club.join : club.slug}`}
                 className="group relative block overflow-hidden rounded-2xl aspect-[4/5] sm:aspect-[4/3] bg-surface"
               >
                 <Image
@@ -94,14 +95,16 @@ export default function Courses() {
                   sizes="(max-width: 640px) 75vw, (max-width: 1024px) 33vw, 25vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-night/85 via-night/15 to-transparent" />
-                <ArrowUpRight className="absolute top-3 right-3 w-8 h-8 p-2 rounded-full bg-white/90 text-ink opacity-0 -translate-y-1 transition-all group-hover:opacity-100 group-hover:translate-y-0" />
+                <ArrowUpRight className="absolute top-3 right-3 w-8 h-8 p-2 rounded-full bg-white/90 text-ink transition-all sm:opacity-0 sm:-translate-y-1 sm:group-hover:opacity-100 sm:group-hover:translate-y-0" />
                 <div className="absolute inset-x-0 bottom-0 p-4">
                   <p className="text-white text-[15px] font-semibold leading-tight">
                     {club.name}
                   </p>
-                  <p className="text-white/65 text-[12px] flex items-center gap-1 mt-1">
+                  <p className="text-white/70 text-[12px] flex items-center gap-1 mt-1">
                     <MapPin className="w-3 h-3" />
                     {club.region}
+                    <span className="text-white/45">·</span>
+                    <span className="text-lime">Join · R149/mo</span>
                   </p>
                 </div>
               </a>

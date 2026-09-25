@@ -9,7 +9,7 @@ import {
   IncludedSection,
   ShowcaseSection,
 } from "@/components/ui/ServiceSections";
-import { GOLF_DAY_PHOTOS } from "@/lib/golfDayPhotos";
+import { galleryFor } from "@/lib/golfDayPhotos";
 import CharityForm from "@/components/forms/CharityForm";
 import CharityFundraisingCalculator from "@/components/CharityFundraisingCalculator";
 import {
@@ -83,8 +83,8 @@ export default function CharityGolfDaysPage() {
               underwritten by Indwe. No cost, no risk. We run it — you raise.
             </>
           }
-          image="/images/golf-day/IMG_4460.jpg"
-          imageAlt="Golfer mid-swing at the Get Lucky Hole-in-One Challenge activation"
+          image="/images/golf-day/IMG_4505.jpg"
+          imageAlt="Three golfers with beers at the Get Lucky activation"
           primary={{ href: "#build", label: "Calculate what you'll raise" }}
           secondary={{ href: "#enquire", label: "Enquire now" }}
           stats={[
@@ -120,7 +120,7 @@ export default function CharityGolfDaysPage() {
           kicker="The real thing"
           title="Moments from the tee"
           lede="Real golfers, real activations, real reactions — from golf days around the country. This is what your charity day looks like."
-          photos={GOLF_DAY_PHOTOS}
+          photos={galleryFor("IMG_4432.jpg", "IMG_4505.jpg")}
         />
 
         <EnquirySection

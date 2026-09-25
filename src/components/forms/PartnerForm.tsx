@@ -110,7 +110,7 @@ export default function PartnerForm() {
       </div>
 
       <div className="pt-2">
-        <SubmitButton pending={pending}>Send Enquiry</SubmitButton>
+        <SubmitButton pending={pending}>Send enquiry</SubmitButton>
       </div>
     </form>
   );

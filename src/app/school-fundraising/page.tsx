@@ -9,7 +9,7 @@ import {
   IncludedSection,
   ShowcaseSection,
 } from "@/components/ui/ServiceSections";
-import { GOLF_DAY_PHOTOS } from "@/lib/golfDayPhotos";
+import { galleryFor } from "@/lib/golfDayPhotos";
 import SectionHeader from "@/components/ui/SectionHeader";
 import FeatureGrid from "@/components/ui/FeatureGrid";
 import SchoolForm from "@/components/forms/SchoolForm";
@@ -128,8 +128,8 @@ export default function SchoolFundraisingPage() {
               underwritten by Indwe. No cost, no risk. We run it — you raise.
             </>
           }
-          image="/images/golf-day/IMG_4460.jpg"
-          imageAlt="Golfer mid-swing at the Get Lucky Hole-in-One Challenge activation"
+          image="/images/golf-day/IMG_4654.jpg"
+          imageAlt="Golfer celebrating a shot at the Get Lucky activation"
           primary={{ href: "#build", label: "Calculate what you'll raise" }}
           secondary={{ href: "#enquire", label: "Enquire now" }}
           stats={[
@@ -164,13 +164,15 @@ export default function SchoolFundraisingPage() {
               lede="From derby days to old boys' reunions, the challenge has teed off with some of South Africa's proudest sporting schools."
             />
             <ul className="mt-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 border-t border-l border-line">
-              {SCHOOLS_WORKED_WITH.map((school) => (
+              {SCHOOLS_WORKED_WITH.map((school, i) => (
                 <li
                   key={school.name}
-                  className="reveal border-b border-r border-line px-5 py-7 flex flex-col justify-between min-h-[132px]"
+                  className="reveal border-b border-r border-line px-5 py-6 flex flex-col justify-between min-h-[120px]"
                 >
-                  <GraduationCap className="w-5 h-5 text-green" />
-                  <div className="mt-6">
+                  <span className="text-[12px] font-semibold text-muted tabular-nums">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <div className="mt-5">
                     <p className="text-[15px] font-semibold leading-snug text-ink">
                       {school.name}
                     </p>
@@ -206,7 +208,7 @@ export default function SchoolFundraisingPage() {
           kicker="The real thing"
           title="Moments from the tee"
           lede="Real golfers, real activations, real reactions — from golf days around the country. This is what your school's fundraising day looks like."
-          photos={GOLF_DAY_PHOTOS}
+          photos={galleryFor("IMG_4527.jpg", "IMG_4654.jpg")}
         />
 
         <EnquirySection

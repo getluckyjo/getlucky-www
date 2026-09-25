@@ -39,16 +39,24 @@ export default function PageHero({
         fill
         priority
         sizes="100vw"
-        className="object-cover object-center -z-20 opacity-55"
+        className="object-cover object-center -z-20 opacity-80"
       />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-night via-night/80 to-night/30" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-night via-transparent to-night/40" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-night/95 via-night/60 to-night/5" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-night via-night/10 to-night/50" />
 
       <div className="wrap pt-36 sm:pt-44 pb-14 sm:pb-20">
         <div className="max-w-4xl">
           <span className="chip chip--dark fade-up">
             <span className="live-dot" aria-hidden />
-            {kicker}
+            {typeof kicker === "string" && kicker.includes(" · ") ? (
+              <>
+                {kicker.slice(0, kicker.indexOf(" · "))}
+                {/* The "where" half only fits beside the "what" on wider screens. */}
+                <span className="hidden sm:inline">{kicker.slice(kicker.indexOf(" · "))}</span>
+              </>
+            ) : (
+              kicker
+            )}
           </span>
           <h1 className="display-xl text-[clamp(2.5rem,5.4vw,4.75rem)] mt-6 fade-up-1">{title}</h1>
           <p className="lede lede--dark mt-6 max-w-2xl fade-up-2">{lede}</p>

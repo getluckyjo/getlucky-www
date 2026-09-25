@@ -108,7 +108,7 @@ export default function VoucherForm() {
       {topError && <FormErrorBanner message={topError} />}
 
       <Field label="Pick Your Prize" name="entryAmount" required error={errors.entryAmount}>
-        <TierPicker value={tier} onChange={setTier} columns="grid-cols-2 sm:grid-cols-3 lg:grid-cols-6" />
+        <TierPicker value={tier} onChange={setTier} columns="grid-cols-2 sm:grid-cols-3" />
       </Field>
 
       <Field label="Your Course" name="course" required error={errors.course}>

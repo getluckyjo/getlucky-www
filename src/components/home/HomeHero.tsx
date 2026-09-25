@@ -55,9 +55,10 @@ export default function HomeHero() {
             </h1>
 
             <p className="lede lede--dark mt-6 max-w-xl fade-up-2">
-              Choose a par 3. Back yourself. Swing from R50 and{" "}
+              Choose a par 3. Back yourself. Scan the QR on the tee, swing
+              from R50 and{" "}
               <strong className="text-white font-semibold">win up to R1 Million</strong>{" "}
-              — every shot camera-verified, every prize insured.
+              — every shot on camera, every prize insured by Santam &amp; Indwe.
             </p>
 
             <div className="mt-9 flex flex-col sm:flex-row gap-3 fade-up-3">
@@ -74,7 +75,7 @@ export default function HomeHero() {
               {[
                 { v: "R50", l: "Swings from" },
                 { v: "R1M", l: "Top prize" },
-                { v: "15 days", l: "Verified payout" },
+                { v: "15", l: "Working days to payout" },
               ].map((s, i) => (
                 <div
                   key={s.l}
@@ -106,7 +107,7 @@ export default function HomeHero() {
                 </p>
                 <span className="inline-flex items-center gap-2 text-[12px] font-medium text-lime">
                   <span className="live-dot" aria-hidden />
-                  Insured &amp; live
+                  Insured on every swing
                 </span>
               </div>
 
@@ -127,7 +128,11 @@ export default function HomeHero() {
                       <span className="text-[11px] font-semibold uppercase tracking-[0.08em] opacity-70 truncate">
                         {t.label.replace(" Swing", "")}
                       </span>
-                      <span className="font-heading text-[17px] leading-none tabular-nums">
+                      <span
+                        className={`font-heading text-[17px] leading-none tabular-nums ${
+                          t.popular ? "" : "text-gold"
+                        }`}
+                      >
                         {t.prize}
                       </span>
                     </span>
@@ -142,7 +147,7 @@ export default function HomeHero() {
                 </span>
                 <span className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-lime shrink-0" />
-                  Underwritten, FSP 3425
+                  Insured by Santam &amp; Indwe
                 </span>
               </div>
             </div>

@@ -35,7 +35,7 @@ const freePerks = [
  */
 export default function Membership() {
   return (
-    <section id="membership" className="section bg-white scroll-mt-20">
+    <section id="membership" className="section bg-white">
       <div className="wrap">
         <SectionHeader
           kicker="Membership"
@@ -83,15 +83,21 @@ export default function Membership() {
             <dl className="relative mt-10 lg:mt-auto grid grid-cols-3 border-t border-white/10 pt-6">
               {[
                 { v: "∞", l: "Swings a month" },
-                { v: "R100K", l: "Per hole-in-one" },
-                { v: "0", l: "Lock-in" },
+                { v: "R100K", l: "Per hole\u2011in\u2011one" },
+                { v: "None", l: "Lock-in contract" },
               ].map((s, i) => (
                 <div
                   key={s.l}
-                  className={`flex flex-col-reverse justify-end ${i > 0 ? "pl-4 border-l border-white/10" : ""}`}
+                  className={`flex flex-col-reverse justify-end min-w-0 ${i > 0 ? "pl-3 sm:pl-5 border-l border-white/10" : "pr-3"}`}
                 >
-                  <dt className="mt-1.5 text-[12px] text-white/55">{s.l}</dt>
-                  <dd className="font-heading text-3xl leading-none text-lime">{s.v}</dd>
+                  <dt className="mt-1.5 text-[12px] leading-snug text-white/60">{s.l}</dt>
+                  <dd
+                    className={`font-heading text-[clamp(1.25rem,5.5vw,1.875rem)] leading-none ${
+                      s.v === "R100K" ? "text-gold" : "text-white"
+                    }`}
+                  >
+                    {s.v}
+                  </dd>
                 </div>
               ))}
             </dl>
@@ -108,7 +114,7 @@ export default function Membership() {
           {/* Sponsor offer */}
           <div
             id="quote"
-            className="reveal relative rounded-3xl border border-line bg-paper p-7 sm:p-10 flex flex-col scroll-mt-24"
+            className="reveal relative rounded-3xl border border-line bg-paper p-7 sm:p-10 flex flex-col"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <span className="chip-lime chip-lime--flag">
@@ -125,7 +131,8 @@ export default function Membership() {
             </div>
 
             <h3 className="mt-6 display-md text-ink">
-              Get a free 12-month hole-in-one membership
+              Get a free <span className="whitespace-nowrap">12-month</span>{" "}
+              <span className="whitespace-nowrap">hole-in-one</span> membership
             </h3>
             <p className="mt-3 text-muted">
               Request a no-obligation insurance quote from our headline
@@ -178,7 +185,7 @@ export default function Membership() {
 
             <p className="mt-6 text-[12px] text-muted/80 leading-relaxed">
               Membership provided by Get Lucky Golf Club. Quote provided by
-              Indwe Risk Services (FSP). Offer subject to standard terms.
+              Indwe Risk Services (FSP 3425). Offer subject to standard terms.
             </p>
           </div>
         </div>

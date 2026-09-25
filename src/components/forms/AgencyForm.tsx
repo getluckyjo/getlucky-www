@@ -126,7 +126,7 @@ export default function AgencyForm() {
       </div>
 
       <div className="pt-2">
-        <SubmitButton pending={pending}>Request a Media Kit</SubmitButton>
+        <SubmitButton pending={pending}>Request a media kit</SubmitButton>
       </div>
     </form>
   );

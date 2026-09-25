@@ -143,7 +143,7 @@ export default function CharityForm() {
       </div>
 
       <div className="pt-2">
-        <SubmitButton pending={pending}>Request Your Charity Day</SubmitButton>
+        <SubmitButton pending={pending}>Request your charity day</SubmitButton>
       </div>
     </form>
   );

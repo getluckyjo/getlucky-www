@@ -43,7 +43,7 @@ export default function BecomeAPartnerPage() {
         <PageHero
           kicker="For golf courses"
           title="Become a partner course"
-          lede="Add the Get Lucky Hole-in-One Challenge to your signature par-3 and offer your members a fully-insured shot at up to R1,000,000. Zero upfront cost, zero risk to your club, full activation support from our team."
+          lede="Add the Get Lucky Hole-in-One Challenge to your signature par‑3 and offer your members a fully-insured shot at up to R1,000,000. Zero upfront cost, zero risk to your club, full activation support from our team."
           image="/images/courses/st-francis-links.jpg"
           imageAlt="St Francis Links, a Get Lucky partner course"
           primary={{ href: "#apply", label: "Apply to partner" }}
@@ -65,7 +65,7 @@ export default function BecomeAPartnerPage() {
             <SectionHeader
               kicker="Why partner with us"
               title={<span id="why-partner-title">Zero cost. Zero risk. Full support.</span>}
-              lede="A permanent hole-in-one challenge on your signature par-3, run end to end by the Get Lucky team."
+              lede="A permanent hole-in-one challenge on your signature par‑3, run end to end by the Get Lucky team."
             />
             <div className="mt-12">
               <FeatureGrid items={VALUE} columns={3} />
@@ -76,7 +76,7 @@ export default function BecomeAPartnerPage() {
         {/* The proposal */}
         <section
           id="proposal"
-          className="section bg-white scroll-mt-24"
+          className="section bg-white"
           aria-labelledby="proposal-title"
         >
           <div className="wrap grid lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] gap-10 lg:gap-16 items-center">
@@ -109,7 +109,7 @@ export default function BecomeAPartnerPage() {
           id="apply"
           kicker="Apply to partner"
           title="Bring it to your course"
-          lede="Tell us about your course, your members and what you're hoping to achieve. We'll be in touch to discuss bringing the challenge to your par-3."
+          lede="Tell us about your course, your members and what you're hoping to achieve. We'll be in touch to discuss bringing the challenge to your par‑3."
           response="The Get Lucky team replies within 1–2 business days."
         >
           <PartnerForm />

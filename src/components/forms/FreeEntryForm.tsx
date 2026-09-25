@@ -117,7 +117,7 @@ export default function FreeEntryForm() {
       </div>
 
       <div className="pt-2">
-        <SubmitButton pending={pending}>Enter the Challenge</SubmitButton>
+        <SubmitButton pending={pending}>Enter the challenge</SubmitButton>
       </div>
     </form>
   );

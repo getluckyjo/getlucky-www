@@ -146,7 +146,7 @@ export default function GolfDayCalculator() {
                     <p className="font-heading text-2xl text-green mt-1">
                       {opt.prize}
                     </p>
-                    <p className="text-xs text-charcoal-light/70 mt-2">
+                    <p className="text-xs text-muted mt-2">
                       {formatRand(opt.pricePerPlayer)} / player
                     </p>
                   </button>
@@ -184,10 +184,10 @@ export default function GolfDayCalculator() {
                   className="w-20 text-center rounded-lg border border-green/15 px-3 py-2 font-semibold text-green focus:border-green focus:outline-none"
                   aria-label="Number of golfers (exact)"
                 />
-                <span className="text-sm text-charcoal-light/70">players</span>
+                <span className="text-sm text-muted">players</span>
               </div>
             </div>
-            <p className="text-xs text-charcoal-light/60 mt-2">
+            <p className="text-xs text-muted mt-2">
               {formatRand(prize.pricePerPlayer)} per player × {golfers} ={" "}
               <span className="font-semibold text-green">
                 {formatRand(breakdown.prizeCost)}
@@ -220,7 +220,7 @@ export default function GolfDayCalculator() {
                 </button>
               ))}
             </div>
-            <p className="text-xs text-charcoal-light/60 mt-2">
+            <p className="text-xs text-muted mt-2">
               {formatRand(PROMOTER_RATE)} per promoter per day · {promoters} ×
               R2,000 ={" "}
               <span className="font-semibold text-green">
@@ -273,7 +273,7 @@ export default function GolfDayCalculator() {
                             {formatRand(a.amount)}
                           </p>
                         </div>
-                        <p className="text-xs text-charcoal-light/70 mt-1 leading-relaxed">
+                        <p className="text-xs text-muted mt-1 leading-relaxed">
                           {a.description}
                         </p>
                       </div>
@@ -343,7 +343,7 @@ export default function GolfDayCalculator() {
               href="#enquire"
               className="btn-lime mt-6 w-full text-center"
             >
-              Lock In This Package
+              Lock in this package
             </a>
           </div>
         </div>

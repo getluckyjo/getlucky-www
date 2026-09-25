@@ -39,24 +39,24 @@ export const SOLUTIONS: readonly Solution[] = [
   {
     href: ROUTES.schools,
     label: "School fundraising",
-    blurb: "Parents and old boys play. Your school keeps 50%.",
+    blurb: "Parents and alumni play. Your school keeps 50%.",
     icon: GraduationCap,
   },
   {
     href: ROUTES.simulator,
-    label: "Golf simulators",
+    label: "Simulator venues",
     blurb: "A R100,000 challenge on your sim. Keep 10% of every swing.",
     icon: MonitorPlay,
   },
   {
     href: ROUTES.tours,
-    label: "Golf tours",
+    label: "Tour operators",
     blurb: "A R100,000 prize on every tour. Earn 20% commission.",
     icon: Plane,
   },
   {
     href: ROUTES.partner,
-    label: "Partner courses",
+    label: "Become a partner course",
     blurb: "The always-on challenge on your par 3, at zero cost.",
     icon: Flag,
   },

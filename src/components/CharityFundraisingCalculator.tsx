@@ -70,7 +70,7 @@ export default function CharityFundraisingCalculator({
                 1. Choose Your Swing
               </h3>
             </div>
-            <p className="text-xs text-charcoal-light/60 mb-4">
+            <p className="text-xs text-muted mb-4">
               The swing price sets what golfers pay and the prize on offer at
               your day.
             </p>
@@ -98,11 +98,11 @@ export default function CharityFundraisingCalculator({
                     </p>
                     <p className="font-heading text-2xl text-green mt-1">
                       {opt.swing}{" "}
-                      <span className="text-sm font-sans text-charcoal-light/70">
+                      <span className="text-sm font-sans text-muted">
                         / swing
                       </span>
                     </p>
-                    <p className="text-xs text-charcoal-light/70 mt-2">
+                    <p className="text-xs text-muted mt-2">
                       {opt.prize} hole-in-one prize
                     </p>
                   </button>
@@ -142,10 +142,10 @@ export default function CharityFundraisingCalculator({
                   className="w-20 text-center rounded-lg border border-green/15 px-3 py-2 font-semibold text-green focus:border-green focus:outline-none"
                   aria-label="Estimated swings sold (exact)"
                 />
-                <span className="text-sm text-charcoal-light/70">swings</span>
+                <span className="text-sm text-muted">swings</span>
               </div>
             </div>
-            <p className="text-xs text-charcoal-light/60 mt-2">
+            <p className="text-xs text-muted mt-2">
               {formatRand(swing.entryAmount)} per swing × {swings} ={" "}
               <span className="font-semibold text-green">
                 {formatRand(breakdown.totalRaised)}
@@ -222,7 +222,7 @@ export default function CharityFundraisingCalculator({
               href="#enquire"
               className="btn-lime btn-lime--dark mt-6 w-full text-center"
             >
-              {beneficiary === "school" ? "Lock In Your School Day" : "Lock In Your Charity Day"}
+              {beneficiary === "school" ? "Lock in your school day" : "Lock in your charity day"}
             </a>
           </div>
         </div>

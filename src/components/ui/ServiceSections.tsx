@@ -27,7 +27,7 @@ export function CalculatorSection({
   children: ReactNode;
 }) {
   return (
-    <section id={id} className="section bg-paper scroll-mt-20">
+    <section id={id} className="section bg-paper">
       <div className="wrap">
         <SectionHeader kicker={kicker} title={title} lede={lede} />
         <div className="reveal mt-12">{children}</div>

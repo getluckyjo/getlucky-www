@@ -143,7 +143,7 @@ export default function SchoolForm() {
       </div>
 
       <div className="pt-2">
-        <SubmitButton pending={pending}>Request Your School Fundraiser</SubmitButton>
+        <SubmitButton pending={pending}>Request your school fundraiser</SubmitButton>
       </div>
     </form>
   );

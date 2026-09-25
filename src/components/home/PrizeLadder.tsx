@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldCheck } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 import { PRIZE_TIERS } from "@/lib/constants";
 
 /** R25,000 → R25K, R1,000,000 → R1M: the short form that fits on a bar. */
@@ -22,13 +23,27 @@ const DEFAULT = PRIZE_TIERS.findIndex((t) => t.popular);
  */
 export default function PrizeLadder() {
   const [active, setActive] = useState(DEFAULT < 0 ? 3 : DEFAULT);
+
+  // A radio group moves with the arrow keys (one Tab stop for the group).
+  const onKey = (e: React.KeyboardEvent<HTMLButtonElement>, i: number) => {
+    const n = PRIZE_TIERS.length;
+    const step: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+    let next: number | null = null;
+    if (e.key in step) next = (i + step[e.key] + n) % n;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = n - 1;
+    if (next === null) return;
+    e.preventDefault();
+    setActive(next);
+    (e.currentTarget.parentElement?.children[next] as HTMLElement | undefined)?.focus();
+  };
   const tier = PRIZE_TIERS[active];
   const multiple = Math.round(tier.prizeAmount / tier.entryAmount);
 
   return (
     <section
       id="prizes"
-      className="on-dark relative isolate overflow-hidden bg-night text-white section scroll-mt-20"
+      className="on-dark relative isolate overflow-hidden bg-night text-white section"
     >
       <div aria-hidden className="dot-grid absolute inset-0 -z-10" />
       <div
@@ -78,6 +93,10 @@ export default function PrizeLadder() {
             </div>
           </div>
 
+          <Link href="/#courses" className="link-arrow mt-6">
+            Find a course to take this swing <ArrowRight className="w-4 h-4" />
+          </Link>
+
           <p className="mt-6 flex items-start gap-2 text-[13px] text-white/55">
             <ShieldCheck className="w-4 h-4 text-lime shrink-0 mt-px" />
             <span>
@@ -103,9 +122,9 @@ export default function PrizeLadder() {
                   role="radio"
                   aria-checked={on}
                   aria-label={`${t.label}: swing ${t.entry}, win ${t.prize}`}
+                  tabIndex={on ? 0 : -1}
                   onClick={() => setActive(i)}
-                  onMouseEnter={() => setActive(i)}
-                  onFocus={() => setActive(i)}
+                  onKeyDown={(e) => onKey(e, i)}
                   className="group h-full flex flex-col justify-end text-left"
                 >
                   <span
@@ -153,7 +172,9 @@ export default function PrizeLadder() {
                   type="button"
                   role="radio"
                   aria-checked={on}
+                  tabIndex={on ? 0 : -1}
                   onClick={() => setActive(i)}
+                  onKeyDown={(e) => onKey(e, i)}
                   className={`w-full rounded-2xl px-4 py-3.5 text-left transition-colors ${
                     on ? "bg-lime text-green-dark" : "bg-white/[0.06] text-white"
                   }`}

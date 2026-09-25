@@ -11,7 +11,7 @@ import {
   IncludedSection,
   ShowcaseSection,
 } from "@/components/ui/ServiceSections";
-import { GOLF_DAY_PHOTOS } from "@/lib/golfDayPhotos";
+import { galleryFor } from "@/lib/golfDayPhotos";
 import {
   Trophy,
   Camera,
@@ -77,7 +77,7 @@ export default function CorporateGolfDaysPage() {
           lede={
             <>
               The Get Lucky Hole-in-One Challenge is a fully-mobile activation
-              that drops onto the signature par-3 of any corporate golf day in
+              that drops onto the signature par‑3 of any corporate golf day in
               South Africa. Real prizes up to{" "}
               <span className="text-white font-semibold">R1,000,000</span>.
               Fully insured. We run the whole thing — you play golf.
@@ -120,7 +120,7 @@ export default function CorporateGolfDaysPage() {
           kicker="The real thing"
           title="Moments from the tee"
           lede="Real corporate golfers, real activations, real reactions — from corporate golf days around the country. This is what your day looks like."
-          photos={GOLF_DAY_PHOTOS}
+          photos={galleryFor("IMG_4634.jpg", "IMG_4460.jpg")}
         />
 
         <EnquirySection
