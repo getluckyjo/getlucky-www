@@ -1,18 +1,21 @@
 name: PayFast Cross-App Health Check
 
-# Aggregates the three per-app /api/health/payfast endpoints into a single
+# Aggregates the per-app /api/health/payfast endpoints into a single
 # daily digest. Runs 15 minutes AFTER the Vercel crons in each app (06:00 UTC)
 # so any failures have already triggered per-app emails — this layer catches
 # the things Vercel cron can't:
 #   • An app's cron silently stopped firing (then we get no email here either,
 #     so the workflow itself failing is the signal — watch the GitHub Actions
 #     badge)
-#   • Canary MD5 divergence across the three apps (means passphrase, encoder,
+#   • Canary MD5 divergence across the apps (means passphrase, encoder,
 #     or merchant id/key drifted on one app without that app individually
 #     "failing" — each cron would report ok:true while signatures no longer
 #     interoperate)
 #
 # On any anomaly the workflow emails johannes@getluckygolfclub.com via Resend.
+#
+# The membership site (membership.getluckygolfclub.com) is not probed: Get
+# Lucky Club memberships are being phased out (Sep 2026) and are not tracked.
 
 on:
   schedule:
@@ -27,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Probe all three apps and aggregate
+      - name: Probe the apps and aggregate
         id: probe
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
@@ -39,7 +42,6 @@ jobs:
           const ENDPOINTS = [
             { app: 'website',       url: 'https://simulator.getluckygolfclub.com/api/health/payfast' },
             { app: 'www',           url: 'https://getluckygolf.co.za/api/health/payfast' },
-            { app: 'subscriptions', url: 'https://membership.getluckygolfclub.com/api/health/payfast' },
           ];
 
           function fetchJson(url) {
