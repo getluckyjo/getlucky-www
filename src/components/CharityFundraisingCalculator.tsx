@@ -22,8 +22,11 @@ const SWING_OPTIONS: SwingOption[] = [
 
 const CHARITY_SHARE = 0.5;
 
+// Pinned to comma grouping (R12,000) so the server render and the browser
+// agree; "en-ZA" groups with a space in Node and a comma in some browsers,
+// which broke hydration.
 function formatRand(n: number): string {
-  return "R" + n.toLocaleString("en-ZA");
+  return "R" + n.toLocaleString("en-US", { maximumFractionDigits: 2 });
 }
 
 // `beneficiary` swaps the wording (and CTA) so the school fundraising page can
@@ -55,7 +58,7 @@ export default function CharityFundraisingCalculator({
   }, [swing, swings, breakdown]);
 
   return (
-    <div className="card bg-white rounded-3xl overflow-hidden card--hover">
+    <div className="card bg-white rounded-3xl overflow-clip card--hover">
       <div className="grid lg:grid-cols-[1fr_360px]">
         {/* Left: configurator */}
         <div className="p-6 sm:p-10 space-y-8">
@@ -169,57 +172,59 @@ export default function CharityFundraisingCalculator({
         </div>
 
         {/* Right: summary */}
-        <div className="bg-green-dark text-white p-6 sm:p-8 lg:p-10 lg:sticky lg:top-24 lg:self-start">
-          <p className="eyebrow eyebrow--dark">
-            Your Fundraiser
-          </p>
-          <p className="font-heading text-3xl sm:text-4xl uppercase mt-1">
-            You Raise
-          </p>
-
-          <div className="mt-6 bg-lime text-green rounded-xl p-5">
-            <p className="eyebrow">
-              {beneficiary === "school" ? "For Your School" : "For Your Cause"}
+        <div className="bg-green-dark text-white">
+          <div className="p-6 sm:p-8 lg:p-10 lg:sticky lg:top-24">
+            <p className="eyebrow eyebrow--dark">
+              Your Fundraiser
             </p>
-            <p className="font-heading text-4xl sm:text-5xl mt-1">
-              {formatRand(breakdown.charityShare)}
+            <p className="font-heading text-3xl sm:text-4xl uppercase mt-1">
+              You Raise
             </p>
-          </div>
 
-          <div className="mt-6 space-y-3 text-sm">
-            <div className="flex justify-between border-b border-white/10 pb-3">
-              <span className="text-white/70">
-                {swing.swing} swing × {swings}
-              </span>
-              <span className="font-semibold">
-                {formatRand(breakdown.totalRaised)}
-              </span>
-            </div>
-            <div className="flex justify-between border-b border-white/10 pb-3">
-              <span className="text-white/70">Your share (50%)</span>
-              <span className="font-semibold">
+            <div className="mt-6 bg-lime text-green rounded-xl p-5">
+              <p className="eyebrow">
+                {beneficiary === "school" ? "For Your School" : "For Your Cause"}
+              </p>
+              <p className="font-heading text-4xl sm:text-5xl mt-1">
                 {formatRand(breakdown.charityShare)}
-              </span>
+              </p>
             </div>
-            <div className="flex justify-between border-b border-white/10 pb-3">
-              <span className="text-white/70">Prize on offer</span>
-              <span className="font-semibold">{swing.prize}</span>
+
+            <div className="mt-6 space-y-3 text-sm">
+              <div className="flex justify-between border-b border-white/10 pb-3">
+                <span className="text-white/70">
+                  {swing.swing} swing × {swings}
+                </span>
+                <span className="font-semibold">
+                  {formatRand(breakdown.totalRaised)}
+                </span>
+              </div>
+              <div className="flex justify-between border-b border-white/10 pb-3">
+                <span className="text-white/70">Your share (50%)</span>
+                <span className="font-semibold">
+                  {formatRand(breakdown.charityShare)}
+                </span>
+              </div>
+              <div className="flex justify-between border-b border-white/10 pb-3">
+                <span className="text-white/70">Prize on offer</span>
+                <span className="font-semibold">{swing.prize}</span>
+              </div>
             </div>
+
+            <p className="text-white/60 text-xs mt-4 leading-relaxed">
+              The prize is fully underwritten by{" "}
+              <span className="text-lime font-semibold">Indwe Risk Services</span>{" "}
+              — zero cost and zero risk to your {beneficiary}. Get Lucky runs the
+              whole activation; you keep half of every swing sold.
+            </p>
+
+            <a
+              href="#enquire"
+              className="btn-lime btn-lime--dark mt-6 w-full text-center"
+            >
+              {beneficiary === "school" ? "Lock In Your School Day" : "Lock In Your Charity Day"}
+            </a>
           </div>
-
-          <p className="text-white/60 text-xs mt-4 leading-relaxed">
-            The prize is fully underwritten by{" "}
-            <span className="text-lime font-semibold">Indwe Risk Services</span>{" "}
-            — zero cost and zero risk to your {beneficiary}. Get Lucky runs the
-            whole activation; you keep half of every swing sold.
-          </p>
-
-          <a
-            href="#enquire"
-            className="btn-lime btn-lime--dark mt-6 w-full text-center"
-          >
-            {beneficiary === "school" ? "Lock In Your School Day" : "Lock In Your Charity Day"}
-          </a>
         </div>
       </div>
     </div>

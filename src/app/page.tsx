@@ -1,29 +1,33 @@
 import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import HowItWorks from "@/components/HowItWorks";
-import PartnerCourses from "@/components/PartnerCourses";
-import PrizeTiers from "@/components/PrizeTiers";
-import IndwePartnership from "@/components/IndwePartnership";
-import IndweOffer from "@/components/IndweOffer";
-import Membership from "@/components/Membership";
-import Features from "@/components/Features";
-import CorporateCTA from "@/components/CorporateCTA";
 import Footer from "@/components/Footer";
+import IndweBannerStrip from "@/components/IndweBannerStrip";
+import HomeHero from "@/components/home/HomeHero";
+import Products from "@/components/home/Products";
+import HowItWorks from "@/components/home/HowItWorks";
+import PrizeLadder from "@/components/home/PrizeLadder";
+import Courses from "@/components/home/Courses";
+import Membership from "@/components/home/Membership";
+import Trust from "@/components/home/Trust";
+import GolfDays from "@/components/home/GolfDays";
+import ForClubs from "@/components/home/ForClubs";
+import FinalCta from "@/components/home/FinalCta";
 
 export default function Home() {
   return (
     <>
       <Navbar />
       <main>
-        <Hero />
+        <HomeHero />
+        <IndweBannerStrip src="/indwe-banner/index.html" />
+        <Products />
         <HowItWorks />
-        <PartnerCourses />
-        <PrizeTiers />
-        <IndwePartnership />
-        <IndweOffer />
+        <PrizeLadder />
+        <Courses />
         <Membership />
-        <Features />
-        <CorporateCTA />
+        <Trust />
+        <GolfDays />
+        <ForClubs />
+        <FinalCta />
       </main>
       <Footer />
     </>

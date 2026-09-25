@@ -1,54 +1,72 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowUpRight, Mail, MessageCircle } from "lucide-react";
 import { SITE, ROUTES } from "@/lib/constants";
+import { SOLUTIONS } from "@/lib/solutions";
 
 const challengeLinks = [
-  { href: "/#how-it-works", label: "How It Works" },
+  { href: "/#how-it-works", label: "How it works" },
   { href: "/#prizes", label: "Prizes" },
   { href: "/#membership", label: "Membership — R149/mo" },
-  { href: "/#courses", label: "Find a Course" },
+  { href: "/#courses", label: "Find a course" },
 ];
 
-const partnerLinks = [
-  { href: ROUTES.corporate, label: "Corporate Golf Days", external: false },
-  { href: ROUTES.charity, label: "Charity Golf Days", external: false },
-  { href: ROUTES.schools, label: "School Fundraising Days", external: false },
-  { href: ROUTES.simulator, label: "Simulator Partners", external: false },
-  { href: ROUTES.tours, label: "Golf Tour Operators", external: false },
-  { href: ROUTES.partner, label: "Become a Partner Course", external: false },
-  { href: SITE.simulator, label: "Golf Simulator", external: true },
-];
-
-const linkClass = "text-white/75 hover:text-lime text-sm transition-colors";
+const linkClass = "text-white/60 hover:text-white text-[14px] transition-colors";
 
 /**
- * Footer in the app's menu-drawer voice: brand green, the corner sticker,
- * Poster Gothic column headings, lime on hover.
+ * The footer on the night panel: the brand and ways to reach us, then the
+ * challenge, every solution and the fine print, and the wordmark set huge
+ * and faint along the bottom edge.
  */
 export default function Footer() {
   return (
-    <footer className="bg-green text-white" id="contact">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+    <footer className="on-dark relative overflow-hidden bg-night text-white" id="contact">
+      <div className="wrap pt-20 sm:pt-24 pb-10">
+        <div className="grid grid-cols-2 lg:grid-cols-12 gap-x-8 gap-y-12">
           {/* Brand */}
-          <div className="sm:col-span-2 lg:col-span-1">
+          <div className="col-span-2 lg:col-span-4">
             <Image
               src="/brand/logo-corner.svg"
               alt="Get Lucky Golf Club"
               width={173}
               height={133}
               unoptimized
-              className="h-16 w-auto mb-5"
+              className="h-14 w-auto"
             />
-            <p className="text-white/75 text-sm leading-relaxed max-w-xs">
+            <p className="mt-6 text-white/60 text-[15px] leading-relaxed max-w-sm">
               {SITE.description}
             </p>
+            <div className="mt-7 flex flex-wrap gap-2">
+              <a href={`mailto:${SITE.email}`} className="chip chip--dark hover:bg-white/15">
+                <Mail className="w-3.5 h-3.5" />
+                Email us
+              </a>
+              <a
+                href={SITE.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="chip chip--dark hover:bg-white/15"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                WhatsApp
+              </a>
+              <a
+                href={SITE.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="chip chip--dark hover:bg-white/15"
+              >
+                @getluckygolfclub
+              </a>
+            </div>
           </div>
 
           {/* Challenge */}
-          <div>
-            <h4 className="font-heading text-xl text-white mb-4">The Challenge</h4>
-            <ul className="space-y-2.5">
+          <div className="lg:col-span-2">
+            <h4 className="text-[12px] font-semibold uppercase tracking-[0.14em] text-white/40">
+              The challenge
+            </h4>
+            <ul className="mt-5 space-y-3">
               {challengeLinks.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className={linkClass}>
@@ -59,68 +77,72 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* For Partners */}
-          <div>
-            <h4 className="font-heading text-xl text-white mb-4">For Partners</h4>
-            <ul className="space-y-2.5">
-              {partnerLinks.map((link) => (
-                <li key={link.href}>
-                  <a
-                    href={link.href}
-                    {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                    className={linkClass}
-                  >
-                    {link.label}
-                  </a>
+          {/* Solutions */}
+          <div className="lg:col-span-3">
+            <h4 className="text-[12px] font-semibold uppercase tracking-[0.14em] text-white/40">
+              Solutions
+            </h4>
+            <ul className="mt-5 space-y-3">
+              {SOLUTIONS.map((s) => (
+                <li key={s.href}>
+                  <Link href={s.href} className={linkClass}>
+                    {s.label}
+                  </Link>
                 </li>
               ))}
+              <li>
+                <a
+                  href={SITE.simulator}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`${linkClass} inline-flex items-center gap-1`}
+                >
+                  Golf Simulator <ArrowUpRight className="w-3.5 h-3.5" />
+                </a>
+              </li>
             </ul>
           </div>
 
           {/* Contact */}
-          <div>
-            <h4 className="font-heading text-xl text-white mb-4">Contact</h4>
-            <ul className="space-y-2.5 text-sm">
+          <div className="col-span-2 lg:col-span-3">
+            <h4 className="text-[12px] font-semibold uppercase tracking-[0.14em] text-white/40">
+              Contact
+            </h4>
+            <ul className="mt-5 space-y-3">
               <li>
-                <a href={`mailto:${SITE.email}`} className={linkClass}>
+                <a href={`mailto:${SITE.email}`} className={`${linkClass} break-all`}>
                   {SITE.email}
                 </a>
               </li>
               <li>
-                <a
-                  href={SITE.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={linkClass}
-                >
-                  @getluckygolfclub
+                <a href={SITE.whatsapp} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                  +27 60 961 5091
                 </a>
               </li>
             </ul>
-            <p className="mt-6 text-xs text-white/60 leading-relaxed max-w-xs">
+            <p className="mt-6 text-[13px] text-white/45 leading-relaxed max-w-xs">
               All prizes underwritten by Indwe Risk Services, an Authorised
               Financial Services Provider (FSP 3425).
             </p>
           </div>
         </div>
 
-        <div className="border-t border-white/15 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-white/60 text-xs">
-            &copy; {new Date().getFullYear()} Get Lucky Golf Club (Pty) Ltd. All rights
-            reserved.
+        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-white/45 text-[13px]">
+            &copy; {new Date().getFullYear()} Get Lucky Golf Club (Pty) Ltd. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             {[
               { href: ROUTES.terms, label: "Terms & Conditions" },
               { href: ROUTES.privacy, label: "Privacy" },
               { href: SITE.instagram, label: "Instagram", external: true },
-              { href: SITE.simulator, label: "Golf Simulator" },
+              { href: SITE.simulator, label: "Golf Simulator", external: true },
             ].map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                className="text-white/60 hover:text-lime text-xs transition-colors"
+                className="text-white/45 hover:text-white text-[13px] transition-colors"
               >
                 {link.label}
               </a>
@@ -128,6 +150,14 @@ export default function Footer() {
           </div>
         </div>
       </div>
+
+      {/* The wordmark, set huge and nearly invisible, as the floor. */}
+      <p
+        aria-hidden
+        className="pointer-events-none select-none font-heading text-center leading-[0.8] text-[22vw] text-white/[0.035] -mb-[3vw] whitespace-nowrap"
+      >
+        Get Lucky
+      </p>
     </footer>
   );
 }

@@ -1,31 +1,42 @@
 @import "tailwindcss";
 
 /*
- * Get Lucky V2 tokens.
+ * Get Lucky tokens.
  *
- * The app (getluckyjo/getluckyapp, src/app/globals.css) is where the brand is
- * decided; this sheet mirrors it. The legacy token names (--cream, --charcoal,
- * --charcoal-light, --background) are kept so the utilities built on them keep
- * compiling, but every one now resolves to a V2 value:
+ * The app (getluckyjo/getluckyapp, src/app/globals.css) decides the brand:
+ * brand green #345231, lime #d6fb4b, Poster Gothic for display. The website
+ * keeps that palette and type but sets it quieter: a near-white page, ink
+ * type, hairline borders, and lime saved for the one thing to press.
  *
- *   green    #345231  brand green — type, icons, chips, button hard-shadows,
- *                     headings on the light surface, the menu drawer
- *   green-dark #1e3120 deep forest — dark panels and footers; where gold belongs
- *   lime     #d6fb4b  the accent — every primary CTA, badges, chips
- *   surface  #ebedea  the light page background (replaces the old cream)
- *   bar-off  #bfc6bb  input borders, outline buttons, inactive bars
- *   gold     #c9a94e  the prize colour, and only on dark green — it fails
- *                     contrast as text on the light surface (2.1:1)
+ *   ink        #0f1b12  body and heading type on light
+ *   muted      #536157  secondary type on light (AA on paper and white)
+ *   paper      #f7f8f4  the page
+ *   surface    #ebedea  quiet fills, inputs on white
+ *   line       hairline borders on light
+ *   green      #345231  brand green — links, icons, chips, headings
+ *   green-dark #1e3120  deep forest panels
+ *   night      #0c160e  the darkest panels: hero scrims, the prize ladder
+ *   lime       #d6fb4b  primary actions and the live accent
+ *   gold       #c9a94e  the prize colour, and only on dark green
+ *
+ * The legacy names (--cream, --charcoal, --background) stay so the pages
+ * and forms built on them keep compiling; each resolves to a value above.
  */
 :root {
+  --ink: #0f1b12;
+  --muted: #536157;
+  --paper: #f7f8f4;
+  --line: rgba(15, 27, 18, 0.09);
+  --line-strong: rgba(15, 27, 18, 0.16);
+  --night: #0c160e;
   --green: #345231;
   --green-light: #4a7a3d;
   --green-dark: #1e3120;
   --lime: #d6fb4b;
-  --lime-dark: #c2e83a;
+  --lime-dark: #c5ec35;
   --surface: #ebedea;
-  --cream: #ebedea;
-  --cream-dark: #dfe3dd;
+  --cream: #f7f8f4;
+  --cream-dark: #eceee9;
   --bar-off: #bfc6bb;
   --logo-cream: #f5eede;
   --gold: #c9a94e;
@@ -33,13 +44,19 @@
   --red: #e40014;
   --charcoal: #1e3120;
   --charcoal-light: #345231;
-  --background: #ebedea;
-  --foreground: #1a1a1a;
+  --background: #f7f8f4;
+  --foreground: #0f1b12;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-paper: var(--paper);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-night: var(--night);
   --color-green: var(--green);
   --color-green-light: var(--green-light);
   --color-green-dark: var(--green-dark);
@@ -65,10 +82,17 @@ body {
   color: var(--foreground);
   font-family: var(--font-inter), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 96px;
+}
+
+::selection {
+  background: var(--lime);
+  color: var(--green-dark);
 }
 
 /*
@@ -79,7 +103,7 @@ html {
  * redefining the variables on a wrapper, and the shared form primitives pick
  * the show's palette up without a fork. Navy, green and cream are sampled
  * from the show's own lockup (getluckyjo/pgashow). The show has no lime, so
- * its primary button is the show green with a navy hard shadow.
+ * its primary button is the show green with navy type.
  */
 .pga-theme {
   --green: #418441;
@@ -90,6 +114,7 @@ html {
   --cream: #f6f4db;
   --cream-dark: #e9e6c8;
   --surface: #f6f4db;
+  --paper: #f6f4db;
   --bar-off: #cfcab0;
   --gold: #418441;
   --gold-light: #8cc08c;
@@ -100,168 +125,275 @@ html {
 .pga-theme .btn-lime {
   background: var(--green);
   color: var(--cream);
-  box-shadow: 4px 5px 0 var(--green-dark);
 }
 .pga-theme .btn-lime:hover { background: var(--green-light); }
-.pga-theme .btn-lime:active { box-shadow: 2px 2px 0 var(--green-dark); }
 
-/* Keyboard focus: green on the light surface, lime inside dark panels (the
-   app's ring), because lime on the light surface is invisible. */
+/* Keyboard focus: green on light, lime inside dark panels. */
 :focus-visible {
   outline: 2px solid var(--green);
-  outline-offset: 2px;
-  border-radius: 4px;
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 .bg-green-dark :focus-visible,
 .bg-green :focus-visible,
 .bg-charcoal :focus-visible,
+.bg-night :focus-visible,
+.on-dark :focus-visible,
 .btn-lime:focus-visible {
   outline-color: var(--lime);
 }
 
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--cream-dark);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--green);
-  border-radius: 3px;
-}
-
-/* Display type is always Poster Gothic Heavy, uppercase, set tight. */
+/* Display type is Poster Gothic Heavy, uppercase, set tight. */
 @layer base {
   .font-heading {
     letter-spacing: 0.005em;
     text-transform: uppercase;
   }
-  /* Headings wrap evenly instead of leaving one word on the last line. */
-  h1.font-heading,
-  h2.font-heading,
-  h3.font-heading {
+  h1, h2, h3 {
     text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
   }
 }
 
-/* ── V2 SHARED COMPONENTS ──
-   Lifted from the app so the two surfaces read as one product. They sit in
-   the components layer, so a Tailwind utility on the same element wins. */
+/* ── SHARED COMPONENTS ──
+   They sit in the components layer, so a Tailwind utility on the same element
+   wins. Pages lean on these rather than restating the look. */
 @layer components {
-  /* Primary button: lime face, brand-green hard shadow offset down-right,
-     Poster Gothic label. Every primary CTA is this button. */
+  /* Page width: one container for every section. */
+  .wrap {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 20px;
+  }
+  @media (min-width: 640px) { .wrap { padding-inline: 32px; } }
+  .wrap--narrow { max-width: 880px; }
+
+  /* Section rhythm: generous and the same everywhere. */
+  .section {
+    padding-block: clamp(72px, 9vw, 112px);
+  }
+  .section--tight {
+    padding-block: clamp(56px, 7vw, 88px);
+  }
+
+  /* Display sizes. Poster Gothic runs large, so the scale is steep. */
+  .display-xl {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: clamp(2.75rem, 6.4vw, 5.75rem);
+    line-height: 0.9;
+    letter-spacing: 0;
+  }
+  .display-lg {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: clamp(2.25rem, 5vw, 4.25rem);
+    line-height: 0.94;
+    letter-spacing: 0;
+  }
+  .display-md {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: clamp(1.75rem, 3.2vw, 2.625rem);
+    line-height: 0.98;
+  }
+  .lede {
+    font-size: clamp(1.0625rem, 1.4vw, 1.25rem);
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .on-dark .lede,
+  .lede--dark {
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  /* Section kicker: a small tracked label behind a lime status dot. */
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    line-height: 1.3;
+    color: var(--green);
+  }
+  .kicker::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 0 1.5px var(--green);
+  }
+  .on-dark .kicker,
+  .kicker--dark {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .on-dark .kicker::before,
+  .kicker--dark::before {
+    box-shadow: 0 0 0 4px rgba(214, 251, 75, 0.18);
+  }
+
+  /* Primary button: lime pill, green label. Every primary CTA is this. */
   .btn-lime {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    min-height: 52px;
-    padding: 0 28px;
+    gap: 8px;
+    min-height: 50px;
+    padding: 0 24px;
     background: var(--lime);
-    color: var(--green);
+    color: var(--green-dark);
     border: none;
-    border-radius: 6px;
-    font-family: var(--font-heading);
-    font-size: clamp(18px, 2vw, 21px);
-    font-weight: 800;
+    border-radius: 999px;
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
     line-height: 1;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
+    letter-spacing: -0.005em;
     text-decoration: none;
-    box-shadow: 4px 5px 0 var(--green);
+    white-space: nowrap;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 8px 24px -10px rgba(52, 82, 49, 0.55);
     cursor: pointer;
     position: relative;
-    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s;
+    transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.18s, background 0.15s;
     -webkit-tap-highlight-color: transparent;
   }
-  .btn-lime:hover { background: var(--lime-dark); }
-  .btn-lime:active {
-    transform: translate(2px, 3px);
-    box-shadow: 2px 2px 0 var(--green);
+  .btn-lime:hover {
+    background: var(--lime-dark);
+    transform: translateY(-1px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 14px 30px -12px rgba(52, 82, 49, 0.6);
   }
+  .btn-lime:active { transform: translateY(0) scale(0.98); }
   .btn-lime:disabled {
-    opacity: 0.6;
+    opacity: 0.55;
     cursor: not-allowed;
     transform: none;
   }
-  /* On a photo or a dark panel the shadow is a plain drop, as in the app. */
-  .btn-lime--dark { box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.3); }
-  .btn-lime--dark:active { box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3); }
+  .btn-lime--dark { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 10px 30px -10px rgba(214, 251, 75, 0.35); }
+  .btn-lime--dark:hover { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 14px 36px -10px rgba(214, 251, 75, 0.45); }
   .btn-lime--sm {
-    min-height: 44px;
-    padding: 0 20px;
-    font-size: 17px;
+    min-height: 40px;
+    padding: 0 18px;
+    font-size: 14px;
   }
 
-  /* Quiet secondary: white card button, Inter label. */
+  /* Ink button: the quiet primary on light sections. */
+  .btn-ink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 50px;
+    padding: 0 24px;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 999px;
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.15s;
+  }
+  .btn-ink:hover { background: var(--green-dark); transform: translateY(-1px); }
+  .btn-ink:active { transform: scale(0.98); }
+
+  /* Quiet secondary: white pill. */
   .btn-tile {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    min-height: 52px;
-    padding: 0 24px;
+    gap: 8px;
+    min-height: 50px;
+    padding: 0 22px;
     background: #fff;
-    color: var(--green);
-    border: none;
-    border-radius: 6px;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 999px;
     font-family: var(--font-inter), system-ui, sans-serif;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     text-decoration: none;
     cursor: pointer;
-    transition: box-shadow 0.15s, transform 0.12s;
+    transition: box-shadow 0.15s, transform 0.12s, border-color 0.15s;
   }
-  .btn-tile:hover { box-shadow: 0 4px 16px rgba(52, 82, 49, 0.12); }
+  .btn-tile:hover { border-color: var(--line-strong); box-shadow: 0 8px 24px -12px rgba(15, 27, 18, 0.25); }
   .btn-tile:active { transform: scale(0.98); }
   .btn-tile:disabled { opacity: 0.6; cursor: not-allowed; }
 
-  /* Outline: the app's ghost button. */
+  /* Outline: the ghost pill. */
   .btn-outline {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    min-height: 52px;
-    padding: 0 24px;
+    gap: 8px;
+    min-height: 50px;
+    padding: 0 22px;
     background: transparent;
-    color: var(--green);
-    border: 2px solid var(--bar-off);
-    border-radius: 6px;
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
     font-family: var(--font-inter), system-ui, sans-serif;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     text-decoration: none;
+    white-space: nowrap;
     cursor: pointer;
     transition: border-color 0.15s, background 0.15s;
   }
-  .btn-outline:hover { border-color: var(--green); }
-  .btn-outline:active { background: rgba(52, 82, 49, 0.06); }
+  .btn-outline:hover { border-color: var(--ink); background: rgba(15, 27, 18, 0.03); }
+  .btn-outline:active { background: rgba(15, 27, 18, 0.06); }
   .btn-outline--dark {
     color: #fff;
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.28);
   }
-  .btn-outline--dark:hover { border-color: rgba(255, 255, 255, 0.7); }
-  .btn-outline--dark:active { background: rgba(255, 255, 255, 0.08); }
+  .btn-outline--dark:hover { border-color: rgba(255, 255, 255, 0.7); background: rgba(255, 255, 255, 0.06); }
+  .btn-outline--dark:active { background: rgba(255, 255, 255, 0.1); }
 
-  /* Eyebrow label: Inter, tracked, uppercase. Green on light, lime on dark. */
+  /* Text link with a trailing arrow that nudges on hover. */
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--green);
+    text-decoration: none;
+  }
+  .link-arrow svg { transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .link-arrow:hover svg,
+  .group:hover .link-arrow svg { transform: translateX(3px); }
+  .on-dark .link-arrow { color: var(--lime); }
+
+  /* Eyebrow label: small tracked caps. Green on light, lime on dark. */
   .eyebrow {
     display: inline-block;
     font-family: var(--font-inter), system-ui, sans-serif;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     line-height: 1.4;
     color: var(--green);
-    opacity: 0.8;
   }
   .eyebrow--dark {
     color: var(--lime);
-    opacity: 1;
   }
 
-  /* Pill chip: lime, green text, the small hard shadow. */
+  /* Chips: lime for the thing that matters, neutral for everything else. */
   .chip-lime {
     display: inline-flex;
     align-items: center;
@@ -269,63 +401,120 @@ html {
     padding: 6px 12px;
     border-radius: 999px;
     background: var(--lime);
-    color: var(--green);
+    color: var(--green-dark);
     font-family: var(--font-inter), system-ui, sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    line-height: 1;
-    box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.25);
+    line-height: 1.1;
   }
-  /* Same chip sitting on a white card: the shadow is the brand green. */
-  .chip-lime--flag { box-shadow: 2px 2px 0 var(--green); }
+  .chip-lime--flag { box-shadow: 0 0 0 1px rgba(52, 82, 49, 0.25); }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+  .chip--dark {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
 
-  /* Card: white on the surface, 12px radius, no border, a soft green shadow. */
+  /* Live status dot: a lime dot with a slow pulse ring. */
+  .live-dot {
+    position: relative;
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--lime);
+    flex-shrink: 0;
+  }
+  .live-dot::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid var(--lime);
+    opacity: 0;
+    animation: live-pulse 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+  }
+
+  /* Card: white on the page, hairline border, a whisper of shadow. */
   .card {
     background: #fff;
-    border-radius: 12px;
-    border: 2px solid transparent;
-    box-shadow: 0 4px 18px rgba(52, 82, 49, 0.06);
-    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    box-shadow: 0 1px 2px rgba(15, 27, 18, 0.04);
+    transition: border-color 0.2s, box-shadow 0.25s, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
-  .card--hover:hover { box-shadow: 0 8px 26px rgba(52, 82, 49, 0.12); }
-  .card.is-selected { border-color: var(--green); }
+  .card--hover:hover {
+    border-color: var(--line-strong);
+    box-shadow: 0 24px 48px -28px rgba(15, 27, 18, 0.3);
+  }
+  .card.is-selected { border-color: var(--green); box-shadow: 0 0 0 1px var(--green); }
   /* Dark card: brand green, white text. */
   .card--dark {
     background: var(--green);
     color: #fff;
-    border-radius: 12px;
+    border-radius: 20px;
   }
-  /* Translucent card on a photo or a dark panel. */
+  /* Glass card on a photo or a dark panel. */
   .card--glass {
-    background: rgba(255, 255, 255, 0.92);
-    color: var(--green);
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    background: rgba(255, 255, 255, 0.07);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 24px;
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.6);
   }
 
-  /* Icon disc: the lime circle with a green glyph; --soft is the light-panel
-     variant with a green tint. */
+  /* Icon tile: a soft rounded square. It picks up a lime glyph on dark
+     panels, and --lime is the loud version for the one icon that leads. */
   .icon-disc {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: var(--lime);
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: rgba(52, 82, 49, 0.08);
     color: var(--green);
+  }
+  .bg-green-dark .icon-disc,
+  .bg-green .icon-disc,
+  .bg-night .icon-disc,
+  .on-dark .icon-disc {
+    background: rgba(214, 251, 75, 0.1);
+    color: var(--lime);
   }
   .icon-disc--soft {
-    background: rgba(52, 82, 49, 0.1);
+    background: rgba(52, 82, 49, 0.08);
     color: var(--green);
   }
+  .icon-disc--lime,
+  .bg-green-dark .icon-disc--lime,
+  .on-dark .icon-disc--lime {
+    background: var(--lime);
+    color: var(--green-dark);
+  }
   .icon-disc--lg {
-    width: 64px;
-    height: 64px;
-    box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.25);
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
   }
 
   /* Prize figure: gold Poster Gothic, and only on dark green. */
@@ -337,31 +526,63 @@ html {
     letter-spacing: 0.005em;
   }
 
-  /* V2 inputs: white field, transparent 2px border that turns green on focus. */
+  /* Inputs: white field with a hairline border that turns green on focus. */
   .field {
     width: 100%;
     min-height: 50px;
     padding: 12px 16px;
     background: #fff;
-    color: var(--green);
-    border: 2px solid transparent;
-    border-radius: 8px;
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
     font-family: var(--font-inter), system-ui, sans-serif;
     font-size: 16px;
     outline: none;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
-  .field:focus { border-color: var(--green); }
-  .field::placeholder { color: rgba(52, 82, 49, 0.45); }
+  .field:hover { border-color: rgba(15, 27, 18, 0.28); }
+  .field:focus { border-color: var(--green); box-shadow: 0 0 0 4px rgba(52, 82, 49, 0.12); }
+  .field::placeholder { color: rgba(15, 27, 18, 0.4); }
   .field:focus-visible { outline: none; }
-  /* A field on a white card sits on the surface instead. */
+  /* A field on a white card sits on the page tone instead. */
   .card .field,
-  .bg-white .field { background: var(--surface); }
+  .bg-white .field { background: var(--paper); }
 
   /* Photo scrim from the app's home screen. */
   .photo-scrim {
     background: linear-gradient(180deg, rgba(20, 38, 25, 0.35) 0%, rgba(20, 38, 25, 0.15) 40%, rgba(20, 38, 25, 0.45) 100%);
   }
+
+  /* A faint dot grid for dark panels: the instrument-panel texture. */
+  .dot-grid {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1.2px);
+    background-size: 22px 22px;
+    -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 20%, transparent 75%);
+    mask-image: radial-gradient(ellipse at 50% 30%, #000 20%, transparent 75%);
+  }
+
+  /* Hairline divider list: rows split by a line, no boxes. */
+  .rule-list > * + * {
+    border-top: 1px solid var(--line);
+  }
+  .on-dark .rule-list > * + *,
+  .rule-list--dark > * + * {
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Horizontal scroller for cards on phones. */
+  .snap-row {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(72%, 1fr);
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .snap-row::-webkit-scrollbar { display: none; }
+  .snap-row > * { scroll-snap-align: start; }
 }
 
 /* ── MOTION ── */
@@ -373,14 +594,35 @@ html {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
 }
-.fade-up { animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.fade-up-1 { animation: fadeUp 0.4s 0.05s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.fade-up-2 { animation: fadeUp 0.4s 0.12s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.fade-up-3 { animation: fadeUp 0.4s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.fade-up-4 { animation: fadeUp 0.4s 0.28s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.scale-in { animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes live-pulse {
+  0% { opacity: 0.8; transform: scale(0.6); }
+  100% { opacity: 0; transform: scale(1.8); }
+}
+.fade-up { animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.fade-up-1 { animation: fadeUp 0.6s 0.05s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.fade-up-2 { animation: fadeUp 0.6s 0.14s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.fade-up-3 { animation: fadeUp 0.6s 0.23s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.fade-up-4 { animation: fadeUp 0.6s 0.32s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.scale-in { animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* Scroll reveal, driven by the scroll position itself (no JavaScript). A
+   browser without scroll-driven animations just shows the content. */
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .fade-up, .fade-up-1, .fade-up-2, .fade-up-3, .fade-up-4, .scale-in { animation: none; }
+  .fade-up, .fade-up-1, .fade-up-2, .fade-up-3, .fade-up-4, .scale-in, .reveal { animation: none; }
+  .live-dot::after { animation: none; }
+  .btn-lime, .btn-ink, .card { transition: none; }
 }
 
 /*
@@ -581,17 +823,19 @@ html {
   .gods-confetti { display: none; }
 }
 
-/* ── NAV DRAWER (the app's menu) ── */
-@keyframes drawerIn {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
-}
+
+/* ── NAV ── */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+@keyframes sheetIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
 .nav-backdrop { animation: fadeIn 0.2s ease both; }
-.nav-drawer { animation: drawerIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.nav-sheet { animation: sheetIn 0.26s cubic-bezier(0.16, 1, 0.3, 1) both; transform-origin: top center; }
+.nav-menu { animation: sheetIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; transform-origin: top center; }
 @media (prefers-reduced-motion: reduce) {
-  .nav-backdrop, .nav-drawer { animation: none; }
+  .nav-backdrop, .nav-sheet, .nav-menu { animation: none; }
 }

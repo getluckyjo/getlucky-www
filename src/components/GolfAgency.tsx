@@ -1,28 +1,27 @@
 import Image from "next/image";
 import { SITE } from "@/lib/constants";
+import SectionHeader from "@/components/ui/SectionHeader";
+import FeatureGrid, { type Feature } from "@/components/ui/FeatureGrid";
 import {
-  Target,
-  Tv,
-  Sparkles,
-  Users,
-  Clock,
-  TrendingUp,
-  Briefcase,
-  BarChart3,
-  MapPin,
+  ArrowRight,
+  Check,
   Gem,
   Hourglass,
+  MessageCircle,
   Network,
+  Sparkles,
+  Target,
   Trophy,
+  Tv,
 } from "lucide-react";
 
 const audienceStats = [
-  { icon: Users, value: "153K+", label: "Registered Golfers in SA" },
-  { icon: BarChart3, value: "4.18M", label: "Rounds Played Per Year" },
-  { icon: MapPin, value: "420+", label: "Courses Nationwide" },
-  { icon: TrendingUp, value: "R14M+", label: "Avg Golfer Net Worth" },
-  { icon: Clock, value: "4+ Hrs", label: "Captive Attention Per Round" },
-  { icon: Briefcase, value: "47%", label: "Business Decision-Makers" },
+  { value: "153K+", label: "Registered golfers in SA" },
+  { value: "4.18M", label: "Rounds played per year" },
+  { value: "420+", label: "Courses nationwide" },
+  { value: "R14M+", label: "Avg golfer net worth" },
+  { value: "4+ Hrs", label: "Captive attention per round" },
+  { value: "47%", label: "Business decision-makers" },
 ];
 
 const platforms = [
@@ -57,7 +56,7 @@ const team = [
     name: "Johannes le Roux",
     role: "Account Director",
     image: "/images/team/johannes.jpeg",
-    imagePosition: "center top",
+    imagePosition: "center 12%",
     bio: "Founder of Get Lucky Golf. Johannes leads brand partnerships end-to-end — from first conversation to live activation — and personally manages every relationship with sponsors, courses, and corporate clients. His background spans technology, marketing, and the premium consumer space.",
   },
   {
@@ -70,307 +69,316 @@ const team = [
 ];
 
 type Brand =
-  | { name: string; logo: string; width: number; height: number }
+  | { name: string; logo: string; width: number; height: number; large?: boolean }
   | { name: string; wordmark: string; className?: string };
 
 const brandsWorkedWith: Brand[] = [
   { name: "Indwe", logo: "/logos/brands/indwe.svg", width: 162, height: 40 },
   { name: "Santam", logo: "/logos/brands/santam.svg", width: 138, height: 50 },
   { name: "Shanky's Whip", logo: "/logos/brands/shankys-whip.svg", width: 176, height: 77 },
-  { name: "Blue Label Telecoms", logo: "/logos/brands/blue-label-telecoms.png", width: 110, height: 85 },
-  { name: "Sun International", logo: "/logos/brands/sun-international.svg", width: 122, height: 60 },
+  { name: "Blue Label Telecoms", logo: "/logos/brands/blue-label-telecoms.png", width: 110, height: 85, large: true },
+  { name: "Sun International", logo: "/logos/brands/sun-international.svg", width: 122, height: 60, large: true },
   { name: "FlySafair", logo: "/logos/brands/flysafair.png", width: 200, height: 68 },
 ];
 
-const brandBenefits = [
+const brandBenefits: Feature[] = [
   {
     icon: Gem,
-    title: "Premium, Affluent Audience",
-    text: "Golfers are among the highest-net-worth sporting audiences globally. In SA, the average golfer's net worth exceeds R14 million — senior decision-makers who influence corporate purchasing.",
+    title: "Premium, affluent audience",
+    body: "Golfers are among the highest-net-worth sporting audiences globally. In SA, the average golfer's net worth exceeds R14 million — senior decision-makers who influence corporate purchasing.",
   },
   {
     icon: Hourglass,
-    title: "4+ Hours of Captive Attention",
-    text: "No other sport offers this kind of uninterrupted brand exposure. A round of golf is 4+ hours in a relaxed, positive environment where brand recall is significantly higher than digital ads.",
+    title: "4+ hours of captive attention",
+    body: "No other sport offers this kind of uninterrupted brand exposure. A round of golf is 4+ hours in a relaxed, positive environment where brand recall is significantly higher than digital ads.",
   },
   {
     icon: Network,
-    title: "Multi-Touchpoint Campaigns",
-    text: "Brand recall compounds when your message lands across the round, the content, and the campaign. One plan, consolidated reporting — no agency-of-record juggling.",
+    title: "Multi-touchpoint campaigns",
+    body: "Brand recall compounds when your message lands across the round, the content, and the campaign. One plan, consolidated reporting — no agency-of-record juggling.",
   },
   {
     icon: Trophy,
-    title: "SA's Only Integrated Golf Agency",
-    text: "No other agency in South Africa packages on-course activations, digital content, and bespoke campaigns into a single offering. We own the infrastructure.",
+    title: "SA's only integrated golf agency",
+    body: "No other agency in South Africa packages on-course activations, digital content, and bespoke campaigns into a single offering. We own the infrastructure.",
   },
 ];
 
 type Props = {
   /**
-   * "section" (default) — renders the mailto CTA block, for embedding the
+   * "section" (default) — the partner CTAs open a mailto, for embedding the
    * agency pitch inside another page. Not used on the homepage any more;
    * the agency lives on its own page.
-   * "page" — replaces the mailto CTA with anchor links to "#enquire" so the
+   * "page" — the partner CTAs are anchor links to "#enquire" so the
    * dedicated /agency page can scroll to its inline form instead of opening
    * the visitor's mail client (much higher conversion for paid traffic).
    */
   variant?: "section" | "page";
 };
 
+/**
+ * The agency pitch, in five movements: a night hero with the promise and
+ * the audience numbers, the three platforms as a spec sheet, the brands
+ * we've worked with, why golf (the one forest panel), and the two people
+ * a brand works with. The enquiry form follows on the page itself.
+ */
 export default function GolfAgency({ variant = "section" }: Props) {
   const isPage = variant === "page";
+  const Title = isPage ? "h1" : "h2";
+  const partnerHref = isPage
+    ? "#enquire"
+    : `mailto:${SITE.partnershipsEmail}?subject=Golf%20Agency%20Partnership%20Enquiry`;
+  const whatsappHref = `${SITE.whatsapp}?text=${encodeURIComponent(
+    "Hi Johannes — I'd like to chat about the Get Lucky Golf Agency."
+  )}`;
+
   return (
-    <section
-      id="agency"
-      className={`${
-        isPage ? "pt-32 pb-24 sm:pt-40 sm:pb-32" : "py-24 sm:py-32"
-      } bg-charcoal relative overflow-hidden`}
-    >
-      {isPage && (
-        <div className="absolute inset-x-0 top-0 h-[680px] sm:h-[820px] pointer-events-none">
-          <Image
-            src="/images/agency-hero.jpg"
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-charcoal/40 via-charcoal/55 to-charcoal" />
-        </div>
-      )}
+    <>
+      {/* ── Hero: the promise and the audience ── */}
+      <section
+        id="agency"
+        className="on-dark relative isolate overflow-hidden bg-night text-white"
+      >
+        <Image
+          src="/images/agency-hero.jpg"
+          alt=""
+          fill
+          priority={isPage}
+          sizes="100vw"
+          className="object-cover object-[70%_center] -z-20 opacity-90"
+        />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-night via-night/75 to-night/10" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-night via-transparent to-night/40" />
 
-      {/* Subtle accent glow */}
-      <div className="absolute top-0 right-0 w-[600px] h-[400px] bg-lime/5 rounded-full blur-[150px]" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[300px] bg-green/5 rounded-full blur-[120px]" />
+        <div className="wrap pt-36 sm:pt-44 pb-14 sm:pb-20">
+          <div className="max-w-3xl">
+            <span className="chip chip--dark fade-up">
+              <span className="live-dot" aria-hidden />
+              For brands &amp; sponsors
+            </span>
+            <Title className="display-xl mt-6 fade-up-1">
+              The Get Lucky <span className="text-lime">Golf Agency</span>
+            </Title>
+            <p className="lede lede--dark mt-6 max-w-2xl fade-up-2">
+              South Africa&apos;s only integrated golf marketing platform. Three
+              channels. One premium audience. Reach the golfers that matter — on
+              the course, on screen, and through bespoke campaigns built
+              end-to-end.
+            </p>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-20">
-          <span className="eyebrow eyebrow--dark">
-            For Brands &amp; Sponsors
-          </span>
-          <h2 className="font-heading text-3xl sm:text-5xl text-white mt-3 uppercase">
-            The Get Lucky
-            <span className="text-lime"> Golf Agency</span>
-          </h2>
-          <p className="text-white/70 mt-4 max-w-2xl mx-auto">
-            South Africa&apos;s only integrated golf marketing platform. Three
-            channels. One premium audience. Reach the golfers that matter — on
-            the course, on screen, and through bespoke campaigns built
-            end-to-end.
-          </p>
-        </div>
-
-        {/* Audience stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-20">
-          {audienceStats.map((stat) => (
-            <div
-              key={stat.label}
-              className="bg-white/5 border border-white/8 rounded-xl p-4 text-center"
-            >
-              <stat.icon className="w-5 h-5 text-lime/60 mx-auto mb-2" />
-              <p className="text-2xl sm:text-3xl font-heading text-lime">
-                {stat.value}
-              </p>
-              <p className="text-white/60 text-xs mt-1 leading-tight">
-                {stat.label}
-              </p>
+            <div className="mt-9 flex flex-col sm:flex-row gap-3 fade-up-3">
+              <a href={partnerHref} className="btn-lime btn-lime--dark">
+                Partner with the agency
+                <ArrowRight className="w-4 h-4" />
+              </a>
+              <a
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-outline btn-outline--dark"
+              >
+                <MessageCircle className="w-4 h-4" />
+                WhatsApp the founder
+              </a>
             </div>
-          ))}
-        </div>
+          </div>
 
-        {/* Platforms */}
-        <div className="mb-20">
-          <h3 className="font-heading text-2xl sm:text-3xl text-white text-center mb-3">
-            Our Platforms
-          </h3>
-          <p className="text-white/60 text-sm text-center mb-10 max-w-lg mx-auto">
-            Three channels. One golfer journey.
-          </p>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {platforms.map((platform, idx) => (
+          <dl className="mt-14 sm:mt-20 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-6 gap-y-8 fade-up-4">
+            {audienceStats.map((stat) => (
               <div
+                key={stat.label}
+                className="flex flex-col-reverse justify-end border-t border-white/15 pt-5"
+              >
+                <dt className="mt-2 text-xs sm:text-sm text-white/55">{stat.label}</dt>
+                <dd className="font-heading text-3xl sm:text-4xl text-white leading-none">
+                  {stat.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
+      {/* ── Platforms: three channels as a spec sheet ── */}
+      <section className="section bg-white" aria-labelledby="platforms-title">
+        <div className="wrap">
+          <SectionHeader
+            kicker="Our platforms"
+            title={<span id="platforms-title">Three channels. One golfer journey.</span>}
+          />
+
+          <ol className="mt-14 border-b border-line">
+            {platforms.map((platform, i) => (
+              <li
                 key={platform.name}
-                className={`bg-white/5 border border-white/8 rounded-2xl p-8 hover:border-lime/20 transition-colors group ${
-                  idx === platforms.length - 1 ? "lg:col-span-2" : ""
-                }`}
+                className="reveal grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-6 lg:gap-16 py-9 sm:py-11 border-t border-line"
               >
                 <div className="flex items-start gap-5">
-                  <div className="icon-disc w-14 h-14 flex-shrink-0">
-                    <platform.icon className="w-7 h-7" />
-                  </div>
+                  <span className="icon-disc icon-disc--lg">
+                    <platform.icon className="w-6 h-6" strokeWidth={1.75} />
+                  </span>
                   <div className="min-w-0">
-                    <h4 className="text-white text-lg font-bold">
-                      {platform.name}
-                    </h4>
-                    <p className="text-lime/60 text-xs font-semibold uppercase tracking-wider mt-0.5">
+                    <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted">
+                      <span className="tabular-nums text-green">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span aria-hidden className="mx-2 text-ink/20">/</span>
                       {platform.type}
                     </p>
+                    <h3 className="mt-2 text-[22px] sm:text-2xl font-semibold tracking-[-0.02em] text-ink leading-tight">
+                      {platform.name}
+                    </h3>
                   </div>
                 </div>
-                <p className="text-white/70 text-sm leading-relaxed mt-5">
-                  {platform.description}
-                </p>
-                <div className="flex flex-wrap gap-2 mt-5">
-                  {platform.highlights.map((h) => (
-                    <span
-                      key={h}
-                      className="chip-lime"
-                    >
-                      {h}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Brands we've worked with */}
-        <div className="mb-20">
-          <h3 className="font-heading text-2xl sm:text-3xl text-white text-center mb-3">
-            Brands We&apos;ve Worked With
-          </h3>
-          <p className="text-white/60 text-sm text-center mb-10 max-w-lg mx-auto">
-            Premium and lifestyle brands have trusted the Get Lucky team to
-            reach South Africa&apos;s affluent audience.
-          </p>
-          <div className="bg-white/5 border border-white/8 rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 items-center gap-x-6 gap-y-8">
-              {brandsWorkedWith.map((brand) => (
-                <BrandLogo key={brand.name} brand={brand} />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Why brands choose golf */}
-        <div className="mb-16">
-          <h3 className="font-heading text-2xl sm:text-3xl text-white text-center mb-3">
-            Why Brands Choose Golf
-          </h3>
-          <p className="text-white/60 text-sm text-center mb-10 max-w-lg mx-auto">
-            Golf delivers what digital can&apos;t — extended, high-quality
-            attention from an audience with real purchasing power.
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-10">
-            {brandBenefits.map((benefit) => (
-              <div key={benefit.title} className="flex gap-5">
-                <div className="icon-disc w-12 h-12 flex-shrink-0">
-                  <benefit.icon className="w-6 h-6" strokeWidth={1.75} />
-                </div>
-                <div className="min-w-0 border-l border-white/10 pl-5">
-                  <h4 className="text-white font-bold text-sm mb-2">
-                    {benefit.title}
-                  </h4>
-                  <p className="text-white/60 text-sm leading-relaxed">
-                    {benefit.text}
+                <div>
+                  <p className="text-[15px] sm:text-[16px] leading-relaxed text-muted max-w-2xl">
+                    {platform.description}
                   </p>
+                  <ul className="mt-5 flex flex-wrap gap-2">
+                    {platform.highlights.map((h) => (
+                      <li key={h} className="chip">
+                        <Check className="w-3.5 h-3.5 text-green" strokeWidth={2.5} />
+                        {h}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
+      </section>
 
-        {/* Leadership */}
-        <div className="mb-20">
-          <h3 className="font-heading text-2xl sm:text-3xl text-white text-center mb-3">
-            Meet the Team
-          </h3>
-          <p className="text-white/60 text-sm text-center mb-10 max-w-lg mx-auto">
-            The senior team you&apos;ll work with from the first brief to the
-            final activation.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* ── Brands we've worked with ── */}
+      <section className="section--tight bg-paper" aria-labelledby="brands-title">
+        <div className="wrap grid lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] gap-10 lg:gap-16 items-center">
+          <div className="reveal">
+            <span className="kicker">Track record</span>
+            <h2 id="brands-title" className="display-md text-ink mt-4">
+              Brands we&apos;ve worked with
+            </h2>
+            <p className="mt-4 text-[15px] sm:text-[16px] leading-relaxed text-muted max-w-md">
+              Premium and lifestyle brands have trusted the Get Lucky team to
+              reach South Africa&apos;s affluent audience.
+            </p>
+          </div>
+
+          <ul className="reveal grid grid-cols-2 sm:grid-cols-3 gap-px overflow-hidden rounded-3xl border border-line bg-line">
+            {brandsWorkedWith.map((brand) => (
+              <li key={brand.name} className="bg-white">
+                <BrandLogo brand={brand} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ── Why brands choose golf: the forest panel ── */}
+      <section
+        className="on-dark section bg-green-dark text-white relative isolate overflow-hidden"
+        aria-labelledby="why-golf-title"
+      >
+        <div aria-hidden className="dot-grid absolute inset-0 -z-10 opacity-60" />
+        <div className="wrap grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-12 lg:gap-16">
+          <div className="reveal lg:sticky lg:top-28 self-start lg:pt-7">
+            <span className="kicker kicker--dark">Why golf</span>
+            <h2 id="why-golf-title" className="display-lg mt-4">
+              Why brands choose golf
+            </h2>
+            <p className="lede lede--dark mt-5">
+              Golf delivers what digital can&apos;t — extended, high-quality
+              attention from an audience with real purchasing power.
+            </p>
+          </div>
+
+          <FeatureGrid items={brandBenefits} dark columns={2} />
+        </div>
+      </section>
+
+      {/* ── Leadership ── */}
+      <section className="section bg-white" aria-labelledby="team-title">
+        <div className="wrap">
+          <SectionHeader
+            kicker="Leadership"
+            title={<span id="team-title">Meet the team</span>}
+            lede="The senior team you'll work with from the first brief to the final activation."
+          />
+
+          <div className="mt-14 grid md:grid-cols-2 gap-x-10 gap-y-14">
             {team.map((member) => (
-              <div
-                key={member.name}
-                className="bg-white/5 border border-white/8 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row gap-6"
-              >
-                <div className="relative w-32 h-32 sm:w-36 sm:h-36 rounded-2xl overflow-hidden flex-shrink-0 ring-1 ring-white/10">
+              <article key={member.name} className="reveal">
+                <div className="relative aspect-[3/2] overflow-hidden rounded-3xl bg-surface">
                   <Image
                     src={member.image}
                     alt={member.name}
                     fill
-                    sizes="(min-width: 640px) 144px, 128px"
+                    sizes="(min-width: 768px) 50vw, 100vw"
                     style={{ objectPosition: member.imagePosition }}
                     className="object-cover grayscale contrast-[1.05]"
                   />
                 </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-baseline justify-between flex-wrap gap-x-4 gap-y-1">
-                    <h4 className="text-white text-xl font-bold">
-                      {member.name}
-                    </h4>
-                    <p className="text-lime/70 text-xs font-semibold uppercase tracking-wider">
-                      {member.role}
-                    </p>
-                  </div>
-                  <p className="text-white/70 text-sm leading-relaxed mt-4">
-                    {member.bio}
+                <div className="mt-6 flex items-baseline justify-between flex-wrap gap-x-4 gap-y-1">
+                  <h3 className="text-xl font-semibold tracking-[-0.015em] text-ink">
+                    {member.name}
+                  </h3>
+                  <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-green">
+                    {member.role}
                   </p>
                 </div>
-              </div>
+                <p className="mt-3 text-[15px] leading-relaxed text-muted">{member.bio}</p>
+              </article>
             ))}
           </div>
-        </div>
 
-        {/* CTA */}
-        <div className="text-center">
-          <p className="text-white/50 text-sm mb-6">
-            Interested in reaching South Africa&apos;s most valuable sporting audience?
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
-              href={
-                variant === "page"
-                  ? "#enquire"
-                  : `mailto:${SITE.partnershipsEmail}?subject=Golf%20Agency%20Partnership%20Enquiry`
-              }
-              className="btn-lime btn-lime--dark"
-            >
-              Partner With the Agency
-            </a>
-            <a
-              href={`${SITE.whatsapp}?text=${encodeURIComponent(
-                "Hi Johannes — I'd like to chat about the Get Lucky Golf Agency."
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-outline btn-outline--dark"
-            >
-              WhatsApp the Founder
-            </a>
+          <div className="reveal mt-16 sm:mt-20 pt-8 border-t border-line flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <p className="text-lg sm:text-xl font-medium tracking-[-0.01em] text-ink max-w-xl">
+              Interested in reaching South Africa&apos;s most valuable sporting audience?
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <a href={partnerHref} className="btn-ink">
+                Partner with the agency
+                <ArrowRight className="w-4 h-4" />
+              </a>
+              <a
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-outline"
+              >
+                <MessageCircle className="w-4 h-4" />
+                WhatsApp the founder
+              </a>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
 
 function BrandLogo({ brand }: { brand: Brand }) {
   if ("logo" in brand) {
     return (
-      <div className="flex items-center justify-center h-12 sm:h-14 px-2">
+      <div className="flex items-center justify-center h-24 sm:h-28 px-6 sm:px-8">
         <Image
           src={brand.logo}
           alt={brand.name}
           width={brand.width}
           height={brand.height}
           unoptimized
-          className="max-h-full w-auto max-w-full object-contain opacity-70 hover:opacity-100 transition-opacity [filter:brightness(0)_invert(1)]"
+          className={`${
+            brand.large ? "max-h-12 sm:max-h-16" : "max-h-10 sm:max-h-12"
+          } w-auto max-w-full object-contain [filter:brightness(0)] opacity-55 transition-opacity duration-300 hover:opacity-90`}
         />
       </div>
     );
   }
 
   return (
-    <div className="flex items-center justify-center h-14 sm:h-16 px-2">
+    <div className="flex items-center justify-center h-24 sm:h-28 px-6">
       <span
-        className={`text-white/70 hover:text-white transition-colors ${
+        className={`text-ink/60 hover:text-ink transition-colors ${
           brand.className ?? "font-heading uppercase tracking-wide text-xl sm:text-2xl"
         }`}
       >

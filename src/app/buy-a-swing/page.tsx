@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Shield } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import VoucherForm from "@/components/forms/VoucherForm";
@@ -19,35 +19,31 @@ export default function BuyASwingPage() {
   return (
     <>
       <Navbar />
-      <main className="pt-20 sm:pt-24">
-        <section className="bg-cream">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
-            <div className="text-center max-w-2xl mx-auto mb-12">
-              <span className="eyebrow">
-                The Challenge
-              </span>
-              <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-green mt-4 uppercase">
-                Buy Your Swing
-              </h1>
-              <p className="text-base sm:text-lg text-charcoal-light/80 mt-5 leading-relaxed">
+      <main>
+        <section className="bg-paper pt-32 sm:pt-40 pb-[clamp(72px,9vw,112px)]">
+          <div className="wrap wrap--narrow">
+            <div className="text-center max-w-2xl mx-auto">
+              <span className="kicker">The challenge</span>
+              <h1 className="display-lg text-ink mt-4">Buy your swing</h1>
+              <p className="lede mt-5">
                 One swing. The bigger your entry, the bigger your prize. From
                 R50 to play for R25,000 — all the way to R1,000 to play for
                 R1,000,000. Redeem at any partner course on your next round.
               </p>
             </div>
 
-            <div className="card bg-white rounded-3xl p-6 sm:p-10 card--hover">
+            <div className="card mt-10 sm:mt-12 p-5 sm:p-10">
               <VoucherForm />
             </div>
 
-            <div className="mt-10 flex items-center justify-center gap-3 text-charcoal-light/70">
-              <Shield className="w-4 h-4" />
-              <p className="text-sm">
+            <p className="mt-8 flex items-start sm:items-center justify-center gap-2.5 text-[14px] leading-relaxed text-muted text-left sm:text-center">
+              <ShieldCheck className="w-4 h-4 text-green shrink-0 mt-0.5 sm:mt-0" />
+              <span>
                 All prizes fully insured by{" "}
-                <span className="text-green font-medium">Indwe Risk Services</span>{" "}
+                <span className="text-ink font-medium">Indwe Risk Services</span>{" "}
                 — FSP 3425. Secure payment by PayFast.
-              </p>
-            </div>
+              </span>
+            </p>
           </div>
         </section>
       </main>

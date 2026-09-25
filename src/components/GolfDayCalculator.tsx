@@ -58,8 +58,11 @@ const ADD_ONS: AddOn[] = [
 
 const PROMOTER_RATE = 2_000;
 
+// Pinned to comma grouping (R12,000) so the server render and the browser
+// agree; "en-ZA" groups with a space in Node and a comma in some browsers,
+// which broke hydration.
 function formatRand(n: number): string {
-  return "R" + n.toLocaleString("en-ZA");
+  return "R" + n.toLocaleString("en-US", { maximumFractionDigits: 2 });
 }
 
 export default function GolfDayCalculator() {
@@ -106,7 +109,7 @@ export default function GolfDayCalculator() {
   }
 
   return (
-    <div className="card bg-white rounded-3xl overflow-hidden card--hover">
+    <div className="card bg-white rounded-3xl overflow-clip card--hover">
       <div className="grid lg:grid-cols-[1fr_360px]">
         {/* Left: configurator */}
         <div className="p-6 sm:p-10 space-y-8">
@@ -288,59 +291,61 @@ export default function GolfDayCalculator() {
         </div>
 
         {/* Right: summary */}
-        <div className="bg-green-dark text-white p-6 sm:p-8 lg:p-10 lg:sticky lg:top-24 lg:self-start">
-          <p className="eyebrow eyebrow--dark">
-            Your Quote
-          </p>
-          <p className="font-heading text-3xl sm:text-4xl uppercase mt-1">
-            Activation Total
-          </p>
+        <div className="bg-green-dark text-white">
+          <div className="p-6 sm:p-8 lg:p-10 lg:sticky lg:top-24">
+            <p className="eyebrow eyebrow--dark">
+              Your Quote
+            </p>
+            <p className="font-heading text-3xl sm:text-4xl uppercase mt-1">
+              Activation Total
+            </p>
 
-          <div className="mt-6 space-y-3 text-sm">
-            <div className="flex justify-between border-b border-white/10 pb-3">
-              <span className="text-white/70">
-                {prize.prize} prize × {golfers} players
-              </span>
-              <span className="font-semibold">{formatRand(breakdown.prizeCost)}</span>
-            </div>
-            <div className="flex justify-between border-b border-white/10 pb-3">
-              <span className="text-white/70">
-                {promoters} promoter{promoters === 1 ? "" : "s"}
-              </span>
-              <span className="font-semibold">{formatRand(breakdown.promoterCost)}</span>
-            </div>
-            {ADD_ONS.filter((a) => selected[a.id]).map((a) => (
-              <div
-                key={a.id}
-                className="flex justify-between border-b border-white/10 pb-3"
-              >
-                <span className="text-white/70">{a.title}</span>
-                <span className="font-semibold">{formatRand(a.amount)}</span>
+            <div className="mt-6 space-y-3 text-sm">
+              <div className="flex justify-between border-b border-white/10 pb-3">
+                <span className="text-white/70">
+                  {prize.prize} prize × {golfers} players
+                </span>
+                <span className="font-semibold">{formatRand(breakdown.prizeCost)}</span>
               </div>
-            ))}
-          </div>
+              <div className="flex justify-between border-b border-white/10 pb-3">
+                <span className="text-white/70">
+                  {promoters} promoter{promoters === 1 ? "" : "s"}
+                </span>
+                <span className="font-semibold">{formatRand(breakdown.promoterCost)}</span>
+              </div>
+              {ADD_ONS.filter((a) => selected[a.id]).map((a) => (
+                <div
+                  key={a.id}
+                  className="flex justify-between border-b border-white/10 pb-3"
+                >
+                  <span className="text-white/70">{a.title}</span>
+                  <span className="font-semibold">{formatRand(a.amount)}</span>
+                </div>
+              ))}
+            </div>
 
-          <div className="mt-6 bg-lime text-green rounded-xl p-5">
-            <p className="eyebrow">
-              Total Investment
+            <div className="mt-6 bg-lime text-green rounded-xl p-5">
+              <p className="eyebrow">
+                Total Investment
+              </p>
+              <p className="font-heading text-4xl sm:text-5xl mt-1">
+                {formatRand(breakdown.total)}
+              </p>
+            </div>
+
+            <p className="text-white/60 text-xs mt-4 leading-relaxed">
+              Every package includes the Get Lucky branded experience, on-site
+              management, a complimentary <span className="text-lime font-semibold">Shanky&apos;s Whip</span> for every
+              golfer, and full prize underwriting by Indwe Risk Services.
             </p>
-            <p className="font-heading text-4xl sm:text-5xl mt-1">
-              {formatRand(breakdown.total)}
-            </p>
+
+            <a
+              href="#enquire"
+              className="btn-lime mt-6 w-full text-center"
+            >
+              Lock In This Package
+            </a>
           </div>
-
-          <p className="text-white/60 text-xs mt-4 leading-relaxed">
-            Every package includes the Get Lucky branded experience, on-site
-            management, a complimentary <span className="text-lime font-semibold">Shanky&apos;s Whip</span> for every
-            golfer, and full prize underwriting by Indwe Risk Services.
-          </p>
-
-          <a
-            href="#enquire"
-            className="btn-lime mt-6 w-full text-center"
-          >
-            Lock In This Package
-          </a>
         </div>
       </div>
     </div>

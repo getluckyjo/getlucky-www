@@ -99,7 +99,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#345231",
+  themeColor: "#0c160e",
 };
 
 export default function RootLayout({
@@ -174,6 +174,7 @@ export default function RootLayout({
   return (
     <html
       lang="en-ZA"
+      data-scroll-behavior="smooth"
       className={`${posterGothic.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
