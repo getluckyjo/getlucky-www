@@ -15,7 +15,8 @@ name: PayFast Cross-App Health Check
 # On any anomaly the workflow emails johannes@getluckygolfclub.com via Resend.
 #
 # The membership site (membership.getluckygolfclub.com) is not probed: Get
-# Lucky Club memberships are being phased out (Sep 2026) and are not tracked.
+# Lucky Club memberships carry on, but they are not the focus while the app is
+# (Sep 2026), so they are not tracked here.
 # Nor is the simulator site (simulator.getluckygolfclub.com), taken out at
 # Johannes's request on 25 Sep 2026. That leaves www alone, so the divergence
 # check below has nothing to compare until another app is added back.
