@@ -172,7 +172,7 @@ export default function SimulatorRevenueCalculator() {
               href="#enquire"
               className="btn-lime mt-6 w-full text-center"
             >
-              Add It To Your Sim
+              Add it to your sim
             </a>
           </div>
         </div>

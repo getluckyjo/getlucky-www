@@ -222,7 +222,7 @@ export default function CharityFundraisingCalculator({
               href="#enquire"
               className="btn-lime btn-lime--dark mt-6 w-full text-center"
             >
-              {beneficiary === "school" ? "Lock In Your School Day" : "Lock In Your Charity Day"}
+              {beneficiary === "school" ? "Lock in your school day" : "Lock in your charity day"}
             </a>
           </div>
         </div>

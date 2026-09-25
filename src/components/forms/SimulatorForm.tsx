@@ -138,7 +138,7 @@ export default function SimulatorForm() {
       </div>
 
       <div className="pt-2">
-        <SubmitButton pending={pending}>Add It To Your Sim</SubmitButton>
+        <SubmitButton pending={pending}>Add it to your sim</SubmitButton>
       </div>
     </form>
   );

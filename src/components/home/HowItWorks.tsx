@@ -82,7 +82,7 @@ export default function HowItWorks() {
                 <item.icon className="w-[18px] h-[18px]" />
               </span>
               <div className="lg:mt-7">
-                <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted tabular-nums">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted tabular-nums lg:min-h-[2lh]">
                   0{i + 1} · {item.subtitle}
                 </p>
                 <h3 className="mt-2 font-heading text-[28px] leading-none text-ink">

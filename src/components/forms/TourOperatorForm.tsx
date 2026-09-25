@@ -135,7 +135,7 @@ export default function TourOperatorForm() {
       </div>
 
       <div className="pt-2">
-        <SubmitButton pending={pending}>Add The Challenge To Your Tours</SubmitButton>
+        <SubmitButton pending={pending}>Add the challenge to your tours</SubmitButton>
       </div>
     </form>
   );

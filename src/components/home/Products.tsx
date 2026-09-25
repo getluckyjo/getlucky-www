@@ -48,7 +48,7 @@ export default function Products() {
             </p>
             <h3 className="display-md mt-2">Play the challenge</h3>
             <p className="mt-3 text-white/70 max-w-md">
-              Scan the QR code at the tee box, pick your prize from R50 to
+              Scan the QR code at the tee box, pick your entry from R50 to
               R1,000, and take one swing on the signature par 3. No app, no
               handicap, no membership needed.
             </p>

@@ -11,18 +11,18 @@
 export default function IndweBannerStrip({ src }: { src: string }) {
   return (
     <section aria-label="Headline sponsor" className="bg-white border-b border-line">
-      <div className="wrap py-5 sm:py-7">
+      <div className="wrap py-3 sm:py-5">
         {/*
           The creative is a wide 1600×333 lockup. On a phone that ratio is only
           ~70px tall and the two-line copy slides get clipped, so we give the
-          frame a taller ratio on small screens and snap back to the wide lockup
+          frame a taller 2:1 ratio on small screens (enough for four lines) and snap back to the wide lockup
           from sm up.
         */}
         <iframe
           src={src}
           title="Indwe Risk Services — Headline Sponsor"
           loading="lazy"
-          className="mx-auto w-full max-w-3xl block border-0 aspect-[5/3] sm:aspect-[1600/333]"
+          className="mx-auto w-full max-w-3xl block border-0 aspect-[2/1] sm:aspect-[1600/333]"
         />
       </div>
     </section>

@@ -195,7 +195,7 @@ export default function TourRevenueCalculator() {
               href="#enquire"
               className="btn-lime mt-6 w-full text-center"
             >
-              Add It To Your Tours
+              Add it to your tours
             </a>
           </div>
         </div>

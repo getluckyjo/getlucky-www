@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldCheck } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 import { PRIZE_TIERS } from "@/lib/constants";
 
 /** R25,000 → R25K, R1,000,000 → R1M: the short form that fits on a bar. */
@@ -77,6 +78,10 @@ export default function PrizeLadder() {
               </span>
             </div>
           </div>
+
+          <Link href="/#courses" className="link-arrow mt-6">
+            Find a course to take this swing <ArrowRight className="w-4 h-4" />
+          </Link>
 
           <p className="mt-6 flex items-start gap-2 text-[13px] text-white/55">
             <ShieldCheck className="w-4 h-4 text-lime shrink-0 mt-px" />

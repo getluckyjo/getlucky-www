@@ -143,7 +143,7 @@ export default function CorporateForm() {
       </div>
 
       <div className="pt-2">
-        <SubmitButton pending={pending}>Request a Quote</SubmitButton>
+        <SubmitButton pending={pending}>Request a quote</SubmitButton>
       </div>
     </form>
   );

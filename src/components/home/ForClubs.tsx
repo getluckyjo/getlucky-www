@@ -51,7 +51,7 @@ export default function ForClubs() {
             Why golf clubs partner with us
           </h2>
           <p className="lede lede--dark mt-5">
-            A permanent activation on your par-3 — at zero cost to your club.
+            A permanent activation on your par‑3 — at zero cost to your club.
             You earn revenue. We handle everything.
           </p>
           <div className="mt-9 flex flex-col sm:flex-row lg:flex-col items-start gap-3">

@@ -343,7 +343,7 @@ export default function GolfDayCalculator() {
               href="#enquire"
               className="btn-lime mt-6 w-full text-center"
             >
-              Lock In This Package
+              Lock in this package
             </a>
           </div>
         </div>

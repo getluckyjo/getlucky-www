@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Mail, MessageCircle } from "lucide-react";
+import { Mail, MessageCircle } from "lucide-react";
 import { SITE, ROUTES } from "@/lib/constants";
 import { SOLUTIONS } from "@/lib/solutions";
 
@@ -90,16 +90,6 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
-              <li>
-                <a
-                  href={SITE.simulator}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${linkClass} inline-flex items-center gap-1`}
-                >
-                  Golf Simulator <ArrowUpRight className="w-3.5 h-3.5" />
-                </a>
-              </li>
             </ul>
           </div>
 
@@ -136,7 +126,6 @@ export default function Footer() {
               { href: ROUTES.terms, label: "Terms & Conditions" },
               { href: ROUTES.privacy, label: "Privacy" },
               { href: SITE.instagram, label: "Instagram", external: true },
-              { href: SITE.simulator, label: "Golf Simulator", external: true },
             ].map((link) => (
               <a
                 key={link.href}
@@ -154,7 +143,7 @@ export default function Footer() {
       {/* The wordmark, set huge and nearly invisible, as the floor. */}
       <p
         aria-hidden
-        className="pointer-events-none select-none font-heading text-center leading-[0.8] text-[22vw] text-white/[0.035] -mb-[3vw] whitespace-nowrap"
+        className="pointer-events-none select-none font-heading text-center leading-[0.8] text-[18.5vw] text-white/[0.035] -mb-[2.5vw] whitespace-nowrap"
       >
         Get Lucky
       </p>

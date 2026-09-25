@@ -36,7 +36,7 @@ export default function Trust() {
       <div className="wrap">
         <SectionHeader
           kicker="Headline sponsor"
-          title={<span id="trust-title">Real prizes. Really paid.</span>}
+          title={<span id="trust-title">Real prizes. Insured before you swing.</span>}
           lede="A hole-in-one is the rarest shot in golf. When you make it, the money has to be there — so every rand of every prize is underwritten before you swing."
         />
 
@@ -90,9 +90,13 @@ export default function Trust() {
             </figcaption>
           </figure>
 
-          <dl className="grid grid-cols-3 lg:grid-cols-1 gap-4 lg:gap-0 lg:divide-y lg:divide-line lg:border-l lg:border-line lg:pl-10">
+          <div>
+          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted mb-2 sm:mb-4 lg:mb-0 lg:pl-10">
+            Indwe Risk Services in numbers
+          </p>
+          <dl className="grid grid-cols-1 divide-y divide-line sm:grid-cols-3 sm:gap-4 sm:divide-y-0 lg:grid-cols-1 lg:gap-0 lg:divide-y lg:border-l lg:border-line lg:pl-10">
             {stats.map((s) => (
-              <div key={s.label} className="flex flex-col-reverse lg:py-5">
+              <div key={s.label} className="flex flex-col-reverse justify-end py-4 sm:py-0 lg:py-5">
                 <dt className="mt-1.5 text-[12px] sm:text-[13px] text-muted">{s.label}</dt>
                 <dd className="font-heading text-3xl sm:text-4xl text-green leading-none">
                   {s.value}
@@ -100,6 +104,7 @@ export default function Trust() {
               </div>
             ))}
           </dl>
+          </div>
         </div>
 
         <div className="reveal mt-10 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 opacity-70">

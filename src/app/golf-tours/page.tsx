@@ -10,7 +10,7 @@ import {
   IncludedSection,
   ShowcaseSection,
 } from "@/components/ui/ServiceSections";
-import { GOLF_DAY_PHOTOS } from "@/lib/golfDayPhotos";
+import { galleryFor } from "@/lib/golfDayPhotos";
 import TourOperatorForm from "@/components/forms/TourOperatorForm";
 import TourRevenueCalculator from "@/components/TourRevenueCalculator";
 import {
@@ -101,7 +101,7 @@ export default function GolfToursPage() {
           }
           lede={
             <>
-              Sell R100 hole-in-one entries on the chosen par-3 of every leg of
+              Sell R100 hole-in-one entries on the chosen par‑3 of every leg of
               your tour. Your golfers swing for{" "}
               <span className="text-white font-semibold">R100,000</span>, you earn{" "}
               <span className="text-white font-semibold">20% commission on every entry</span>{" "}
@@ -109,8 +109,8 @@ export default function GolfToursPage() {
               cameras, no kit, fully underwritten by Indwe.
             </>
           }
-          image="/images/golf-day/IMG_4460.jpg"
-          imageAlt="Golfer mid-swing at the Get Lucky Hole-in-One Challenge"
+          image="/images/courses/zimbali.jpg"
+          imageAlt="The fairway at Zimbali, a Get Lucky partner course"
           primary={{ href: "#build", label: "Calculate what you'll earn" }}
           secondary={{ href: "#enquire", label: "Enquire now" }}
           stats={[
@@ -193,7 +193,7 @@ export default function GolfToursPage() {
           kicker="The real thing"
           title="Moments from the tee"
           lede="Real golfers, real challenges, real reactions — from Get Lucky hole-in-one challenges around the country."
-          photos={GOLF_DAY_PHOTOS}
+          photos={galleryFor("IMG_4274.jpg")}
         />
 
         <EnquirySection

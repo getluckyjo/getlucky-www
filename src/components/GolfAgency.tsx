@@ -69,15 +69,15 @@ const team = [
 ];
 
 type Brand =
-  | { name: string; logo: string; width: number; height: number; large?: boolean }
+  | { name: string; logo: string; width: number; height: number; size?: "sm" | "lg" | "xl" }
   | { name: string; wordmark: string; className?: string };
 
 const brandsWorkedWith: Brand[] = [
-  { name: "Indwe", logo: "/logos/brands/indwe.svg", width: 162, height: 40 },
+  { name: "Indwe", logo: "/logos/brands/indwe.svg", width: 162, height: 40, size: "sm" },
   { name: "Santam", logo: "/logos/brands/santam.svg", width: 138, height: 50 },
   { name: "Shanky's Whip", logo: "/logos/brands/shankys-whip.svg", width: 176, height: 77 },
-  { name: "Blue Label Telecoms", logo: "/logos/brands/blue-label-telecoms.png", width: 110, height: 85, large: true },
-  { name: "Sun International", logo: "/logos/brands/sun-international.svg", width: 122, height: 60, large: true },
+  { name: "Blue Label Telecoms", logo: "/logos/brands/blue-label-telecoms.png", width: 110, height: 85, size: "lg" },
+  { name: "Sun International", logo: "/logos/brands/sun-international.svg", width: 122, height: 60, size: "xl" },
   { name: "FlySafair", logo: "/logos/brands/flysafair.png", width: 200, height: 68 },
 ];
 
@@ -368,7 +368,15 @@ function BrandLogo({ brand }: { brand: Brand }) {
           height={brand.height}
           unoptimized
           className={`${
-            brand.large ? "max-h-12 sm:max-h-16" : "max-h-10 sm:max-h-12"
+            // Optical sizing: a wide wordmark reads bigger than a stacked
+            // crest at the same height, so each logo gets its own cap.
+            brand.size === "sm"
+              ? "max-h-7 sm:max-h-8"
+              : brand.size === "lg"
+                ? "max-h-12 sm:max-h-16"
+                : brand.size === "xl"
+                  ? "max-h-16 sm:max-h-20"
+                  : "max-h-10 sm:max-h-12"
           } w-auto max-w-full object-contain [filter:brightness(0)] opacity-55 transition-opacity duration-300 hover:opacity-90`}
         />
       </div>
