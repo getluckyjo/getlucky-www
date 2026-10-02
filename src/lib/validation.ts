@@ -1,8 +1,17 @@
 import { z } from "zod";
-import { COURSES, PRIZE_TIERS } from "./constants.ts";
+import { COURSES, PRIZE_TIERS, canonicalCourse } from "./constants.ts";
 
 const requiredString = (field: string) =>
   z.string({ error: `${field} is required` }).trim().min(1, `${field} is required`);
+
+const courseValues = COURSES as readonly string[];
+
+// A course from the list. A page loaded before a course was renamed still
+// sends the old spelling; it is accepted and stored under the current one.
+const courseName = (message: string) =>
+  requiredString("Course")
+    .transform(canonicalCourse)
+    .refine((v) => courseValues.includes(v), message);
 
 const consent = z.literal(true, { error: "You must agree to continue" });
 // Communication opt-in is optional — accept any boolean. Users who don't tick
@@ -32,10 +41,7 @@ export const clubMemberFields = {
   name: requiredString("Name").max(120),
   email: requiredString("Email").email("Enter a valid email").max(160),
   mobile: phone,
-  course: requiredString("Course").refine(
-    (v) => (COURSES as readonly string[]).includes(v),
-    "Choose a partner course",
-  ),
+  course: courseName("Choose a partner course"),
   consentCommunication: optionalConsent,
   // Meta requires WhatsApp to be named explicitly before any business-initiated
   // message, and the wording must say what the golfer will be messaged about —
@@ -147,18 +153,13 @@ export const simulatorSchema = z.object({
   consentTerms: consent,
 });
 const tierEntries = PRIZE_TIERS.map((t) => t.entryAmount) as readonly number[];
-const courseValues = COURSES as readonly string[];
-
 export const voucherSchema = z
   .object({
     entryAmount: z.coerce.number().refine(
       (v) => tierEntries.includes(v),
       { message: "Choose an entry amount" },
     ),
-    course: requiredString("Course").refine(
-      (v) => courseValues.includes(v),
-      "Choose a partner course",
-    ),
+    course: courseName("Choose a partner course"),
     fullName: requiredString("Full name").max(120),
     email: requiredString("Email").email("Enter a valid email").max(160),
     mobile: phone,
@@ -227,10 +228,7 @@ export const freeEntrySchema = z.object({
   // Optional on the sponsored form — mobile is the primary contact channel.
   email: z.string().trim().email("Enter a valid email").max(160).optional().or(z.literal("")),
   mobile: phone,
-  course: requiredString("Course").refine(
-    (v) => (COURSES as readonly string[]).includes(v),
-    "Choose a course",
-  ),
+  course: courseName("Choose a course"),
   event: z.string().trim().max(120).optional().or(z.literal("")),
   consentWhatsApp: optionalConsent,
   consentTerms: consent,

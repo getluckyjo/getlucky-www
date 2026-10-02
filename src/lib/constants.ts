@@ -73,7 +73,7 @@ export const COURSE_SLUGS = {
   "Highland Gate": "highland-gate",
   "Metropolitan 9th Hole": "metropolitan",
   "Metropolitan 18th Hole": "metropolitan",
-  "Mosselbay Golf Club": "mossel-bay",
+  "Mossel Bay Golf Club": "mossel-bay",
   "Mount Edgecombe Country Club": "mount-edgecombe",
   "Rondebosch Golf Club": "rondebosch",
   "San Lameer": "san-lameer",
@@ -87,6 +87,21 @@ export const COURSE_SLUGS = {
 } as const;
 
 export const COURSES = Object.keys(COURSE_SLUGS) as ReadonlyArray<keyof typeof COURSE_SLUGS>;
+
+/**
+ * Course names as they were once spelled. Rows already in the database keep
+ * the spelling they were saved with, so anything that looks a course up by
+ * name goes through canonicalCourse() first. When a key in COURSE_SLUGS is
+ * renamed, add its old spelling here.
+ */
+export const LEGACY_COURSE_NAMES: Readonly<Record<string, keyof typeof COURSE_SLUGS>> = {
+  "Mosselbay Golf Club": "Mossel Bay Golf Club",
+};
+
+/** The current spelling of a course name; any other name comes back as is. */
+export function canonicalCourse(name: string): string {
+  return LEGACY_COURSE_NAMES[name] ?? name;
+}
 
 export const ROUTES = {
   home: "/",
