@@ -42,7 +42,7 @@ export default function HomeHero() {
               height={588}
               unoptimized
               priority
-              className="lg:hidden h-28 sm:h-32 w-auto mb-6 -rotate-3 drop-shadow-[0_14px_30px_rgba(0,0,0,0.35)] scale-in"
+              className="lg:hidden h-28 sm:h-32 w-auto mb-6 drop-shadow-[0_14px_30px_rgba(0,0,0,0.35)] scale-in"
             />
             <span className="chip chip--dark fade-up">
               <span className="live-dot" aria-hidden />
@@ -95,7 +95,7 @@ export default function HomeHero() {
 
           {/* The ladder, as a live card */}
           <div className="hidden lg:block scale-in relative">
-            {/* The challenge lockup, stuck on the card like a sticker */}
+            {/* The challenge lockup, centred on the card's top edge */}
             <Image
               src="/brand/logo-lockup.svg"
               alt="Get Lucky Hole-in-1 Challenge"
@@ -103,7 +103,7 @@ export default function HomeHero() {
               height={588}
               unoptimized
               priority
-              className="absolute -top-[118px] right-2 z-10 h-32 w-auto rotate-6 drop-shadow-[0_18px_30px_rgba(0,0,0,0.4)]"
+              className="absolute -top-[118px] left-1/2 -translate-x-1/2 z-10 h-32 w-auto drop-shadow-[0_18px_30px_rgba(0,0,0,0.4)]"
             />
             <div className="card--glass p-6">
               <div className="flex items-center justify-between">
