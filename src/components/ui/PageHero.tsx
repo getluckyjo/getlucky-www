@@ -15,6 +15,7 @@ export default function PageHero({
   lede,
   image,
   imageAlt,
+  imagePosition = "object-center",
   primary,
   secondary,
   stats,
@@ -25,10 +26,13 @@ export default function PageHero({
   lede: ReactNode;
   image: string;
   imageAlt: string;
+  /** Where the photo anchors when cover-cropped, e.g. "object-[center_20%]"
+      to keep heads clear of the nav on a tall photo. */
+  imagePosition?: string;
   primary: Cta;
   secondary?: Cta;
   stats?: { value: string; label: string }[];
-  /** The Indwe underwriting line under the actions. */
+  /** The prize-insurance line under the actions. */
   trust?: boolean;
 }) {
   return (
@@ -39,7 +43,7 @@ export default function PageHero({
         fill
         priority
         sizes="100vw"
-        className="object-cover object-center -z-20 opacity-80"
+        className={`object-cover ${imagePosition} -z-20 opacity-80`}
       />
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-night/95 via-night/60 to-night/5" />
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-night via-night/10 to-night/50" />
@@ -76,7 +80,8 @@ export default function PageHero({
           {trust && (
             <p className="mt-7 flex items-center gap-2 text-sm text-white/60 fade-up-4">
               <ShieldCheck className="w-4 h-4 text-lime shrink-0" />
-              Every prize underwritten by Indwe Risk Services · FSP 3425
+              Every prize insured by Santam &amp; Indwe Risk Services{" "}
+              <span className="whitespace-nowrap">(FSP 3425)</span>
             </p>
           )}
         </div>

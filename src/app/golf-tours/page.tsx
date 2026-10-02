@@ -24,19 +24,24 @@ import {
   FileSignature,
   BadgeCheck,
 } from "lucide-react";
+import { socialMeta } from "@/lib/seo";
+
+const TITLE = "Golf Tour Operators | Sell the R100,000 Hole-in-One Challenge on Your Tours";
+const DESCRIPTION =
+  "Add a R100,000 hole-in-one prize to every golf tour you sell. Golfers pay R100 per entry on a defined par-3 — you earn 20% commission on every entry. No cameras, no kit: payouts verified by mobile video, a four-ball affidavit and a course certificate. Any course in South Africa, minimum 150m. Insured by Santam & Indwe Risk Services.";
 
 export const metadata: Metadata = {
-  title: "Golf Tour Operators | Sell the R100,000 Hole-in-One Challenge on Your Tours",
-  description:
-    "Add a R100,000 hole-in-one prize to every golf tour you sell. Golfers pay R100 per entry on a defined par-3 — you earn 20% commission on every entry. No cameras, no kit: payouts verified by mobile video, a four-ball affidavit and a course certificate. Any course in South Africa, minimum 150m. Underwritten by Indwe Risk Services.",
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: { canonical: "/golf-tours" },
+  ...socialMeta("/golf-tours", TITLE, DESCRIPTION),
 };
 
 const WHY = [
   {
     icon: Trophy,
     title: "R100,000 on every tour",
-    body: "Every itinerary you sell carries a real R100,000 hole-in-one prize on a defined par-3. Fully underwritten by Indwe Risk Services — if someone holes it, the payout is guaranteed and it never touches your pocket.",
+    body: "Every itinerary you sell carries a real R100,000 hole-in-one prize on a defined par-3. Fully underwritten by Santam and structured by Indwe Risk Services — if someone holes it, the payout is guaranteed and it never touches your pocket.",
   },
   {
     icon: Megaphone,
@@ -106,7 +111,7 @@ export default function GolfToursPage() {
               <span className="text-white font-semibold">R100,000</span>, you earn{" "}
               <span className="text-white font-semibold">20% commission on every entry</span>{" "}
               — and your brochure gets a headline no other operator can match. No
-              cameras, no kit, fully underwritten by Indwe.
+              cameras, no kit, fully insured by Santam &amp; Indwe.
             </>
           }
           image="/images/courses/zimbali.jpg"
@@ -129,7 +134,7 @@ export default function GolfToursPage() {
           lede="Pick how many entries your golfers will take per tour and how many tours you run a year. Your live earnings estimate updates as you go — no calls, no back-and-forth."
           checks={[
             "You earn 20% commission on every R100 entry",
-            "R100,000 prize fully underwritten by Indwe — zero risk",
+            "R100,000 prize fully insured by Santam & Indwe — zero risk",
             "Works on any SA course with a 150m+ par-3",
           ]}
         >
@@ -139,7 +144,7 @@ export default function GolfToursPage() {
         <IncludedSection
           kicker="Why operators add it"
           title="The cheapest R100,000 your marketing will ever buy"
-          lede="A six-figure cash prize on every itinerary — without carrying the risk, the kit, or the admin. You sell the entries; Indwe carries the prize."
+          lede="A six-figure cash prize on every itinerary — without carrying the risk, the kit, or the admin. You sell the entries; the prize is insured."
           items={WHY}
         />
 

@@ -45,7 +45,7 @@ export const SOLUTIONS: readonly Solution[] = [
   {
     href: ROUTES.simulator,
     label: "Simulator venues",
-    blurb: "A R100,000 challenge on your sim. Keep 10% of every swing.",
+    blurb: "A R100,000 challenge on your sim. Keep 10% of every entry.",
     icon: MonitorPlay,
   },
   {

@@ -8,6 +8,7 @@ import {
   SIMULATOR_PRIZE,
   VENUE_SHARE,
 } from "@/lib/simulatorQuoteStore";
+import ExactNumberInput from "@/components/ui/ExactNumberInput";
 
 // Pinned to comma grouping (R12,000) so the server render and the browser
 // agree; "en-ZA" groups with a space in Node and a comma in some browsers,
@@ -55,17 +56,17 @@ export default function SimulatorRevenueCalculator() {
               </p>
               <p className="text-sm text-muted mt-1">
                 Players pay R{SIMULATOR_ENTRY} for 3 attempts at a{" "}
-                {SIMULATOR_PRIZE} hole-in-one — and you keep 10% of every swing.
+                {SIMULATOR_PRIZE} hole-in-one — and you keep 10% of every entry.
               </p>
             </div>
           </div>
 
-          {/* Swings sold */}
+          {/* Entries sold */}
           <div>
             <div className="flex items-center gap-2 mb-4">
               <Users className="w-4 h-4 text-green" />
               <h3 className="font-heading text-lg text-green uppercase">
-                2. Estimated Swings Per Month
+                2. Estimated Entries Per Month
               </h3>
             </div>
             <div className="flex items-center gap-4">
@@ -77,29 +78,25 @@ export default function SimulatorRevenueCalculator() {
                 value={swings}
                 onChange={(e) => setSwings(Number(e.target.value))}
                 className="flex-1 accent-green"
-                aria-label="Estimated swings per month"
+                aria-label="Estimated entries per month"
               />
               <div className="flex items-center gap-2">
-                <input
-                  type="number"
+                <ExactNumberInput
+                  value={swings}
                   min={1}
                   max={5000}
-                  value={swings}
-                  onChange={(e) =>
-                    setSwings(Math.max(1, Number(e.target.value) || 0))
-                  }
-                  className="w-20 text-center rounded-lg border border-green/15 px-3 py-2 font-semibold text-green focus:border-green focus:outline-none"
-                  aria-label="Estimated swings per month (exact)"
+                  onChange={setSwings}
+                  label="Estimated entries per month (exact)"
                 />
                 <span className="text-sm text-muted">/ month</span>
               </div>
             </div>
             <p className="text-xs text-muted mt-2">
-              {formatRand(SIMULATOR_ENTRY)} per swing × {swings} ={" "}
+              {formatRand(SIMULATOR_ENTRY)} per entry × {swings} ={" "}
               <span className="font-semibold text-green">
                 {formatRand(breakdown.totalRevenue)}
               </span>{" "}
-              in monthly swing sales
+              in monthly entry sales
             </p>
           </div>
 
@@ -114,8 +111,8 @@ export default function SimulatorRevenueCalculator() {
             <p className="text-sm text-charcoal-light/80 leading-relaxed">
               You keep{" "}
               <span className="font-semibold text-green">10%</span> of every
-              swing sold — passive revenue on the simulator you already own. Get
-              Lucky covers the full activation and the Indwe-underwritten prize, so
+              entry sold — passive revenue on the simulator you already own. Get
+              Lucky covers the full activation and the insured prize, so
               it costs your venue nothing and carries zero risk.
             </p>
           </div>
@@ -143,7 +140,7 @@ export default function SimulatorRevenueCalculator() {
             <div className="mt-6 space-y-3 text-sm">
               <div className="flex justify-between border-b border-white/10 pb-3">
                 <span className="text-white/70">
-                  R{SIMULATOR_ENTRY} swing × {swings}
+                  R{SIMULATOR_ENTRY} entry × {swings}
                 </span>
                 <span className="font-semibold">
                   {formatRand(breakdown.totalRevenue)}
@@ -165,7 +162,7 @@ export default function SimulatorRevenueCalculator() {
               The prize is fully underwritten by{" "}
               <span className="text-lime font-semibold">Indwe Risk Services</span> —
               zero cost and zero risk to your venue. Get Lucky runs the whole
-              activation; you keep 10% of every swing sold.
+              activation; you keep 10% of every entry sold.
             </p>
 
             <a

@@ -11,7 +11,8 @@ export const metadata: Metadata = {
  * /pga-golf-show/cancel — a paid show entry that was abandoned at PayFast.
  *
  * The free shot is still there, so the page says so: nobody should leave the
- * stand with nothing because a card did not go through.
+ * stand with nothing because a card did not go through. Once the show has
+ * closed (PGA_GOLF_SHOW.entriesOpen) it points to a partner course instead.
  */
 export default function PgaGolfShowCancelPage() {
   return (
@@ -33,16 +34,26 @@ export default function PgaGolfShowCancelPage() {
             Payment Cancelled
           </h1>
           <p className="text-sm text-charcoal-light/80 leading-relaxed mb-6">
-            No charge was made. The free shot at {PGA_GOLF_SHOW.prize} is still
-            open — go back and take it, or try the {PGA_GOLF_SHOW.paidEntry.entry}{" "}
-            entry again.
+            {PGA_GOLF_SHOW.entriesOpen ? (
+              <>
+                No charge was made. The free shot at {PGA_GOLF_SHOW.prize} is
+                still open — go back and take it, or try the{" "}
+                {PGA_GOLF_SHOW.paidEntry.entry} entry again.
+              </>
+            ) : (
+              <>
+                No charge was made. The show has ended and show entries are
+                closed, but the challenge is live at Get Lucky partner courses
+                across South Africa.
+              </>
+            )}
           </p>
           <div className="flex flex-col gap-3">
             <Link
-              href={ROUTES.pgaGolfShow}
+              href={PGA_GOLF_SHOW.entriesOpen ? ROUTES.pgaGolfShow : "/#courses"}
               className="btn-lime"
             >
-              Back to the Entry Form
+              {PGA_GOLF_SHOW.entriesOpen ? "Back to the entry form" : "Find a course"}
             </Link>
             <a
               href={`mailto:${SITE.email}`}

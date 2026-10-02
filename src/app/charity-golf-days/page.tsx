@@ -20,12 +20,17 @@ import {
   Sparkles,
   Wine,
 } from "lucide-react";
+import { socialMeta } from "@/lib/seo";
+
+const TITLE = "Charity Golf Days | Fundraise with the Get Lucky Hole-in-One Challenge";
+const DESCRIPTION =
+  "Turn your charity golf day into a fundraiser. Sell swings at the mobile R1,000,000 Hole-in-One Challenge and keep 50% of every swing. The prize is fully insured by Santam & Indwe Risk Services — zero cost, zero risk to your charity.";
 
 export const metadata: Metadata = {
-  title: "Charity Golf Days | Fundraise with the Get Lucky Hole-in-One Challenge",
-  description:
-    "Turn your charity golf day into a fundraiser. Sell swings at the mobile R1,000,000 Hole-in-One Challenge and keep 50% of every swing. The prize is fully underwritten by Indwe Risk Services — zero cost, zero risk to your charity.",
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: { canonical: "/charity-golf-days" },
+  ...socialMeta("/charity-golf-days", TITLE, DESCRIPTION),
 };
 
 const INCLUDED = [
@@ -37,7 +42,7 @@ const INCLUDED = [
   {
     icon: Trophy,
     title: "Prizes up to R1,000,000",
-    body: "Choose your headline prize — R25k, R60k, R100k or bigger. Fully underwritten by Indwe Risk Services, so the moment is real, the payout is guaranteed, and your charity carries zero risk.",
+    body: "Choose your headline prize — R25k, R60k, R100k or bigger. Fully underwritten by Santam and structured by Indwe Risk Services, so the moment is real, the payout is guaranteed, and your charity carries zero risk.",
   },
   {
     icon: Camera,
@@ -80,11 +85,12 @@ export default function CharityGolfDaysPage() {
               <span className="text-white font-semibold">50% of every swing</span>.
               Real prizes up to{" "}
               <span className="text-white font-semibold">R1,000,000</span>, fully
-              underwritten by Indwe. No cost, no risk. We run it — you raise.
+              insured by Santam &amp; Indwe. No cost, no risk. We run it — you raise.
             </>
           }
           image="/images/golf-day/IMG_4505.jpg"
           imageAlt="Three golfers with beers at the Get Lucky activation"
+          imagePosition="object-[center_20%]"
           primary={{ href: "#build", label: "Calculate what you'll raise" }}
           secondary={{ href: "#enquire", label: "Enquire now" }}
           stats={[
@@ -103,7 +109,7 @@ export default function CharityGolfDaysPage() {
           lede="Pick your swing price and how many you expect to sell. Your live fundraising estimate updates as you go — no calls, no back-and-forth."
           checks={[
             "You keep 50% of every swing sold",
-            "Prize fully underwritten by Indwe — zero risk",
+            "Prize fully insured by Santam & Indwe — zero risk",
             "We run the whole activation for you",
           ]}
         >

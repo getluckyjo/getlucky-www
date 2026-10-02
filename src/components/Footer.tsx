@@ -111,8 +111,8 @@ export default function Footer() {
               </li>
             </ul>
             <p className="mt-6 text-[13px] text-white/55 leading-relaxed max-w-xs">
-              All prizes underwritten by Indwe Risk Services, an Authorised
-              Financial Services Provider (FSP 3425).
+              All prizes underwritten by Santam and structured by Indwe Risk
+              Services, an Authorised Financial Services Provider (FSP 3425).
             </p>
           </div>
         </div>

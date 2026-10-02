@@ -5,6 +5,15 @@ Lucky stand, 18–20 September 2026. One free shot at R25,000 for a name and a
 number, and — at the bottom of the same form — a paid shot at R100,000 for
 R100.
 
+> **Closed since 2 October 2026.** The show is over, so
+> `PGA_GOLF_SHOW.entriesOpen` (`src/lib/constants.ts`) is `false`: the page
+> shows "The show has ended" with a link to the partner courses instead of the
+> form, and both `/api/forms/pga-golf-show` and `/api/forms/pga-golf-show/paid`
+> answer 410 before writing a lead or starting a PayFast payment. The PayFast
+> notification and `/pga-golf-show/success` are untouched, so a payment that
+> was already in flight still completes. To run it again for another show,
+> set `entriesOpen` back to `true` and update `dates`.
+
 ## What it does
 
 - Asks for **name and mobile only**. No email, no course, no event field — the

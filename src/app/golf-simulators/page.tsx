@@ -15,24 +15,29 @@ import {
   Megaphone,
   Sparkles,
 } from "lucide-react";
+import { socialMeta } from "@/lib/seo";
+
+const TITLE = "Golf Simulators | Add the R100,000 Get Lucky Hole-in-One Challenge";
+const DESCRIPTION =
+  "Add a R100,000 Hole-in-One Challenge to your golf simulator. Players pay R149 for 3 shots to win R100,000 cash, your venue keeps 10% of every entry, and the prize is fully underwritten by Santam and structured by Indwe Risk Services — zero cost, zero risk.";
 
 export const metadata: Metadata = {
-  title: "Golf Simulators | Add the R100,000 Get Lucky Hole-in-One Challenge",
-  description:
-    "Add a R100,000 Hole-in-One Challenge to your golf simulator. Players pay R149 for 3 shots to win R100,000 cash, your venue keeps 10% of every swing, and the prize is fully underwritten by Indwe Risk Services — zero cost, zero risk.",
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: { canonical: "/golf-simulators" },
+  ...socialMeta("/golf-simulators", TITLE, DESCRIPTION),
 };
 
 const INCLUDED = [
   {
     icon: TrendingUp,
     title: "10% revenue share",
-    body: "Players pay R149 for 3 shots — and your venue keeps 10% of every swing. No setup fee, no upfront cost. Passive revenue on the simulator you already own.",
+    body: "Players pay R149 for 3 shots — and your venue keeps 10% of every entry. No setup fee, no upfront cost. Passive revenue on the simulator you already own.",
   },
   {
     icon: Trophy,
     title: "R100,000 cash prize",
-    body: "A real R100,000 hole-in-one prize, fully underwritten by Indwe Risk Services. The payout is guaranteed and your venue carries zero liability.",
+    body: "A real R100,000 hole-in-one prize, fully underwritten by Santam and structured by Indwe Risk Services. The payout is guaranteed and your venue carries zero liability.",
   },
   {
     icon: MonitorSmartphone,
@@ -76,8 +81,8 @@ export default function GolfSimulatorsPage() {
               a hole-in-one to win{" "}
               <span className="text-white font-semibold">R100,000 cash</span> — and
               your venue keeps{" "}
-              <span className="text-white font-semibold">10% of every swing</span>.
-              The prize is fully underwritten by Indwe. No cost, no risk. We run
+              <span className="text-white font-semibold">10% of every entry</span>.
+              The prize is fully insured by Santam &amp; Indwe. No cost, no risk. We run
               it — you earn.
             </>
           }
@@ -88,7 +93,7 @@ export default function GolfSimulatorsPage() {
           stats={[
             { value: "R100K", label: "Cash prize, underwritten" },
             { value: "R149", label: "Per player for 3 shots" },
-            { value: "10%", label: "Of every swing to your venue" },
+            { value: "10%", label: "Of every entry to your venue" },
             { value: "0", label: "New hardware to buy" },
           ]}
         />
@@ -99,10 +104,10 @@ export default function GolfSimulatorsPage() {
           id="earn"
           kicker="See what you could earn"
           title="Your revenue at 10%"
-          lede="Drag in how many swings you'd expect each month. Your live revenue estimate updates as you go — no calls, no back-and-forth."
+          lede="Drag in how many entries (3 shots each) you'd expect a month. Your live revenue estimate updates as you go — no calls, no back-and-forth."
           checks={[
-            "You keep 10% of every swing sold",
-            "Prize fully underwritten by Indwe — zero risk",
+            "You keep 10% of every entry sold",
+            "Prize fully insured by Santam & Indwe — zero risk",
             "Runs on the sim you already own",
           ]}
         >
@@ -111,7 +116,7 @@ export default function GolfSimulatorsPage() {
 
         <IncludedSection
           title="A new revenue line, switched on"
-          lede="The challenge slots straight into your existing simulator. We set it up, brand it, market it and handle the prize — you add a show-stopping reason to play and keep 10% of every swing."
+          lede="The challenge slots straight into your existing simulator. We set it up, brand it, market it and handle the prize — you add a show-stopping reason to play and keep 10% of every entry."
           items={INCLUDED}
         />
 

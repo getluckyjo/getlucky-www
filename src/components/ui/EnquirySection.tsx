@@ -21,7 +21,7 @@ export default function EnquirySection({
   title: ReactNode;
   lede: ReactNode;
   response?: string;
-  /** The Indwe underwriting line; off where no prize is involved. */
+  /** The prize-insurance line; off where no prize is involved. */
   trust?: boolean;
   children: ReactNode;
 }) {
@@ -56,7 +56,8 @@ export default function EnquirySection({
               <li className="flex items-center gap-3 py-4">
                 <ShieldCheck className="w-4 h-4 text-green shrink-0" />
                 <span className="text-ink">
-                  Prizes underwritten by Indwe Risk Services · FSP 3425
+                  Every prize insured by Santam &amp; Indwe Risk Services{" "}
+                  <span className="whitespace-nowrap">(FSP 3425)</span>
                 </span>
               </li>
             )}

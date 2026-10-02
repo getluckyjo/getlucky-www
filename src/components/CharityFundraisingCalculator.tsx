@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { Check, Flag, Users, HeartHandshake } from "lucide-react";
 import { setCharityQuote } from "@/lib/charityQuoteStore";
+import ExactNumberInput from "@/components/ui/ExactNumberInput";
 
 type SwingOption = {
   swing: string;
@@ -131,16 +132,12 @@ export default function CharityFundraisingCalculator({
                 aria-label="Estimated swings sold"
               />
               <div className="flex items-center gap-2">
-                <input
-                  type="number"
+                <ExactNumberInput
+                  value={swings}
                   min={1}
                   max={1000}
-                  value={swings}
-                  onChange={(e) =>
-                    setSwings(Math.max(1, Number(e.target.value) || 0))
-                  }
-                  className="w-20 text-center rounded-lg border border-green/15 px-3 py-2 font-semibold text-green focus:border-green focus:outline-none"
-                  aria-label="Estimated swings sold (exact)"
+                  onChange={setSwings}
+                  label="Estimated swings sold (exact)"
                 />
                 <span className="text-sm text-muted">swings</span>
               </div>
@@ -165,7 +162,7 @@ export default function CharityFundraisingCalculator({
             <p className="text-sm text-charcoal-light/80 leading-relaxed">
               You keep <span className="font-semibold text-green">half</span>{" "}
               of every swing sold. The other half covers the full Get Lucky
-              activation and the Indwe-underwritten prize — so the day costs your{" "}
+              activation and the insured prize — so the day costs your{" "}
               {beneficiary} nothing and carries zero risk.
             </p>
           </div>

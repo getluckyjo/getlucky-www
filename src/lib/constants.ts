@@ -14,7 +14,7 @@ export const SITE = {
   name: "Get Lucky Golf Club",
   tagline: "South Africa's Leading Hole-in-One Golf Activation",
   description:
-    "Buy a swing from R50, sink a hole-in-one, win up to R1,000,000. Live at 20+ courses nationwide. Fully insured by Indwe Risk Services.",
+    "Buy a swing from R50, sink a hole-in-one, win up to R1,000,000. Live at 20+ courses nationwide. Fully insured by Santam & Indwe Risk Services.",
   email: "johannes@getluckygolfclub.com",
   partnershipsEmail: "johannes@getluckygolfclub.com",
   whatsapp: "https://wa.me/27609615091",
@@ -123,6 +123,16 @@ export const PGA_GOLF_SHOW = {
   name: "PGA Golf & Lifestyle Show",
   year: 2026,
   dates: "18–20 September 2026",
+  /**
+   * The show ran 18–20 September 2026. With this false, /pga-golf-show says
+   * the show has ended instead of showing the form, and both entry routes
+   * refuse before they write a lead or start a PayFast payment, so a stale tab
+   * or a lanyard QR scanned later cannot take R100 for a shot that no longer
+   * exists. The PayFast notification and the success page are untouched, so
+   * a payment already in flight still completes. Flip it back for the next
+   * show (and update `dates`).
+   */
+  entriesOpen: false as boolean,
   prize: "R25,000",
   prizeAmount: 25000,
   course: "the PGA Golf Show",

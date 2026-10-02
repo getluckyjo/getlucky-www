@@ -13,7 +13,7 @@ export default function FormCancelPage() {
     <main className="min-h-screen relative">
       <div className="absolute inset-0 -z-10">
         <Image
-          src="/images/hero-bg.avif"
+          src="/images/hero-dusk.jpg"
           alt=""
           fill
           className="object-cover"

@@ -7,24 +7,29 @@ import { PRIZE_TIERS } from "@/lib/constants";
 const RUNG_WIDTH = [54, 62, 70, 78, 88, 100];
 
 /**
- * The homepage hero: a course at golden hour under a deep scrim, the promise
- * in one Poster Gothic line, two actions, and, on wide screens, the prize
- * ladder as a live card beside it. Swings are bought at the tee box through
- * the QR form, so there is no buy button here.
+ * The homepage hero: Metropolitan Golf Club on the Mouille Point seafront,
+ * the promise in one Poster Gothic line, two actions, and, on wide screens,
+ * the prize ladder as a live card beside it. Swings are bought at the tee box
+ * through the QR form, so there is no buy button here.
+ *
+ * The photo is a bright daytime aerial, so the scrim does the work: deep on
+ * the left where the white type sits, enough on the right that the glass
+ * card keeps its contrast, and a floor under the stats. Phones crop the
+ * portrait frame towards the green and the pond rather than the flats.
  */
 export default function HomeHero() {
   return (
     <section className="on-dark relative isolate overflow-hidden bg-night text-white">
       <Image
-        src="/images/hero-bg.avif"
+        src="/images/hero-metropolitan.jpg"
         alt=""
         fill
         priority
         sizes="100vw"
-        className="object-cover -z-20"
+        className="object-cover object-[68%_50%] lg:object-center -z-20"
       />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-night/95 via-night/65 to-night/20" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-night via-night/10 to-night/50" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-night/90 via-night/65 to-night/30" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-night via-night/20 to-night/45" />
 
       <div className="wrap min-h-[100svh] lg:min-h-[860px] flex flex-col justify-center lg:justify-end pt-28 pb-12 sm:pb-16">
         <div className="grid lg:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)] gap-12 lg:gap-14 items-end">

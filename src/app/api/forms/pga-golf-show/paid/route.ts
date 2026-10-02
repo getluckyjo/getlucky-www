@@ -7,6 +7,16 @@ import { CONSENT_FORM_VERSION } from "@/lib/whatsapp";
 
 export const runtime = "nodejs";
 
+/** The show is over: say so instead of recording an entry. See PGA_GOLF_SHOW.entriesOpen. */
+function showClosed() {
+  return NextResponse.json(
+    {
+      error: `The ${PGA_GOLF_SHOW.name} has ended, so show entries are closed. Find a Get Lucky course to take your shot.`,
+    },
+    { status: 410 },
+  );
+}
+
 /**
  * /api/forms/pga-golf-show/paid — the R100 option at the bottom of the show
  * form: R100 for a shot at R100,000 on the same simulator, beside the free
@@ -34,6 +44,8 @@ export const runtime = "nodejs";
  * the stand actually watches.
  */
 export async function POST(req: NextRequest) {
+  if (!PGA_GOLF_SHOW.entriesOpen) return showClosed();
+
   // Don't accept money we cannot record. Postgres is the only store now that
   // the Sheets mirror is gone, so an unconfigured database is a hard stop.
   if (!isDbConfigured()) {

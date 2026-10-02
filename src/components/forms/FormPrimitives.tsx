@@ -229,6 +229,7 @@ export function RadioGroup({
 export function SubmitButton({
   pending,
   disabled,
+  fullWidth,
   children = "Submit",
 }: {
   pending?: boolean;
@@ -238,13 +239,19 @@ export function SubmitButton({
    * other button and showing it here would claim this one is working.
    */
   disabled?: boolean;
+  /**
+   * Fill the card at every width. The entry and payment cards are narrow and
+   * the pay button is the point of the page; the wide enquiry forms keep a
+   * natural-width button from sm up.
+   */
+  fullWidth?: boolean;
   children?: ReactNode;
 }) {
   return (
     <button
       type="submit"
       disabled={pending || disabled}
-      className="btn-lime w-full sm:w-auto"
+      className={`btn-lime w-full ${fullWidth ? "" : "sm:w-auto"}`}
     >
       {pending && (
         <svg

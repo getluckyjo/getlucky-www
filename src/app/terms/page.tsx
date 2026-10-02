@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions & POPIA Privacy Notice",
+  title: "Terms & Conditions and POPIA Privacy Notice",
   description:
     "Terms and conditions, rules of play, prize fulfilment and POPIA privacy notice for the Get Lucky Hole-in-One Challenge.",
   alternates: { canonical: "/terms" },
@@ -41,7 +41,7 @@ export default function TermsPage() {
           <div className="wrap">
             <span className="kicker">Legal</span>
             <h1 className="display-lg text-ink mt-4 max-w-4xl">
-              Terms &amp; Conditions &amp; POPIA Privacy Notice
+              Terms &amp; Conditions and POPIA Privacy Notice
             </h1>
             <p className="lede mt-5 max-w-2xl">
               Rules of play, prize fulfilment and the POPIA privacy notice for
@@ -137,7 +137,7 @@ export default function TermsPage() {
                     Verified prize money will be paid within 15 working days.
                   </li>
                   <li>
-                    By entering and paying, you accept all Terms &amp;
+                    By entering (and paying, where applicable), you accept all Terms &amp;
                     Conditions and these Rules of Play.
                   </li>
                 </ul>
@@ -148,7 +148,7 @@ export default function TermsPage() {
                   <Num n="3" />Acceptance of Terms
                 </h2>
                 <p className={P}>
-                  By entering the challenge (including scanning QR code and
+                  By entering the challenge (including scanning the QR code and
                   making payment), you confirm that you have read, understood,
                   and accepted these Terms &amp; Conditions, including the
                   POPIA Privacy Notice.

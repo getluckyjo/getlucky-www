@@ -6,6 +6,16 @@ import { notifyWhatsAppChannel } from "@/lib/whatsapp";
 
 export const runtime = "nodejs";
 
+/** The show is over: say so instead of recording an entry. See PGA_GOLF_SHOW.entriesOpen. */
+function showClosed() {
+  return NextResponse.json(
+    {
+      error: `The ${PGA_GOLF_SHOW.name} has ended, so show entries are closed. Find a Get Lucky course to take your shot.`,
+    },
+    { status: 410 },
+  );
+}
+
 /**
  * /api/forms/pga-golf-show — the simulator entry at the PGA Golf & Lifestyle
  * Show. Same shape as the sponsored free entry: no payment, recorded as a
@@ -16,6 +26,8 @@ export const runtime = "nodejs";
  * payment step, so submitting is entering.
  */
 export async function POST(req: NextRequest) {
+  if (!PGA_GOLF_SHOW.entriesOpen) return showClosed();
+
   let body: unknown;
   try {
     body = await req.json();

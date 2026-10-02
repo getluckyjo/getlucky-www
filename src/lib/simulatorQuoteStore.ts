@@ -3,14 +3,14 @@
 import { useSyncExternalStore } from "react";
 
 // The simulator offer is fixed: R149 for 3 shots at a R100,000 hole-in-one.
-// The venue keeps 10% of every swing as revenue share.
+// The venue keeps 10% of every entry as revenue share.
 export const SIMULATOR_ENTRY = 149;
 export const SIMULATOR_PRIZE = "R100,000";
 export const VENUE_SHARE = 0.1;
 
 export type SimulatorQuote = {
   swings: number; // estimated swings per month
-  totalRevenue: number; // gross swing sales per month
+  totalRevenue: number; // gross entry sales per month
   venueShare: number; // 10% kept by the venue
 };
 
@@ -37,8 +37,10 @@ export function useSimulatorQuote(): SimulatorQuote | null {
   return useSyncExternalStore(subscribe, getSnapshot, () => null);
 }
 
+// Comma grouping, as the calculators show it: "en-ZA" groups with a space
+// in some browsers, so the prefilled message would disagree with the quote.
 function formatRand(n: number): string {
-  return "R" + n.toLocaleString("en-ZA");
+  return "R" + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 export function formatSimulatorQuoteMessage(q: SimulatorQuote): string {
@@ -48,8 +50,8 @@ export function formatSimulatorQuoteMessage(q: SimulatorQuote): string {
   );
   lines.push("");
   lines.push(`• Offer: R${SIMULATOR_ENTRY} for 3 shots at a ${SIMULATOR_PRIZE} hole-in-one`);
-  lines.push(`• Estimated swings per month: ${q.swings}`);
-  lines.push(`• Estimated monthly swing sales: ${formatRand(q.totalRevenue)}`);
+  lines.push(`• Estimated entries per month (3 shots each): ${q.swings}`);
+  lines.push(`• Estimated monthly entry sales: ${formatRand(q.totalRevenue)}`);
   lines.push(`• Our 10% revenue share: ${formatRand(q.venueShare)} per month`);
   lines.push("");
   lines.push("Please confirm how it works and the next steps to set this up.");

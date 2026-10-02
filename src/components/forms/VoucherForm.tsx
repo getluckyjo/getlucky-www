@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { COURSES, ROUTES } from "@/lib/constants";
+import { formatRand } from "@/lib/tiers";
 import {
   Checkbox,
   Field,
@@ -120,7 +121,7 @@ export default function VoucherForm() {
           <Input name="fullName" required autoComplete="name" placeholder="First and last name" />
         </Field>
         <Field label="Mobile Number" name="mobile" required error={errors.mobile}>
-          <Input name="mobile" type="tel" required autoComplete="tel" placeholder="+27 XX XXX XXX" inputMode="tel" />
+          <Input name="mobile" type="tel" required autoComplete="tel" placeholder="+27 XX XXX XXXX" inputMode="tel" />
         </Field>
       </div>
 
@@ -168,7 +169,7 @@ export default function VoucherForm() {
 
       <div className="space-y-3 pt-2">
         <Checkbox name="consentCommunication" error={errors.consentCommunication}>
-          I agree to receive communication from Get Lucky Hole-in-One Challenge and Indwe Risk Services.
+          I agree to receive communication from the Get Lucky Hole-in-One Challenge and Indwe Risk Services.
         </Checkbox>
         <Checkbox name="consentTerms" required error={errors.consentTerms}>
           I accept the{" "}
@@ -180,8 +181,8 @@ export default function VoucherForm() {
       </div>
 
       <div className="pt-2">
-        <SubmitButton pending={pending}>
-          Pay R{tier} via PayFast →
+        <SubmitButton fullWidth pending={pending}>
+          Pay {formatRand(tier)} via PayFast →
         </SubmitButton>
         <p className="text-xs text-charcoal-light/60 mt-3">
           Secure payment by PayFast. Card, EFT, SnapScan and Zapper supported.

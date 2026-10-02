@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "The Get Lucky Golf Agency",
     description:
-      "South Africa's only integrated golf marketing platform. Reach 153,000 affluent golfers across on-course activations, a YouTube show, and bespoke campaigns — through one agency.",
+      "South Africa's only integrated golf marketing platform. Reach 153K+ registered golfers across on-course activations, a YouTube show, and bespoke campaigns — through one agency.",
     type: "website",
     locale: "en_ZA",
     url: "https://www.getluckygolf.co.za/agency",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "The Get Lucky Golf Agency",
     description:
-      "South Africa's only integrated golf marketing platform. 153K affluent golfers. Three channels. One agency.",
+      "South Africa's only integrated golf marketing platform. 153K+ registered golfers. Three channels. One agency.",
     images: ["/og-agency-v4.jpg"],
   },
 };
