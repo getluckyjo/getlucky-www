@@ -1,6 +1,11 @@
 import Image from "next/image";
+import { Caveat } from "next/font/google";
 import { BadgeCheck, Camera, ShieldCheck } from "lucide-react";
 import SectionHeader from "@/components/ui/SectionHeader";
+
+// The founder's quote is set in a hand, like a note signed to the sponsor.
+// Loaded here rather than in the layout, so only the homepage fetches it.
+const handwriting = Caveat({ subsets: ["latin"], weight: ["500"], display: "swap" });
 
 const proofs = [
   {
@@ -68,7 +73,7 @@ export default function Trust() {
               <span className="text-ink/25">×</span>
               <span className="font-heading text-lg text-green">Get Lucky Golf</span>
             </div>
-            <blockquote className="mt-7 text-[19px] sm:text-[22px] leading-[1.45] tracking-[-0.01em] text-ink">
+            <blockquote className={`${handwriting.className} mt-6 text-[27px] sm:text-[32px] leading-[1.2] text-ink`}>
               &ldquo;We&apos;re proud to welcome Indwe Risk Services as our
               headline sponsor. Indwe&apos;s focus on confidence, expertise,
               and protecting life&apos;s defining moments aligns seamlessly
