@@ -20,19 +20,24 @@ import {
   Sparkles,
   Wine,
 } from "lucide-react";
+import { socialMeta } from "@/lib/seo";
+
+const TITLE = "Corporate Golf Day Activations | Get Lucky Hole-in-One Challenge";
+const DESCRIPTION =
+  "Turn your corporate golf day into the story everyone talks about. Mobile R1,000,000 Hole-in-One Challenge — 4G solar cameras, promoter team, Shanky's Whip for every golfer, fully insured by Santam & Indwe Risk Services.";
 
 export const metadata: Metadata = {
-  title: "Corporate Golf Day Activations | Get Lucky Hole-in-One Challenge",
-  description:
-    "Turn your corporate golf day into the story everyone talks about. Mobile R1,000,000 Hole-in-One Challenge — 4G solar cameras, promoter team, Shanky's Whip for every golfer, fully insured by Indwe Risk Services.",
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: { canonical: "/corporate-golf-days" },
+  ...socialMeta("/corporate-golf-days", TITLE, DESCRIPTION),
 };
 
 const INCLUDED = [
   {
     icon: Trophy,
     title: "Prizes up to R1,000,000",
-    body: "Choose your headline prize — R100k, R250k or the full R1M. Fully underwritten by Indwe Risk Services so the moment is real and the payout is guaranteed.",
+    body: "Choose your headline prize — R100k, R250k or the full R1M. Fully underwritten by Santam and structured by Indwe Risk Services, so the moment is real and the payout is guaranteed.",
   },
   {
     icon: Camera,
@@ -76,7 +81,7 @@ export default function CorporateGolfDaysPage() {
           }
           lede={
             <>
-              The Get Lucky Hole-in-One Challenge is a fully-mobile activation
+              The Get Lucky Hole-in-One Challenge is a fully mobile activation
               that drops onto the signature par‑3 of any corporate golf day in
               South Africa. Real prizes up to{" "}
               <span className="text-white font-semibold">R1,000,000</span>.
@@ -103,7 +108,7 @@ export default function CorporateGolfDaysPage() {
           lede="Pick your prize, your team, and your extras. Your live quote updates as you go — no calls, no back-and-forth."
           checks={[
             "Setup, teardown & on-site management included",
-            "Full Indwe prize underwriting",
+            "Prize fully insured by Santam & Indwe",
             "Custom co-branding with your sponsor",
           ]}
         >
@@ -119,7 +124,7 @@ export default function CorporateGolfDaysPage() {
         <ShowcaseSection
           kicker="The real thing"
           title="Moments from the tee"
-          lede="Real corporate golfers, real activations, real reactions — from corporate golf days around the country. This is what your day looks like."
+          lede="Real corporate golfers, real activations, real reactions — from golf days around the country. This is what your day looks like."
           photos={galleryFor("IMG_4634.jpg", "IMG_4460.jpg")}
         />
 

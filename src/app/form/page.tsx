@@ -31,7 +31,7 @@ export default function FormPage() {
       {/* Hero background */}
       <div className="absolute inset-0 -z-10">
         <Image
-          src="/images/hero-bg.avif"
+          src="/images/hero-dusk.jpg"
           alt=""
           fill
           className="object-cover"
@@ -73,7 +73,7 @@ export default function FormPage() {
         </div>
 
         <p className="relative text-sm sm:text-base text-white/85 mt-4 leading-relaxed drop-shadow max-w-sm">
-          It&apos;s only a matter of time until your hole in one.
+          It&apos;s only a matter of time until your hole-in-one.
         </p>
 
         <JackpotTicker />

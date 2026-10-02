@@ -18,7 +18,7 @@ import {
 const audienceStats = [
   { value: "153K+", label: "Registered golfers in SA" },
   { value: "4.18M", label: "Rounds played per year" },
-  { value: "420+", label: "Courses nationwide" },
+  { value: "420+", label: "Golf courses in SA" },
   { value: "R14M+", label: "Avg golfer net worth" },
   { value: "4+ Hrs", label: "Captive attention per round" },
   { value: "47%", label: "Business decision-makers" },
@@ -47,7 +47,7 @@ const platforms = [
     type: "Bespoke Strategy & Creative",
     description:
       "Tailor-made campaigns built around your brand objectives. With over 30 years of combined experience marketing to South Africa's most affluent audiences, our team designs end-to-end golf activations — strategy, creative, media, and execution — that reach high-net-worth decision-makers where they spend their time. From concept to on-course delivery, every campaign is engineered for measurable brand lift.",
-    highlights: ["30+ years of premium-brand experience", "Strategy, creative & media planning", "Full campaign execution"],
+    highlights: ["30+ years' combined experience", "Strategy, creative & media planning", "Full campaign execution"],
   },
 ];
 

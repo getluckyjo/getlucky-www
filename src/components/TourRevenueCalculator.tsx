@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { Users, CalendarRange, HandCoins } from "lucide-react";
 import { setTourQuote } from "@/lib/tourQuoteStore";
+import ExactNumberInput from "@/components/ui/ExactNumberInput";
 
 // Fixed tour-operator offer: R100 entries, R100,000 prize on a defined par-3.
 const ENTRY_PRICE = 100;
@@ -67,16 +68,12 @@ export default function TourRevenueCalculator() {
                 aria-label="Entries sold per tour"
               />
               <div className="flex items-center gap-2">
-                <input
-                  type="number"
+                <ExactNumberInput
+                  value={entries}
                   min={1}
                   max={1000}
-                  value={entries}
-                  onChange={(e) =>
-                    setEntries(Math.max(1, Number(e.target.value) || 0))
-                  }
-                  className="w-20 text-center rounded-lg border border-green/15 px-3 py-2 font-semibold text-green focus:border-green focus:outline-none"
-                  aria-label="Entries sold per tour (exact)"
+                  onChange={setEntries}
+                  label="Entries sold per tour (exact)"
                 />
                 <span className="text-sm text-muted">entries</span>
               </div>
@@ -110,16 +107,12 @@ export default function TourRevenueCalculator() {
                 aria-label="Tours per year"
               />
               <div className="flex items-center gap-2">
-                <input
-                  type="number"
+                <ExactNumberInput
+                  value={tours}
                   min={1}
                   max={200}
-                  value={tours}
-                  onChange={(e) =>
-                    setTours(Math.max(1, Number(e.target.value) || 0))
-                  }
-                  className="w-20 text-center rounded-lg border border-green/15 px-3 py-2 font-semibold text-green focus:border-green focus:outline-none"
-                  aria-label="Tours per year (exact)"
+                  onChange={setTours}
+                  label="Tours per year (exact)"
                 />
                 <span className="text-sm text-muted">tours</span>
               </div>
@@ -139,7 +132,7 @@ export default function TourRevenueCalculator() {
               <span className="font-semibold text-green">
                 20% commission
               </span>{" "}
-              on every entry sold. The rest covers the Indwe-underwritten{" "}
+              on every entry sold. The rest covers the insured{" "}
               {PRIZE_LABEL} prize — so if someone holes it, the payout is real
               and it never touches your pocket.
             </p>
@@ -186,9 +179,9 @@ export default function TourRevenueCalculator() {
 
             <p className="text-white/60 text-xs mt-4 leading-relaxed">
               The prize is fully underwritten by{" "}
-              <span className="text-lime font-semibold">Indwe Risk Services</span>{" "}
+              <span className="text-lime font-semibold">Santam &amp; Indwe Risk Services</span>{" "}
               — zero cost and zero risk to your business. You sell the entries;
-              we carry the {PRIZE_LABEL}.
+              the {PRIZE_LABEL} is insured.
             </p>
 
             <a

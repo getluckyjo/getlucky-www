@@ -44,7 +44,7 @@ export default function JackpotTicker() {
         {formatRand(shown)}
       </span>
       <span className="mt-1.5 text-[10px] sm:text-xs text-white/70">
-        One swing. Fully insured by Indwe Risk Services.
+        One swing. Fully insured by Santam &amp; Indwe.
       </span>
     </div>
   );

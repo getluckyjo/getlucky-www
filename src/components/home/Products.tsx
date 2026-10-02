@@ -71,8 +71,8 @@ export default function Products() {
               Become a member
             </h3>
             <p className="mt-2 text-muted">
-              Unlimited swings at {MEMBERSHIP.prize}, every round, at every
-              partner course. No lock-in.
+              Unlimited shots at the {MEMBERSHIP.prize} prize, every round, at
+              every partner course. No lock-in.
             </p>
             <span className="link-arrow mt-auto pt-5">
               See membership <ArrowRight className="w-4 h-4" />

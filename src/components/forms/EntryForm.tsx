@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { COURSES, ROUTES } from "@/lib/constants";
+import { formatRand } from "@/lib/tiers";
 import { WHATSAPP_CONSENT_WORDING } from "@/lib/whatsapp";
 import {
   Checkbox,
@@ -99,7 +100,7 @@ export default function EntryForm() {
           friction at a tee box for data we are handed a minute later. */}
 
       <Field label="Mobile Number" name="mobile" required error={errors.mobile}>
-        <Input name="mobile" type="tel" required autoComplete="tel" placeholder="+27 XX XXX XXX" inputMode="tel" />
+        <Input name="mobile" type="tel" required autoComplete="tel" placeholder="+27 XX XXX XXXX" inputMode="tel" />
       </Field>
 
       {/* Prize first, stake second: see TierPicker for the reasoning. */}
@@ -119,8 +120,8 @@ export default function EntryForm() {
       </div>
 
       <div className="pt-2">
-        <SubmitButton pending={pending}>
-          Pay R{tier} via PayFast →
+        <SubmitButton fullWidth pending={pending}>
+          Pay {formatRand(tier)} via PayFast →
         </SubmitButton>
         {/* The terms are accepted by pressing the button, as on the PGA show
             form, rather than by a box of their own. The WhatsApp box above is

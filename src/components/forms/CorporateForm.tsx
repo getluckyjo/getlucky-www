@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { ROUTES } from "@/lib/constants";
 import {
@@ -27,11 +27,9 @@ export default function CorporateForm() {
   const [messageTouched, setMessageTouched] = useState(false);
   const quote = useGolfDayQuote();
 
-  useEffect(() => {
-    if (!messageTouched && quote) {
-      setMessage(formatGolfDayQuoteMessage(quote));
-    }
-  }, [quote, messageTouched]);
+  // Until they type in it, the message mirrors the package built in the
+  // calculator; their first keystroke takes it over.
+  const shownMessage = !messageTouched && quote ? formatGolfDayQuoteMessage(quote) : message;
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -58,7 +56,9 @@ export default function CorporateForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = await res.json();
+      // A timeout or crash page is HTML, not JSON; fall through to the
+      // generic message rather than blaming the connection.
+      const data = (await res.json().catch(() => null)) ?? {};
       if (!res.ok) {
         if (data.fieldErrors) setErrors(data.fieldErrors);
         setTopError(data.error || "Something went wrong. Please try again.");
@@ -90,7 +90,7 @@ export default function CorporateForm() {
           <Input name="fullName" required autoComplete="name" placeholder="First and last name" />
         </Field>
         <Field label="Mobile Number" name="mobile" required error={errors.mobile}>
-          <Input name="mobile" type="tel" required autoComplete="tel" placeholder="+27 XX XXX XXX" inputMode="tel" />
+          <Input name="mobile" type="tel" required autoComplete="tel" placeholder="+27 XX XXX XXXX" inputMode="tel" />
         </Field>
       </div>
 
@@ -121,7 +121,7 @@ export default function CorporateForm() {
           name="message"
           rows={10}
           placeholder="Tell us about your event — number of players, format, what you'd like the activation to achieve."
-          value={message}
+          value={shownMessage}
           onChange={(e) => {
             setMessage(e.target.value);
             setMessageTouched(true);
@@ -131,7 +131,7 @@ export default function CorporateForm() {
 
       <div className="space-y-3 pt-2">
         <Checkbox name="consentCommunication" error={errors.consentCommunication}>
-          I agree to receive communication from Get Lucky Hole-in-One Challenge and Indwe Risk Services.
+          I agree to receive communication from the Get Lucky Hole-in-One Challenge and Indwe Risk Services.
         </Checkbox>
         <Checkbox name="consentTerms" required error={errors.consentTerms}>
           I accept the{" "}

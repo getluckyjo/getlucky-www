@@ -26,12 +26,17 @@ import {
   BookOpen,
   Landmark,
 } from "lucide-react";
+import { socialMeta } from "@/lib/seo";
+
+const TITLE = "School Fundraising Golf Days | Get Lucky Hole-in-One Challenge";
+const DESCRIPTION =
+  "Turn your school golf day into a fundraiser. Parents, old boys and girls, and local businesses buy swings at the mobile R1,000,000 Hole-in-One Challenge — and your school keeps 50% of every swing. The prize is fully insured by Santam & Indwe Risk Services — zero cost, zero risk to your school.";
 
 export const metadata: Metadata = {
-  title: "School Fundraising Golf Days | Get Lucky Hole-in-One Challenge",
-  description:
-    "Turn your school golf day into a fundraiser. Parents, old boys and girls, and local businesses buy swings at the mobile R1,000,000 Hole-in-One Challenge — and your school keeps 50% of every swing. The prize is fully underwritten by Indwe Risk Services — zero cost, zero risk to your school.",
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: { canonical: "/school-fundraising" },
+  ...socialMeta("/school-fundraising", TITLE, DESCRIPTION),
 };
 
 const INCLUDED = [
@@ -43,7 +48,7 @@ const INCLUDED = [
   {
     icon: Trophy,
     title: "Prizes up to R1,000,000",
-    body: "Choose your headline prize — R25k, R60k, R100k or bigger. Fully underwritten by Indwe Risk Services, so the moment is real, the payout is guaranteed, and your school carries zero risk.",
+    body: "Choose your headline prize — R25k, R60k, R100k or bigger. Fully underwritten by Santam and structured by Indwe Risk Services, so the moment is real, the payout is guaranteed, and your school carries zero risk.",
   },
   {
     icon: Camera,
@@ -125,11 +130,11 @@ export default function SchoolFundraisingPage() {
               <span className="text-white font-semibold">50% of every swing</span>.
               Real prizes up to{" "}
               <span className="text-white font-semibold">R1,000,000</span>, fully
-              underwritten by Indwe. No cost, no risk. We run it — you raise.
+              insured by Santam &amp; Indwe. No cost, no risk. We run it — you raise.
             </>
           }
-          image="/images/golf-day/IMG_4654.jpg"
-          imageAlt="Golfer celebrating a shot at the Get Lucky activation"
+          image="/images/golf-day/IMG_4572.jpg"
+          imageAlt="Golfer smiling on the green beside the flag"
           primary={{ href: "#build", label: "Calculate what you'll raise" }}
           secondary={{ href: "#enquire", label: "Enquire now" }}
           stats={[
@@ -148,7 +153,7 @@ export default function SchoolFundraisingPage() {
           lede="Pick your swing price and how many you expect to sell. Your live fundraising estimate updates as you go — no calls, no back-and-forth."
           checks={[
             "Your school keeps 50% of every swing sold",
-            "Prize fully underwritten by Indwe — zero risk",
+            "Prize fully insured by Santam & Indwe — zero risk",
             "We run the whole activation for you",
           ]}
         >
@@ -163,7 +168,7 @@ export default function SchoolFundraisingPage() {
               title="Schools we've worked with"
               lede="From derby days to old boys' reunions, the challenge has teed off with some of South Africa's proudest sporting schools."
             />
-            <ul className="mt-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 border-t border-l border-line">
+            <ul className="mt-12 grid grid-cols-2 lg:grid-cols-5 border-t border-l border-line">
               {SCHOOLS_WORKED_WITH.map((school, i) => (
                 <li
                   key={school.name}
@@ -208,7 +213,7 @@ export default function SchoolFundraisingPage() {
           kicker="The real thing"
           title="Moments from the tee"
           lede="Real golfers, real activations, real reactions — from golf days around the country. This is what your school's fundraising day looks like."
-          photos={galleryFor("IMG_4527.jpg", "IMG_4654.jpg")}
+          photos={galleryFor("IMG_4527.jpg", "IMG_4572.jpg")}
         />
 
         <EnquirySection

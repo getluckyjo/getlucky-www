@@ -41,7 +41,7 @@ export default function Membership() {
           kicker="Membership"
           title={
             <>
-              Unlimited swings at {MEMBERSHIP.prize}.
+              Unlimited shots at {MEMBERSHIP.prize}.
               <br className="hidden sm:block" /> One monthly fee.
             </>
           }

@@ -190,7 +190,7 @@ export default function PgaGolfShowEntryForm() {
       </Field>
 
       <Field label="Mobile Number" name="mobile" required error={errors.mobile}>
-        <Input name="mobile" type="tel" required autoComplete="tel" placeholder="+27 XX XXX XXX" inputMode="tel" />
+        <Input name="mobile" type="tel" required autoComplete="tel" placeholder="+27 XX XXX XXXX" inputMode="tel" />
       </Field>
 
       {/* Instagram follow — asked for, optional. */}
@@ -233,7 +233,7 @@ export default function PgaGolfShowEntryForm() {
       </div>
 
       <div className="pt-2">
-        <SubmitButton pending={pending} disabled={paying}>Enter for free →</SubmitButton>
+        <SubmitButton fullWidth pending={pending} disabled={paying}>Enter for free →</SubmitButton>
         <p className="text-xs text-charcoal-light/70 mt-3 leading-relaxed">
           By entering you accept the{" "}
           <Link href={ROUTES.terms} className="text-green underline hover:text-green">

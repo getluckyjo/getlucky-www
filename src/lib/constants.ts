@@ -14,7 +14,7 @@ export const SITE = {
   name: "Get Lucky Golf Club",
   tagline: "South Africa's Leading Hole-in-One Golf Activation",
   description:
-    "Buy a swing from R50, sink a hole-in-one, win up to R1,000,000. Live at 20+ courses nationwide. Fully insured by Indwe Risk Services.",
+    "Buy a swing from R50, sink a hole-in-one, win up to R1,000,000. Live at 20+ courses nationwide. Fully insured by Santam & Indwe Risk Services.",
   email: "johannes@getluckygolfclub.com",
   partnershipsEmail: "johannes@getluckygolfclub.com",
   whatsapp: "https://wa.me/27609615091",

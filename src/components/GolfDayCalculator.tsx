@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { Check, Trophy, Users, Tent, Camera, Image as ImageIcon, Video } from "lucide-react";
 import { setGolfDayQuote } from "@/lib/golfDayQuoteStore";
+import ExactNumberInput from "@/components/ui/ExactNumberInput";
 
 type PrizeOption = {
   prize: string;
@@ -175,14 +176,12 @@ export default function GolfDayCalculator() {
                 aria-label="Number of golfers"
               />
               <div className="flex items-center gap-2">
-                <input
-                  type="number"
+                <ExactNumberInput
+                  value={golfers}
                   min={1}
                   max={400}
-                  value={golfers}
-                  onChange={(e) => setGolfers(Math.max(1, Number(e.target.value) || 0))}
-                  className="w-20 text-center rounded-lg border border-green/15 px-3 py-2 font-semibold text-green focus:border-green focus:outline-none"
-                  aria-label="Number of golfers (exact)"
+                  onChange={setGolfers}
+                  label="Number of golfers (exact)"
                 />
                 <span className="text-sm text-muted">players</span>
               </div>
@@ -221,8 +220,7 @@ export default function GolfDayCalculator() {
               ))}
             </div>
             <p className="text-xs text-muted mt-2">
-              {formatRand(PROMOTER_RATE)} per promoter per day · {promoters} ×
-              R2,000 ={" "}
+              {formatRand(PROMOTER_RATE)} per promoter per day × {promoters} ={" "}
               <span className="font-semibold text-green">
                 {formatRand(breakdown.promoterCost)}
               </span>
@@ -303,7 +301,7 @@ export default function GolfDayCalculator() {
             <div className="mt-6 space-y-3 text-sm">
               <div className="flex justify-between border-b border-white/10 pb-3">
                 <span className="text-white/70">
-                  {prize.prize} prize × {golfers} players
+                  {prize.prize} prize cover ({formatRand(prize.pricePerPlayer)} × {golfers} players)
                 </span>
                 <span className="font-semibold">{formatRand(breakdown.prizeCost)}</span>
               </div>
@@ -336,7 +334,7 @@ export default function GolfDayCalculator() {
             <p className="text-white/60 text-xs mt-4 leading-relaxed">
               Every package includes the Get Lucky branded experience, on-site
               management, a complimentary <span className="text-lime font-semibold">Shanky&apos;s Whip</span> for every
-              golfer, and full prize underwriting by Indwe Risk Services.
+              golfer, and full prize underwriting by Santam and Indwe Risk Services.
             </p>
 
             <a

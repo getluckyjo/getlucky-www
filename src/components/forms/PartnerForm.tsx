@@ -43,7 +43,9 @@ export default function PartnerForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = await res.json();
+      // A timeout or crash page is HTML, not JSON; fall through to the
+      // generic message rather than blaming the connection.
+      const data = (await res.json().catch(() => null)) ?? {};
       if (!res.ok) {
         if (data.fieldErrors) setErrors(data.fieldErrors);
         setTopError(data.error || "Something went wrong. Please try again.");
@@ -75,7 +77,7 @@ export default function PartnerForm() {
           <Input name="fullName" required autoComplete="name" placeholder="First and last name" />
         </Field>
         <Field label="Mobile Number" name="mobile" required error={errors.mobile}>
-          <Input name="mobile" type="tel" required autoComplete="tel" placeholder="+27 XX XXX XXX" inputMode="tel" />
+          <Input name="mobile" type="tel" required autoComplete="tel" placeholder="+27 XX XXX XXXX" inputMode="tel" />
         </Field>
       </div>
 
@@ -98,7 +100,7 @@ export default function PartnerForm() {
 
       <div className="space-y-3 pt-2">
         <Checkbox name="consentCommunication" error={errors.consentCommunication}>
-          I agree to receive communication from Get Lucky Hole-in-One Challenge and Indwe Risk Services.
+          I agree to receive communication from the Get Lucky Hole-in-One Challenge and Indwe Risk Services.
         </Checkbox>
         <Checkbox name="consentTerms" required error={errors.consentTerms}>
           I accept the{" "}

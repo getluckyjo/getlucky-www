@@ -9,23 +9,28 @@ import PageHero from "@/components/ui/PageHero";
 import SectionHeader from "@/components/ui/SectionHeader";
 import FeatureGrid, { type Feature } from "@/components/ui/FeatureGrid";
 import EnquirySection from "@/components/ui/EnquirySection";
+import { socialMeta } from "@/lib/seo";
+
+const TITLE = "Become a Partner Course";
+const DESCRIPTION =
+  "Bring the Get Lucky Hole-in-One Challenge to your golf course. Drive footfall, member engagement and a fully insured prize activation — at no upfront cost.";
 
 export const metadata: Metadata = {
-  title: "Become a Partner Course",
-  description:
-    "Bring the Get Lucky Hole-in-One Challenge to your golf course. Drive footfall, member engagement and a fully insured prize activation — at no upfront cost.",
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: { canonical: "/become-a-partner" },
+  ...socialMeta("/become-a-partner", TITLE, DESCRIPTION),
 };
 
 const VALUE: Feature[] = [
   {
     icon: ShieldCheck,
     title: "Fully insured",
-    body: "Every prize underwritten by Indwe Risk Services (FSP 3425). Your club carries no payout liability.",
+    body: "Every prize underwritten by Santam and structured by Indwe Risk Services (FSP 3425). Your club carries no payout liability.",
   },
   {
     icon: Users,
-    title: "Drive members",
+    title: "Drive foot traffic",
     body: "Sustained marketing across our channels and partner network drives foot traffic to your course.",
   },
   {
@@ -43,11 +48,11 @@ export default function BecomeAPartnerPage() {
         <PageHero
           kicker="For golf courses"
           title="Become a partner course"
-          lede="Add the Get Lucky Hole-in-One Challenge to your signature par‑3 and offer your members a fully-insured shot at up to R1,000,000. Zero upfront cost, zero risk to your club, full activation support from our team."
+          lede="Add the Get Lucky Hole-in-One Challenge to your signature par‑3 and offer your members a fully insured shot at up to R1,000,000. Zero upfront cost, zero risk to your club, full activation support from our team."
           image="/images/courses/st-francis-links.jpg"
           imageAlt="St Francis Links, a Get Lucky partner course"
           primary={{ href: "#apply", label: "Apply to partner" }}
-          secondary={{ href: "#proposal", label: "View the 2026 proposal" }}
+          secondary={{ href: "#proposal", label: "View the 2026 partner deck" }}
           stats={[
             { value: "R1M", label: "Top prize, fully insured" },
             { value: "R0", label: "Upfront cost to your club" },

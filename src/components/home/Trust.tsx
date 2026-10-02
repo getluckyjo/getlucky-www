@@ -106,26 +106,6 @@ export default function Trust() {
           </dl>
           </div>
         </div>
-
-        <div className="reveal mt-10 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
-          <span className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted">
-            Prizes underwritten by
-          </span>
-          <Image
-            src="/logos/brands/santam.svg"
-            alt="Santam"
-            width={120}
-            height={32}
-            className="h-6 w-auto grayscale opacity-70"
-          />
-          <Image
-            src="/logos/brands/indwe.svg"
-            alt="Indwe Risk Services"
-            width={120}
-            height={32}
-            className="h-6 w-auto grayscale opacity-70"
-          />
-        </div>
       </div>
     </section>
   );

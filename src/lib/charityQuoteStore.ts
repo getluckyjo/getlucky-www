@@ -34,8 +34,10 @@ export function useCharityQuote(): CharityQuote | null {
   return useSyncExternalStore(subscribe, getSnapshot, () => null);
 }
 
+// Comma grouping, as the calculators show it: "en-ZA" groups with a space
+// in some browsers, so the prefilled message would disagree with the quote.
 function formatRand(n: number): string {
-  return "R" + n.toLocaleString("en-ZA");
+  return "R" + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 // `beneficiary` swaps the wording for pages that share the fundraiser flow

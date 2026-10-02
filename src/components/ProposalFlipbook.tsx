@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Download, Maximize2, X } from "lucide-react";
 
@@ -10,54 +11,29 @@ const PDF_HREF = "/GLG_Golf_Course_Proposal_2026.pdf";
 const pageSrc = (n: number) =>
   `/proposal-pages/page-${String(n).padStart(2, "0")}.jpg`;
 
-export default function ProposalFlipbook() {
-  const [page, setPage] = useState(1);
-  const [fullscreen, setFullscreen] = useState(false);
-  const touchStartX = useRef<number | null>(null);
-
-  const goPrev = useCallback(
-    () => setPage((p) => Math.max(1, p - 1)),
-    [],
-  );
-  const goNext = useCallback(
-    () => setPage((p) => Math.min(TOTAL_PAGES, p + 1)),
-    [],
-  );
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") goPrev();
-      else if (e.key === "ArrowRight") goNext();
-      else if (e.key === "Escape" && fullscreen) setFullscreen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [goPrev, goNext, fullscreen]);
-
-  useEffect(() => {
-    if (fullscreen) {
-      const original = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = original;
-      };
-    }
-  }, [fullscreen]);
-
-  const onTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
-  const onTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
-    if (Math.abs(dx) > 40) {
-      if (dx < 0) goNext();
-      else goPrev();
-    }
-    touchStartX.current = null;
-  };
-
-  const Viewer = ({ inFullscreen }: { inFullscreen: boolean }) => (
+/**
+ * The page stack with its arrows. Lives outside ProposalFlipbook so a page
+ * turn re-renders it rather than remounting all 17 images, which is what lets
+ * the cross-fade play.
+ */
+function Viewer({
+  page,
+  inFullscreen,
+  onPrev,
+  onNext,
+  onClose,
+  onTouchStart,
+  onTouchEnd,
+}: {
+  page: number;
+  inFullscreen: boolean;
+  onPrev: () => void;
+  onNext: () => void;
+  onClose?: () => void;
+  onTouchStart: (e: React.TouchEvent) => void;
+  onTouchEnd: (e: React.TouchEvent) => void;
+}) {
+  return (
     <div
       className={
         inFullscreen
@@ -90,7 +66,7 @@ export default function ProposalFlipbook() {
 
         <button
           type="button"
-          onClick={goPrev}
+          onClick={onPrev}
           disabled={page === 1}
           aria-label="Previous page"
           className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed text-green rounded-full p-3 shadow-md transition"
@@ -99,7 +75,7 @@ export default function ProposalFlipbook() {
         </button>
         <button
           type="button"
-          onClick={goNext}
+          onClick={onNext}
           disabled={page === TOTAL_PAGES}
           aria-label="Next page"
           className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed text-green rounded-full p-3 shadow-md transition"
@@ -110,7 +86,7 @@ export default function ProposalFlipbook() {
         {inFullscreen && (
           <button
             type="button"
-            onClick={() => setFullscreen(false)}
+            onClick={onClose}
             aria-label="Close fullscreen"
             className="absolute top-3 right-3 bg-white/90 hover:bg-white text-green rounded-full p-2 shadow-md transition"
           >
@@ -120,10 +96,69 @@ export default function ProposalFlipbook() {
       </div>
     </div>
   );
+}
+
+export default function ProposalFlipbook() {
+  const [page, setPage] = useState(1);
+  const [fullscreen, setFullscreen] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+
+  const goPrev = useCallback(
+    () => setPage((p) => Math.max(1, p - 1)),
+    [],
+  );
+  const goNext = useCallback(
+    () => setPage((p) => Math.min(TOTAL_PAGES, p + 1)),
+    [],
+  );
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      // Arrows belong to whatever field has focus (the enquiry form below,
+      // the page slider); only a bare page turns the deck.
+      const t = e.target as HTMLElement | null;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      if (e.key === "ArrowLeft") goPrev();
+      else if (e.key === "ArrowRight") goNext();
+      else if (e.key === "Escape" && fullscreen) setFullscreen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [goPrev, goNext, fullscreen]);
+
+  useEffect(() => {
+    if (fullscreen) {
+      const original = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = original;
+      };
+    }
+  }, [fullscreen]);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(dx) > 40) {
+      if (dx < 0) goNext();
+      else goPrev();
+    }
+    touchStartX.current = null;
+  };
 
   return (
     <div className="w-full">
-      <Viewer inFullscreen={false} />
+      <Viewer
+        page={page}
+        inFullscreen={false}
+        onPrev={goPrev}
+        onNext={goNext}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      />
 
       <div className="flex items-center justify-between gap-3 mt-4 flex-wrap">
         <div className="flex items-center gap-2 text-sm text-charcoal-light/70">
@@ -164,19 +199,32 @@ export default function ProposalFlipbook() {
         </div>
       </div>
 
-      {fullscreen && (
-        <div
-          className="fixed inset-0 z-50 bg-charcoal/95 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Proposal fullscreen view"
-        >
-          <Viewer inFullscreen={true} />
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm">
-            {page} / {TOTAL_PAGES}
-          </div>
-        </div>
-      )}
+      {/* Portalled to <body>: the deck sits inside a scroll-reveal wrapper,
+          and the transform that animation leaves behind would otherwise
+          shrink this "fixed" overlay to the size of the card. */}
+      {fullscreen &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[60] bg-charcoal/95 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Proposal fullscreen view"
+          >
+            <Viewer
+              page={page}
+              inFullscreen
+              onPrev={goPrev}
+              onNext={goNext}
+              onClose={() => setFullscreen(false)}
+              onTouchStart={onTouchStart}
+              onTouchEnd={onTouchEnd}
+            />
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm">
+              {page} / {TOTAL_PAGES}
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
