@@ -33,6 +33,28 @@ const freePerks = [
  * monthly, or get the year free through the headline sponsor's quote. The
  * offer keeps its #quote anchor for links already out in the world.
  */
+/**
+ * Poster Gothic draws "∞" at about half its cap height, so beside "R100K" and
+ * "NONE" it read as a footnote. This one is drawn to the cap height and the
+ * heavy stroke of the face, in ems, so it scales with the figures around it.
+ */
+function InfinityMark() {
+  return (
+    <svg
+      viewBox="0.5 6.5 23 11"
+      className="inline-block h-[0.74em] w-auto align-baseline"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z" />
+    </svg>
+  );
+}
+
 export default function Membership() {
   return (
     <section id="membership" className="section bg-white">
@@ -96,7 +118,14 @@ export default function Membership() {
                       s.v === "R100K" ? "text-gold" : "text-white"
                     }`}
                   >
-                    {s.v}
+                    {s.v === "∞" ? (
+                      <>
+                        <InfinityMark />
+                        <span className="sr-only">Unlimited</span>
+                      </>
+                    ) : (
+                      s.v
+                    )}
                   </dd>
                 </div>
               ))}
