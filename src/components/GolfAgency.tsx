@@ -30,8 +30,8 @@ const platforms = [
     name: "Hole-in-One Challenge",
     type: "On-Course Activation",
     description:
-      "Branded signage, tee boxes, and prize boards at 20+ premium courses. Solar-powered cameras capture every attempt. Seen by thousands of golfers every month — in a relaxed, premium environment with unmatched dwell time.",
-    highlights: ["20+ live courses", "Camera-verified exposure", "Branded tee box signage"],
+      "Branded signage, tee boxes, and prize boards at 30+ premium courses. Solar-powered cameras capture every attempt. Seen by thousands of golfers every month — in a relaxed, premium environment with unmatched dwell time.",
+    highlights: ["30+ live courses", "Camera-verified exposure", "Branded tee box signage"],
   },
   {
     icon: Tv,
