@@ -56,7 +56,7 @@ export default function BecomeAPartnerPage() {
           stats={[
             { value: "R1M", label: "Top prize, fully insured" },
             { value: "R0", label: "Upfront cost to your club" },
-            { value: "20+", label: "Partner courses live" },
+            { value: "30+", label: "Partner courses live" },
             { value: "4G", label: "Solar cameras on your hole" },
           ]}
         />

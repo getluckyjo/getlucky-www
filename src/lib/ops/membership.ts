@@ -17,7 +17,7 @@
  * CONSENT_FORM_VERSION in src/lib/whatsapp.ts).
  */
 
-import { COURSE_SLUGS } from "@/lib/constants";
+import { COURSE_SLUGS, canonicalCourse } from "@/lib/constants";
 import { isSubsDbConfigured, listMembers } from "@/lib/subscriptions-db";
 import { loadIndweReport, type IndweLead } from "@/lib/ops/indwe";
 import type { DataSource } from "@/lib/ops/metrics";
@@ -87,7 +87,8 @@ function consentOf(rows: IndweLead[]): ConsentState {
 }
 
 function joinUrlFor(course: string): string | null {
-  const slug = COURSE_SLUGS[course as keyof typeof COURSE_SLUGS];
+  // Old leads keep the spelling they were saved with ("Mosselbay").
+  const slug = COURSE_SLUGS[canonicalCourse(course) as keyof typeof COURSE_SLUGS];
   return slug ? `${MEMBERSHIP_HOST}/join/${slug}` : null;
 }
 

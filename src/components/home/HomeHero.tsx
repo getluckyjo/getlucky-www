@@ -46,7 +46,7 @@ export default function HomeHero() {
             />
             <span className="chip chip--dark fade-up">
               <span className="live-dot" aria-hidden />
-              Live at 20+ courses across South Africa
+              Live at 30+ courses across South Africa
             </span>
 
             <h1 className="display-xl lg:text-[clamp(3.5rem,5.3vw,5.25rem)] mt-6 fade-up-1">

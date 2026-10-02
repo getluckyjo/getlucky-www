@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     template: "%s | Get Lucky Golf Club",
   },
   description:
-    "South Africa's leading hole-in-one golf activation. Buy a swing from R50, play the signature par-3, and win up to R1,000,000 at 20+ premium courses nationwide. Fully insured by Santam & Indwe Risk Services.",
+    "South Africa's leading hole-in-one golf activation. Buy a swing from R50, play the signature par-3, and win up to R1,000,000 at 30+ premium courses nationwide. Fully insured by Santam & Indwe Risk Services.",
   keywords: [
     "hole-in-one challenge",
     "hole-in-one challenge South Africa",
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Get Lucky Golf Club | Hole-in-One Challenge South Africa",
     description:
-      "Buy a swing from R50, sink a hole-in-one on the signature par-3, and win up to R1,000,000. Live at 20+ premium courses across South Africa. Insured by Santam & Indwe Risk Services.",
+      "Buy a swing from R50, sink a hole-in-one on the signature par-3, and win up to R1,000,000. Live at 30+ premium courses across South Africa. Insured by Santam & Indwe Risk Services.",
     type: "website",
     locale: "en_ZA",
     url: "https://www.getluckygolf.co.za",
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Get Lucky Golf Club | Hole-in-One Challenge South Africa",
     description:
-      "Buy a swing from R50. Sink a hole-in-one. Win up to R1,000,000. 20+ premium courses across SA.",
+      "Buy a swing from R50. Sink a hole-in-one. Win up to R1,000,000. 30+ premium courses across SA.",
     images: ["/og-image.png"],
   },
   // The V2 mark, drawn for the app's icon set (getluckyjo/getluckyapp public/icons).
@@ -114,7 +114,7 @@ export default function RootLayout({
     url: "https://www.getluckygolf.co.za",
     logo: "https://www.getluckygolf.co.za/icons/icon-512.png",
     description:
-      "South Africa's leading hole-in-one golf activation. Buy a swing, play the signature par-3, and win up to R1,000,000 at 20+ premium courses. Insured by Santam & Indwe Risk Services.",
+      "South Africa's leading hole-in-one golf activation. Buy a swing, play the signature par-3, and win up to R1,000,000 at 30+ premium courses. Insured by Santam & Indwe Risk Services.",
     email: "johannes@getluckygolfclub.com",
     address: {
       "@type": "PostalAddress",
