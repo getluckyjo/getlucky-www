@@ -87,14 +87,16 @@ export function ShowcaseSection({
     <section className="section bg-white">
       <div className="wrap">
         <SectionHeader kicker={kicker} title={title} lede={lede} />
-        <div className="mt-12">
+        {/* The film is vertical, so on wide screens the phone stands beside
+            the photos and stretches to the gallery's height. */}
+        <div
+          className={`mt-12 grid gap-3 ${
+            photos && photos.length > 0 ? "lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)]" : ""
+          }`}
+        >
           <VideoFrame />
+          {photos && photos.length > 0 && <PhotoGallery photos={photos} />}
         </div>
-        {photos && photos.length > 0 && (
-          <div className="mt-3">
-            <PhotoGallery photos={photos} />
-          </div>
-        )}
       </div>
     </section>
   );

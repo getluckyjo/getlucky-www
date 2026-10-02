@@ -72,7 +72,7 @@ export default function GolfDays() {
           }
         />
 
-        <div className="mt-14 grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] gap-10 lg:gap-14 items-start">
+        <div className="mt-14 grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-10 lg:gap-14 items-center">
           <VideoFrame />
 
           <ul className="grid sm:grid-cols-2 lg:grid-cols-1 gap-x-8">
