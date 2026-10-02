@@ -6,8 +6,12 @@ import SponsorLogo from "@/components/SponsorLogo";
 import { PGA_GOLF_SHOW, ROUTES } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: `Free Shot at ${PGA_GOLF_SHOW.prize} — ${PGA_GOLF_SHOW.name}`,
-  description: `Enter your name and number for a free simulator hole-in-one shot at ${PGA_GOLF_SHOW.prize} at the ${PGA_GOLF_SHOW.name}, ${PGA_GOLF_SHOW.dates}.`,
+  title: PGA_GOLF_SHOW.entriesOpen
+    ? `Free Shot at ${PGA_GOLF_SHOW.prize} — ${PGA_GOLF_SHOW.name}`
+    : `The show has ended — ${PGA_GOLF_SHOW.name}`,
+  description: PGA_GOLF_SHOW.entriesOpen
+    ? `Enter your name and number for a free simulator hole-in-one shot at ${PGA_GOLF_SHOW.prize} at the ${PGA_GOLF_SHOW.name}, ${PGA_GOLF_SHOW.dates}.`
+    : `The Get Lucky simulator challenge at the ${PGA_GOLF_SHOW.name} has closed. Take your shot at a Get Lucky partner course instead.`,
   robots: { index: false, follow: false },
 };
 
@@ -20,6 +24,11 @@ export const metadata: Metadata = {
  * lockup beside it. Indwe sits directly above the form as headline sponsor,
  * small, and the co-sponsors under it.
  * `.pga-theme` (globals.css) re-colours the shared form primitives.
+ *
+ * Once the show is over (PGA_GOLF_SHOW.entriesOpen false) the headline and
+ * form give way to a closed card that sends the golfer to a partner course;
+ * the masthead, lockups and sponsors stay, so a late QR scan still lands on
+ * something that looks like the stand they remember.
  */
 export default function PgaGolfShowPage() {
   return (
@@ -60,34 +69,59 @@ export default function PgaGolfShowPage() {
 
       {/* Headline */}
       <div className="max-w-md mx-auto px-4 pt-7 pb-8">
-        <div className="text-center mb-6">
-          <span className="eyebrow">
-            Simulator Hole-in-One · Free Entry
-          </span>
-          <h1 className="font-heading text-4xl sm:text-5xl text-green uppercase mt-2">
-            One Shot at {PGA_GOLF_SHOW.prize}
-          </h1>
-          <p className="text-sm sm:text-base text-green/75 mt-3 leading-relaxed">
-            Your name and your number, and a follow on Instagram if you have it.
-          </p>
-        </div>
+        {PGA_GOLF_SHOW.entriesOpen ? (
+          <>
+            <div className="text-center mb-6">
+              <span className="eyebrow">
+                Simulator Hole-in-One · Free Entry
+              </span>
+              <h1 className="font-heading text-4xl sm:text-5xl text-green uppercase mt-2">
+                One Shot at {PGA_GOLF_SHOW.prize}
+              </h1>
+              <p className="text-sm sm:text-base text-green/75 mt-3 leading-relaxed">
+                Your name and your number, and a follow on Instagram if you have it.
+              </p>
+            </div>
 
-        {/* Indwe — headline sponsor, kept small and above the form so it is
-            seen before the golfer reads the WhatsApp offer that names it. */}
-        <div className="card mb-4 rounded-xl bg-white px-6 py-5 sm:py-6 flex justify-center card--hover">
-          <Image
-            src="/images/indwe-sponsor-banner.png"
-            alt="Proudly Sponsored by Indwe Risk Services — Authorised Financial Services Provider FSP 3425"
-            width={1920}
-            height={292}
-            className="w-full max-w-[360px] h-auto"
-            priority
-          />
-        </div>
+            {/* Indwe — headline sponsor, kept small and above the form so it is
+                seen before the golfer reads the WhatsApp offer that names it. */}
+            <div className="card mb-4 rounded-xl bg-white px-6 py-5 sm:py-6 flex justify-center card--hover">
+              <Image
+                src="/images/indwe-sponsor-banner.png"
+                alt="Proudly Sponsored by Indwe Risk Services — Authorised Financial Services Provider FSP 3425"
+                width={1920}
+                height={292}
+                className="w-full max-w-[360px] h-auto"
+                priority
+              />
+            </div>
 
-        <div className="card bg-white shadow-green-dark/10 border-t-4 border-green p-5 sm:p-7 rounded-xl card--hover">
-          <PgaGolfShowEntryForm />
-        </div>
+            <div className="card bg-white shadow-green-dark/10 border-t-4 border-green p-5 sm:p-7 rounded-xl card--hover">
+              <PgaGolfShowEntryForm />
+            </div>
+          </>
+        ) : (
+          <div className="card bg-white shadow-green-dark/10 border-t-4 border-green p-6 sm:p-8 text-center rounded-xl">
+            <span className="eyebrow">Simulator Hole-in-One · {PGA_GOLF_SHOW.dates}</span>
+            <h1 className="font-heading text-3xl sm:text-4xl text-green uppercase mt-2">
+              The show has ended
+            </h1>
+            <p className="text-sm sm:text-base text-green-dark mt-3 leading-relaxed">
+              Thanks to everyone who took a shot at the {PGA_GOLF_SHOW.name}.
+              Show entries are closed, but the challenge is live on the
+              signature par 3 at Get Lucky partner courses across South
+              Africa, with prizes up to R1,000,000.
+            </p>
+            <div className="mt-6 flex flex-col gap-3">
+              <Link href="/#courses" className="btn-lime">
+                Find a course
+              </Link>
+              <Link href="/" className="btn-outline">
+                Visit Get Lucky Golf Club
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Co-sponsors */}
         <div className="card mt-6 bg-white px-5 py-5 rounded-xl card--hover">
