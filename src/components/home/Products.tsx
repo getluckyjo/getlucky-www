@@ -33,11 +33,11 @@ export default function Products() {
             className="reveal group on-dark relative isolate overflow-hidden rounded-3xl bg-night text-white p-7 sm:p-9 min-h-[340px] lg:col-span-2 lg:row-span-2 flex flex-col justify-end"
           >
             <Image
-              src="/images/golf-day/IMG_4419.jpg"
-              alt="A golfer scanning the QR code on the Get Lucky challenge sign at the tee box"
+              src="/images/play-the-challenge.jpg"
+              alt="A golfer celebrating with both arms up on the Get Lucky challenge tee, beside the Swing It To Win It gazebo"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover -z-20 transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+              className="object-cover object-[70%_center] -z-20 transition-transform duration-700 ease-out group-hover:scale-[1.03]"
             />
             <div className="absolute inset-0 -z-10 bg-gradient-to-t from-night via-night/60 to-night/5" />
             <span className="icon-disc icon-disc--lime">

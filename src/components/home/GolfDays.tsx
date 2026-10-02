@@ -72,8 +72,8 @@ export default function GolfDays() {
           }
         />
 
-        <div className="mt-14 grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-10 lg:gap-14 items-center">
-          <VideoFrame />
+        <div className="mt-14 grid lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] gap-10 lg:gap-14 items-center">
+          <VideoFrame className="mx-auto aspect-[9/16] max-w-[420px] lg:max-w-none" />
 
           <ul className="grid sm:grid-cols-2 lg:grid-cols-1 gap-x-8">
             {benefits.map((item) => (
