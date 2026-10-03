@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<title>Get Lucky Golf Club — LinkedIn cover</title>
+<!--
+  LinkedIn cover, 1584 x 396 (LinkedIn's size). Screenshot it at 2x for a
+  3168 x 792 upload that stays sharp on retina screens.
+
+  Built from the homepage hero (src/components/home/HomeHero.tsx): the
+  Metropolitan aerial under the night scrim, the promise in one Poster Gothic
+  line with lime on "hole-in-1", the hero's stat row, and the challenge
+  lockup standing on the greens. (The hero's prize-ladder card does not
+  survive the half-size LinkedIn shows a banner at: its rungs go illegible.)
+
+  LinkedIn lays the profile photo over the lower left of the banner (larger,
+  relative to the banner, in the phone app than on desktop), so the first
+  ~460px carry only photograph: the type starts after it.
+-->
+<style>
+  @font-face {
+    font-family: "Poster Gothic";
+    src: url("../../public/fonts/PosterGothicRoundATF-Heavy.woff2") format("woff2");
+    font-weight: 800;
+  }
+  @font-face {
+    font-family: "Inter";
+    src: url("https://rsms.me/inter/font-files/InterVariable.woff2") format("woff2");
+    font-weight: 100 900;
+  }
+
+  :root {
+    --night: #0c160e;
+    --green-dark: #1e3120;
+    --lime: #d6fb4b;
+    --gold: #c9a94e;
+    --gold-light: #e8d48b;
+  }
+
+  html, body { margin: 0; width: 1584px; height: 396px; overflow: hidden; }
+  body {
+    position: relative;
+    background: var(--night);
+    color: #fff;
+    font-family: "Inter", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* The photograph, cropped to the band with the bay, the flats and the
+     greens: the horizon sits near the top edge. */
+  .photo {
+    position: absolute; inset: 0;
+    background: url("../../public/images/hero-metropolitan.jpg") center 32% / cover no-repeat;
+  }
+  /* Deep where the type sits, light at both ends so the photograph carries
+     the banner: the flats under the profile photo, the greens under the
+     lockup. A floor along the bottom as on the site. */
+  .scrim-x {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg,
+      rgba(12, 22, 14, 0.30) 0%,
+      rgba(12, 22, 14, 0.78) 24%,
+      rgba(12, 22, 14, 0.80) 52%,
+      rgba(12, 22, 14, 0.42) 70%,
+      rgba(12, 22, 14, 0.08) 100%);
+  }
+  .scrim-y {
+    position: absolute; inset: 0;
+    background: linear-gradient(0deg,
+      rgba(12, 22, 14, 0.70) 0%,
+      rgba(12, 22, 14, 0.00) 45%,
+      rgba(12, 22, 14, 0.30) 100%);
+  }
+
+  /* The promise. LinkedIn shows the banner at about half size on desktop,
+     so nothing here is smaller than 20px. */
+  .copy {
+    position: absolute;
+    left: 480px; top: 50%;
+    transform: translateY(-50%);
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(12px);
+    font-size: 21px; font-weight: 600; line-height: 1.1;
+  }
+  .live-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 0 5px rgba(214, 251, 75, 0.20);
+  }
+  h1 {
+    margin: 18px 0 0;
+    font-family: "Poster Gothic", Impact, sans-serif;
+    font-weight: 800;
+    font-size: 92px;
+    line-height: 0.9;
+    text-transform: uppercase;
+    text-shadow: 0 6px 30px rgba(0, 0, 0, 0.35);
+  }
+  h1 .lime { color: var(--lime); white-space: nowrap; }
+
+  /* The hero's stat row */
+  dl { display: flex; margin: 20px 0 0; }
+  dl div { display: flex; flex-direction: column-reverse; justify-content: flex-end; padding: 0 30px; }
+  dl div:first-child { padding-left: 0; }
+  dl div + div { border-left: 1.5px solid rgba(255, 255, 255, 0.18); }
+  dd { margin: 0; font-family: "Poster Gothic", Impact, sans-serif; font-weight: 800; font-size: 44px; line-height: 1; }
+  dd.gold { color: var(--gold-light); }
+  dt { margin-top: 6px; font-size: 20px; color: rgba(255, 255, 255, 0.66); }
+
+  /* The challenge lockup, standing on the greens in a pool of lime light */
+  .glow {
+    position: absolute;
+    right: -40px; top: 50%;
+    width: 560px; height: 560px;
+    transform: translateY(-50%);
+    background: radial-gradient(closest-side, rgba(214, 251, 75, 0.30), rgba(214, 251, 75, 0.08) 55%, transparent);
+  }
+  .lockup {
+    position: absolute;
+    right: 84px; top: 50%;
+    transform: translateY(-50%) rotate(-4deg);
+    height: 292px; width: auto;
+    filter: drop-shadow(0 22px 34px rgba(0, 0, 0, 0.55));
+  }
+</style>
+</head>
+<body>
+  <div class="photo"></div>
+  <div class="scrim-x"></div>
+  <div class="scrim-y"></div>
+
+  <div class="copy">
+    <span class="chip"><span class="live-dot"></span>Live at 30+ courses across South Africa</span>
+    <h1>Win a million<br>for a <span class="lime">hole-in-1</span></h1>
+    <dl>
+      <div><dt>Swings from</dt><dd>R50</dd></div>
+      <div><dt>Top prize</dt><dd class="gold">R1,000,000</dd></div>
+      <div><dt>Prizes underwritten by</dt><dd>Santam</dd></div>
+    </dl>
+  </div>
+
+  <div class="glow"></div>
+  <img class="lockup" src="../../public/brand/logo-lockup.svg" alt="">
+</body>
+</html>
