@@ -10,7 +10,6 @@ import {
   getEntry,
   voucherToSheet,
   entryToSheet,
-  backfillEntryContact,
   type EntryRow,
 } from "@/lib/db";
 import { notifyWhatsAppChannel } from "@/lib/whatsapp";
@@ -66,11 +65,11 @@ export async function POST(req: NextRequest) {
   const amountGross = fields.amount_gross || "";
   const pfPaymentId = fields.pf_payment_id || "";
 
-  // /form no longer asks for a name or an email — PayFast collects both on its
-  // own checkout, which is a page the golfer is already on, and returns them
-  // here. This is the only place they enter our records.
-  const itnName = [fields.name_first, fields.name_last].filter(Boolean).join(" ").trim();
-  const itnEmail = (fields.email_address || "").trim();
+  // name_first, name_last and email_address are deliberately not read. The ITN
+  // only echoes what the payment request sent, so they can never tell us more
+  // than the entry row already holds. A backfill from them ran here from 31 Aug
+  // to Nov 2026 and never filled a single row — see entrySchema in
+  // src/lib/validation.ts.
 
   // 0. Source IP (defence-in-depth). Vercel puts the real client IP first in
   //    x-forwarded-for. Only reject when we positively identify a non-PayFast
@@ -221,10 +220,6 @@ export async function POST(req: NextRequest) {
     return new Response("OK", { status: 200 });
   }
 
-  // The Sheet write that used to mirror this status is gone. The name and email
-  // PayFast collected at checkout are still captured — they land on the row in
-  // the Postgres backfill below, which is now the only place they are kept.
-
   // Idempotency gate: markPaid returns true only on the first not-paid → paid
   // transition. PayFast resends ITNs, so without this gate a resend would
   // re-send the confirmation emails. Fail-open on DB error: a DB hiccup should
@@ -238,31 +233,6 @@ export async function POST(req: NextRequest) {
   });
   if (!firstPaidTransition) {
     return new Response("OK", { status: 200 });
-  }
-
-  // Backfill Postgres before anything downstream reads the row: the ops
-  // notification, the WhatsApp handoff and the Indwe feed all want a name.
-  // Only fills what is empty — a value already on the row is never clobbered.
-  if (tab === "entry" && entryRec) {
-    const patch: { name?: string; email?: string } = {};
-    if (!entryRec.name && itnName) patch.name = itnName;
-    if (!entryRec.email && itnEmail) patch.email = itnEmail;
-    if (patch.name || patch.email) {
-      const written = await backfillEntryContact(reference, patch).then(
-        () => true,
-        (err) => {
-          console.error("PayFast ITN entry contact backfill failed", { reference, err });
-          void reportWriteFailure("Postgres backfillEntryContact", reference, tab, err);
-          return false;
-        },
-      );
-      // Carry the values locally either way. The money is recorded and the
-      // golfer is owed their confirmation; a failed write should not also
-      // strip the name off the email and the WhatsApp handoff.
-      entryRec = { ...entryRec, ...patch };
-      row = entryToSheet(entryRec);
-      if (!written) console.warn("PayFast ITN using un-persisted contact details", { reference });
-    }
   }
 
   const tier = PRIZE_TIERS.find((t) => t.label === row.Tier);

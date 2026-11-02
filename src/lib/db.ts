@@ -229,23 +229,6 @@ export async function getEntry(reference: string): Promise<EntryRow | null> {
   return (data as EntryRow) ?? null;
 }
 
-/**
- * Write the buyer's name and email onto a paid entry.
- *
- * /form does not ask for either — PayFast collects them on its own checkout and
- * returns them in the ITN. The caller decides what to include, and should only
- * pass a field that is currently empty on the row: this overwrites whatever is
- * there, so it is the caller's job not to clobber a real value with a worse one.
- */
-export async function backfillEntryContact(
-  reference: string,
-  patch: { name?: string; email?: string },
-): Promise<void> {
-  if (!patch.name && !patch.email) return;
-  const { error } = await db().from("entries").update(patch).eq("reference", reference);
-  if (error) throw new Error(`db.backfillEntryContact: ${error.message}`);
-}
-
 export async function listVouchers(sinceISO?: string): Promise<VoucherRow[]> {
   let q = db().from("vouchers").select("*").order("created_at", { ascending: false });
   if (sinceISO) q = q.gte("created_at", sinceISO);
@@ -411,6 +394,24 @@ export function leadToSheet(type: DbLeadType, r: LeadRow): Record<string, string
  * Aug 2026. The only honest signal is the outcome: entries are being created,
  * and entries are being marked paid.
  * -------------------------------------------------------------------------- */
+
+/**
+ * Name and email of every entry created since `sinceISO`, for
+ * contactableEntriesCheck. Rows, not a count: what counts as blank (null,
+ * empty, whitespace) is the rule's to decide, and a day's entries are a few
+ * dozen.
+ */
+export async function listEntryContactsSince(
+  sinceISO: string,
+): Promise<Pick<EntryRow, "name" | "email">[]> {
+  const { data, error } = await db()
+    .from("entries")
+    .select("name, email")
+    .gte("created_at", sinceISO)
+    .limit(1000);
+  if (error) throw new Error(`db.listEntryContactsSince: ${error.message}`);
+  return (data as Pick<EntryRow, "name" | "email">[]) ?? [];
+}
 
 export type EntryPaymentHealth = {
   /** Entries created in the window. */

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { signFields } from "@/lib/payfast";
-import { isDbConfigured, getEntryPaymentHealth } from "@/lib/db";
-import { stuckPendingCheck } from "@/lib/health";
+import { isDbConfigured, getEntryPaymentHealth, listEntryContactsSince } from "@/lib/db";
+import { stuckPendingCheck, contactableEntriesCheck } from "@/lib/health";
 
 /**
  * Daily PayFast + backend health check.
@@ -52,6 +52,13 @@ import { stuckPendingCheck } from "@/lib/health";
 const PAID_WINDOW_DAYS = 3;
 const STUCK_PENDING_HOURS = 24;
 const STUCK_PENDING_WINDOW_HOURS = 72;
+
+/**
+ * CONTACT_WINDOW_HOURS: the entries_contactable check reads the last day of
+ * entries. That matches the daily cron, so each entry is judged once and a
+ * break alerts the morning after it starts rather than three mornings running.
+ */
+const CONTACT_WINDOW_HOURS = 24;
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -190,6 +197,25 @@ export async function GET() {
     } catch (err) {
       checks.push({
         name: "entry_payments_flowing",
+        ok: false,
+        detail: err instanceof Error ? err.message : String(err),
+      });
+    }
+
+    // 5. Are those entries leads anyone can act on? The checks above stayed
+    //    green for two months while every on-course entry was written with a
+    //    mobile number and nothing else — see src/lib/health.ts.
+    try {
+      const contactSinceISO = new Date(now - CONTACT_WINDOW_HOURS * 3600_000).toISOString();
+      const contactable = contactableEntriesCheck(await listEntryContactsSince(contactSinceISO));
+      checks.push({
+        name: "entries_contactable",
+        ok: contactable.ok,
+        detail: `entries created in the last ${CONTACT_WINDOW_HOURS}h: ${contactable.detail}`,
+      });
+    } catch (err) {
+      checks.push({
+        name: "entries_contactable",
         ok: false,
         detail: err instanceof Error ? err.message : String(err),
       });

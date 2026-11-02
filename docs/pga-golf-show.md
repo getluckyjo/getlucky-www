@@ -71,8 +71,9 @@ still enters for free, never walks anyone to a payment page.
   fails closed if that write fails or the database is not configured, then hands
   the signed PayFast fields back for the redirect. The `GLE-` prefix is what routes
   the notification to the entry tab in `/api/payfast/notify`, which marks it
-  paid, backfills the email PayFast collected at checkout, and hands the golfer
-  to the WhatsApp channel — **once the money has arrived, not on submit**.
+  paid and hands the golfer to the WhatsApp channel — **once the money has
+  arrived, not on submit**. No email is recorded: the form does not ask, and
+  PayFast's notification only echoes what the payment request sent.
 - **The course is still `the PGA Golf Show`**, so a paid show entrant gets the
   same show WhatsApp journey as a free one.
 - One thing the free path records and this one does not: the **Instagram tap**.

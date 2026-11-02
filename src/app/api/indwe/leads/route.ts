@@ -371,25 +371,17 @@ export async function GET(req: NextRequest) {
 
   // Withhold a lead nobody can act on.
   //
-  // /form stopped asking for a name and an email on 31 Aug 2026 — PayFast
-  // returns both, and they are written onto the entry when the payment lands.
-  // But the entry row is created at form submit, so for the minute or two
-  // between submitting and paying it holds a mobile number and nothing else.
-  // This feed deliberately sends pending entries so Indwe see the whole funnel,
-  // and Indwe poll every twelve to fifteen minutes — so any entry submitted
-  // shortly before a poll is captured in that state, including one that goes on
-  // to pay perfectly. It is a race, not only an abandoned checkout.
+  // /form stopped asking for a name and an email on 31 Aug 2026, on the belief
+  // that PayFast would return both in its notification. It does not — the ITN
+  // only echoes what the payment request sent — so every on-course entry from
+  // then until /form asked for a name again in Nov 2026 holds a mobile number
+  // and nothing else, paid or not, and stays withheld here for good.
   //
-  // Indwe reported six such leads on 1 Sep. Five shared one mobile and were
-  // captured 08:58–09:00 SAST, which is 06:58–07:00 UTC — the same three
-  // minutes in which four PayFast notifications arrived and were accepted. They
-  // were caught mid-payment, not after walking away.
-  //
-  // Sending the whole funnel was decided when a pending entry still carried a
-  // name, an email and a mobile — a lead somebody could work. That premise
-  // changed; this restores it rather than reversing the decision. Contactable
-  // pending entries still flow, and a withheld one appears on the next poll
-  // once payment fills in the missing detail.
+  // Indwe reported six such leads on 1 Sep, which is when this filter went in.
+  // Sending the whole funnel, pending entries included, was decided when every
+  // entry carried a name and a mobile — a lead somebody could work. This keeps
+  // that premise rather than reversing the decision: contactable entries flow,
+  // paid or pending, and the count of withheld ones is reported below.
   const withheld = leads.filter((l) => !isDeliverable(l)).length;
   leads = leads.filter(isDeliverable);
 
