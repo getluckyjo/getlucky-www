@@ -85,9 +85,9 @@ export async function POST(req: NextRequest) {
         amount: d.entryAmount,
         prize: tier.prize,
         course: d.course,
-        // Not asked on this form. Backfilled at payment from the PayFast
-        // notification, which carries name_first, name_last and email_address.
-        name: null,
+        name: d.name,
+        // Not asked on this form, and PayFast will not supply it — see
+        // entrySchema in src/lib/validation.ts.
         email: null,
         mobile: d.mobile,
         source,
@@ -128,9 +128,7 @@ export async function POST(req: NextRequest) {
       itemName: `${tier.label} — Get Lucky Hole-in-One Challenge`,
       itemDescription: `Course entry for ${d.course} on ${entryDate}, win ${tier.prize}`,
       reference,
-      // Left blank on purpose: PayFast prompts for them on its own checkout,
-      // which is a page the golfer is already on.
-      buyerName: "",
+      buyerName: d.name,
       buyerEmail: "",
       buyerMobile: d.mobile,
       customStr1: d.course,

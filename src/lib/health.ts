@@ -65,3 +65,37 @@ export function stuckPendingCheck(h: StuckPendingInput): StuckPendingVerdict {
   }
   return { ok, detail: `${summary} — NOT ONE of ${cohortCreated} paid` };
 }
+
+/**
+ * Whether the entries being written can be acted on at all.
+ *
+ * From 31 Aug to Nov 2026 every on-course entry was written with a mobile
+ * number and nothing else, and every check in this file stayed green: entries
+ * were created, entries were paid, the money path worked. What had broken was
+ * the lead — /form had stopped asking for a name on the belief that PayFast
+ * would supply one, PayFast never did, and two months of golfers were withheld
+ * from Indwe and greeted as "there" on WhatsApp before anyone looked.
+ *
+ * The bar is the one /api/indwe/leads applies (isDeliverable): a name or an
+ * email. Every form that writes an entry now requires a name, so a single row
+ * without either is a form or a route that has stopped recording one — not a
+ * golfer being difficult. Hence no cohort floor here, unlike the check above:
+ * one is enough.
+ */
+export type EntryContact = { name: string | null; email: string | null };
+
+export type ContactableVerdict = { ok: boolean; detail: string };
+
+export function contactableEntriesCheck(rows: EntryContact[]): ContactableVerdict {
+  if (rows.length === 0) {
+    return { ok: true, detail: "no entries created in the window" };
+  }
+  const bare = rows.filter((r) => !(r.name ?? "").trim() && !(r.email ?? "").trim()).length;
+  if (bare === 0) {
+    return { ok: true, detail: `all ${rows.length} carry a name or an email` };
+  }
+  return {
+    ok: false,
+    detail: `${bare} of ${rows.length} have neither a name nor an email — withheld from Indwe`,
+  };
+}

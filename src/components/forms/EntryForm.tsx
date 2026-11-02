@@ -43,6 +43,7 @@ export default function EntryForm() {
     const payload = {
       entryAmount: Number(fd.get("entryAmount") || 0),
       course: String(fd.get("course") || ""),
+      name: String(fd.get("name") || ""),
       mobile: String(fd.get("mobile") || ""),
       consentWhatsApp: fd.get("consentWhatsApp") === "on",
       // Accepted by pressing the pay button; the line under it says so.
@@ -88,16 +89,19 @@ export default function EntryForm() {
     <form onSubmit={onSubmit} onChange={onFieldChange} noValidate className="space-y-5">
       {topError && <FormErrorBanner message={topError} />}
 
-      {/* Course and number first, then the bet. The two quick fields are out
+      {/* Course, name and number first, then the bet. The quick fields are out
           of the way before the picker, so the prize and the pay button sit
           together at the bottom with nothing between them. */}
       <Field label="Golf Course" name="course" required error={errors.course}>
         <Select name="course" required options={COURSES} placeholder="Select your course" />
       </Field>
 
-      {/* Name and email are not asked here — PayFast collects them at checkout
-          and returns them in its notification, so asking would be two fields of
-          friction at a tee box for data we are handed a minute later. */}
+      {/* Asked here because nobody else will ask: PayFast's checkout does not,
+          and its notification only echoes what we sent it. Email is still left
+          off — see entrySchema in src/lib/validation.ts. */}
+      <Field label="Name" name="name" required error={errors.name}>
+        <Input name="name" required autoComplete="name" placeholder="Full name" />
+      </Field>
 
       <Field label="Mobile Number" name="mobile" required error={errors.mobile}>
         <Input name="mobile" type="tel" required autoComplete="tel" placeholder="+27 XX XXX XXXX" inputMode="tel" />

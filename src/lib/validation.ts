@@ -205,13 +205,17 @@ export const voucherSchema = z
 /**
  * The paid course entry at /form.
  *
- * Name and email are deliberately NOT asked. A golfer filling this in is
- * standing at a tee box on a phone, and PayFast returns both in its ITN — so
- * asking is two fields of friction for data we are handed a minute later.
- * /api/payfast/notify writes them onto the entry row when the payment lands.
+ * Name required, email not asked. A golfer filling this in is standing at a
+ * tee box on a phone, so the form stays as short as it can — but the name is
+ * the one field it cannot do without.
  *
- * Only this schema drops them. /form-2 (free entry) has no payment step and
- * therefore nothing to backfill from, so it still asks.
+ * From 31 Aug to Nov 2026 this asked for neither, on the understanding that
+ * PayFast collects both at checkout and returns them in the ITN. It does not.
+ * The ITN echoes the customer details the payment request sent, and with a
+ * cell_number and no email_address PayFast logs the buyer in by number and
+ * never asks. Every on-course entry in that window holds a mobile number and
+ * nothing else: withheld from Indwe as uncontactable, and greeted as "there"
+ * on WhatsApp. Whatever this form does not ask for, we do not have.
  */
 export const entrySchema = z.object({
   entryAmount: z.coerce.number().refine(
@@ -219,7 +223,7 @@ export const entrySchema = z.object({
     { message: "Choose an entry amount" },
   ),
   ...clubMemberFields,
-}).omit({ consentCommunication: true, name: true, email: true });
+}).omit({ consentCommunication: true, email: true });
 export type EntryInput = z.infer<typeof entrySchema>;
 
 // /form-2 — free entry for sponsored/corporate events

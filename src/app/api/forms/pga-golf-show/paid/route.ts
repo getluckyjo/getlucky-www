@@ -31,9 +31,9 @@ function showClosed() {
  * Unlike the free entry this writes a paid **entry** row with a `GLE-`
  * reference, not a `free_entry` lead — that prefix is what routes the PayFast
  * notification to the entry tab (see tabForReference in /api/payfast/notify),
- * and it is what marks the row paid, backfills the name and email PayFast
- * collects at checkout, and hands the golfer to the WhatsApp channel once the
- * money has actually arrived. Submitting is not entering; paying is.
+ * and it is what marks the row paid and hands the golfer to the WhatsApp
+ * channel once the money has actually arrived. Submitting is not entering;
+ * paying is.
  *
  * `course` is PGA_GOLF_SHOW.course, so a paid show entrant gets the show's
  * WhatsApp journey exactly like a free one — see docs/pga-golf-show.md.
@@ -130,8 +130,8 @@ export async function POST(req: NextRequest) {
       itemDescription: `Simulator entry at the ${PGA_GOLF_SHOW.name} on ${entryDate}, win ${paid.prize}`,
       reference,
       buyerName: d.name,
-      // Not asked on the show form — PayFast collects it at checkout and
-      // returns it in the notification, which is where it enters our records.
+      // Not asked on the show form, so we never have it: PayFast does not ask
+      // for one either, and its notification only echoes what we send.
       buyerEmail: "",
       buyerMobile: d.mobile,
       customStr1: PGA_GOLF_SHOW.course,
